@@ -18,9 +18,14 @@ This builds the Windows server installer and the browser UI it serves.
 
 The setup writes:
 
-- `C:\ProgramData\XenoCare\install.log`
-- `C:\ProgramData\XenoCare\last-error.txt`
+- `C:\ProgramData\XenoCare\install.log` — setup transcript
+- `C:\ProgramData\XenoCare\provision.log` — database provisioning output
+- `C:\ProgramData\XenoCare\provision-error.log` — Docker/Supabase stderr
+- `C:\ProgramData\XenoCare\last-error.txt` — last failure message
 - `C:\ProgramData\XenoCare\docker-info.txt` when the engine does not respond
+
+Provisioning runs as a separate process with stdout/stderr redirected to
+files. Docker pull progress on stderr is normal and no longer aborts setup.
 
 To rerun the setup manually after fixing Docker:
 
