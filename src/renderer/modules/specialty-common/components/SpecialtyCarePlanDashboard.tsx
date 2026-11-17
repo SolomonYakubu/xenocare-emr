@@ -692,7 +692,7 @@ export default function SpecialtyCarePlanDashboard({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
           <input
             type="text"
-            placeholder="Search by patient name, EMR number or plan..."
+            placeholder="Search by patient name, patient number or plan..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/15 rounded-xl text-sm text-white placeholder-white/40 focus:ring-2 focus:ring-white/30 transition-all"

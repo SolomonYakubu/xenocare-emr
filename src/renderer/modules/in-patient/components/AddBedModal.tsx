@@ -81,6 +81,19 @@ const AddBedModal: React.FC<AddBedModalProps> = ({
 
   const { data: wards } = useWards();
   const createBed = useCreateBed();
+
+  // Bed-only deployment: keep the ward behind the scenes and default to the
+  // first active ward so the UI never asks the user to choose one.
+  React.useEffect(() => {
+    const defaultWardId = wards?.[0]?.id;
+    if (!defaultWardId) return;
+    setFormData((prev) =>
+      prev.ward_id ? prev : { ...prev, ward_id: defaultWardId },
+    );
+    setBulkFormData((prev) =>
+      prev.ward_id ? prev : { ...prev, ward_id: defaultWardId },
+    );
+  }, [wards]);
   const createBulkBeds = useCreateBulkBeds();
 
   // Update ward_id when preSelectedWardId changes
@@ -251,25 +264,10 @@ const AddBedModal: React.FC<AddBedModalProps> = ({
 
           {mode === 'single' ? (
             <form onSubmit={handleSubmitSingle} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ward <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={formData.ward_id}
-                  onChange={(e) =>
-                    setFormData({ ...formData, ward_id: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">Select a ward</option>
-                  {wards?.map((ward) => (
-                    <option key={ward.id} value={ward.id}>
-                      {ward.name} ({ward.code})
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500">
+                Beds are added directly. Ward grouping is handled
+                automatically.
+              </p>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -374,28 +372,10 @@ const AddBedModal: React.FC<AddBedModalProps> = ({
             </form>
           ) : (
             <form onSubmit={handleSubmitBulk} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Ward <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={bulkFormData.ward_id}
-                  onChange={(e) =>
-                    setBulkFormData({
-                      ...bulkFormData,
-                      ward_id: e.target.value,
-                    })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">Select a ward</option>
-                  {wards?.map((ward) => (
-                    <option key={ward.id} value={ward.id}>
-                      {ward.name} ({ward.code})
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-500">
+                Beds are added directly. Ward grouping is handled
+                automatically.
+              </p>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

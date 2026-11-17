@@ -39,8 +39,6 @@ import { supabase } from '../../../api/supabaseClient';
 import { useAuth } from '../../../contexts/AuthContext';
 
 // XenoCare Logo
-const ndcLogoSrc = require('../../../../../assets/xenocare-logo.png');
-
 // =============================================================================
 // Types - All tied to encounter_id
 // =============================================================================
@@ -888,11 +886,7 @@ function ShiftHandoverForm({
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4 flex-shrink-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <img
-                  src={ndcLogoSrc}
-                  alt="XenoCare Logo"
-                  className="h-12 w-12 rounded-lg bg-white p-1"
-                />
+                
                 <div>
                   <h2 className="text-xl font-bold text-white">
                     New Shift Handover

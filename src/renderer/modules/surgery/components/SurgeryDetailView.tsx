@@ -473,7 +473,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <InfoItem label="Patient Name" value={surgery.patient_name} />
-          <InfoItem label="EMR Number" value={surgery.patient_emr_number} />
+          <InfoItem label="Patient number" value={surgery.patient_emr_number} />
           <InfoItem
             label="Insurance Type"
             value={surgery.patient_insurance_type}

@@ -60,7 +60,7 @@ export default class MenuBuilder {
           label: 'About XenoCare',
           selector: 'orderFrontStandardAboutPanel:',
         },
-        { label: 'Powered by Xenolink', enabled: false },
+        { label: 'Powered by XenoCare', enabled: false },
         { type: 'separator' },
         { label: 'Services', submenu: [] },
         { type: 'separator' },

@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR — Imaging Report API
+ * XenoCare — Imaging Report API
  */
 
 import { supabase } from '../../../api/supabaseClient';

@@ -1,27 +1,17 @@
 // =============================================================================
 // XENOCARE EMR - Admission Form Component
-// Form for creating new patient admissions
+// Single-page admission: patient, bed and clinical details in one form.
 // =============================================================================
 
-import React, { useState, useEffect } from 'react';
-import {
-  User,
-  Building2,
-  Bed,
-  Stethoscope,
-  AlertTriangle,
-  Calendar,
-  FileText,
-  Search,
-  X,
-  Loader2,
-} from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { AlertTriangle, X } from 'lucide-react';
 import { useCreateAdmission } from '../hooks/useAdmissions';
-import { WardBedSelector } from '../../clinical-requests/components/WardBedSelector';
+import { useBedAvailability } from '../hooks/useBeds';
 import { useAuth } from '../../../contexts/AuthContext';
 import PatientSearchInput from '../../../components/ui/PatientSearchInput';
 import SavedNotesPopover from '../../../components/ui/SavedNotesPopover';
 import type { PatientDTO } from '../../patient-registration/dtos/patient.dto';
+import type { BedAvailabilityView } from '../../../types/database.types';
 import type {
   AdmissionType,
   AdmissionSource,
@@ -43,39 +33,28 @@ const admissionTypes: { value: AdmissionType; label: string }[] = [
   { value: 'elective', label: 'Elective' },
   { value: 'transfer', label: 'Transfer' },
   { value: 'observation', label: 'Observation' },
-  { value: 'day_case', label: 'Day Case' },
+  { value: 'day_case', label: 'Day case' },
 ];
 
 const admissionSources: { value: AdmissionSource; label: string }[] = [
-  { value: 'emergency', label: 'Emergency Department' },
-  { value: 'outpatient', label: 'Outpatient Clinic' },
-  { value: 'referral', label: 'External Referral' },
-  { value: 'transfer', label: 'Transfer from Another Facility' },
-  { value: 'direct', label: 'Direct Admission' },
+  { value: 'emergency', label: 'Emergency department' },
+  { value: 'outpatient', label: 'Outpatient clinic' },
+  { value: 'referral', label: 'External referral' },
+  { value: 'transfer', label: 'Transfer from another facility' },
+  { value: 'direct', label: 'Direct admission' },
 ];
 
-const acuityLevels: { value: AcuityLevel; label: string; color: string }[] = [
-  {
-    value: 'low',
-    label: 'Low',
-    color: 'bg-green-100 text-green-700 border-green-200',
-  },
-  {
-    value: 'moderate',
-    label: 'Moderate',
-    color: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-  },
-  {
-    value: 'high',
-    label: 'High',
-    color: 'bg-orange-100 text-orange-700 border-orange-200',
-  },
-  {
-    value: 'critical',
-    label: 'Critical',
-    color: 'bg-red-100 text-red-700 border-red-200',
-  },
+const acuityLevels: { value: AcuityLevel; label: string }[] = [
+  { value: 'low', label: 'Low' },
+  { value: 'moderate', label: 'Moderate' },
+  { value: 'high', label: 'High' },
+  { value: 'critical', label: 'Critical' },
 ];
+
+const fieldClass =
+  'w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-[#E9783F] focus:ring-2 focus:ring-[#E9783F]/15';
+
+const labelClass = 'mb-1 block text-xs font-semibold text-slate-600';
 
 const AdmissionForm: React.FC<AdmissionFormProps> = ({
   patientId: initialPatientId,
@@ -85,7 +64,6 @@ const AdmissionForm: React.FC<AdmissionFormProps> = ({
   onSuccess,
   onCancel,
 }) => {
-  const [step, setStep] = useState(1);
   const [selectedPatientId, setSelectedPatientId] = useState(
     initialPatientId || '',
   );
@@ -94,8 +72,6 @@ const AdmissionForm: React.FC<AdmissionFormProps> = ({
   );
   const [selectedWardId, setSelectedWardId] = useState(initialWardId || '');
   const [selectedBedId, setSelectedBedId] = useState(initialBedId || '');
-  const [selectedWard, setSelectedWard] = useState<any>(null);
-  const [selectedBed, setSelectedBed] = useState<any>(null);
 
   const [formData, setFormData] = useState<Partial<CreateAdmissionDTO>>({
     admission_type: 'elective',
@@ -108,8 +84,36 @@ const AdmissionForm: React.FC<AdmissionFormProps> = ({
   });
 
   const { staff } = useAuth();
-  const facilityId = staff?.facility_id || '';
   const createAdmission = useCreateAdmission();
+  const { data: beds = [], isLoading: bedsLoading } = useBedAvailability();
+
+  const availableBeds = useMemo(
+    () =>
+      (beds as BedAvailabilityView[])
+        .filter((bed) => String(bed.status).toLowerCase() === 'available')
+        .sort((a, b) => {
+          const na = Number(a.bed_number.replace(/\D/g, ''));
+          const nb = Number(b.bed_number.replace(/\D/g, ''));
+          return na - nb;
+        }),
+    [beds],
+  );
+
+  const selectedBed = availableBeds.find(
+    (bed) => bed.bed_id === selectedBedId,
+  );
+
+  // Preselect a bed when the form is opened from the bed board.
+  useEffect(() => {
+    if (!initialBedId || selectedBedId) return;
+    const bed = (beds as BedAvailabilityView[]).find(
+      (item) => item.bed_id === initialBedId,
+    );
+    if (bed) {
+      setSelectedBedId(bed.bed_id);
+      setSelectedWardId(bed.ward_id);
+    }
+  }, [beds, initialBedId, selectedBedId]);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -124,10 +128,16 @@ const AdmissionForm: React.FC<AdmissionFormProps> = ({
     }));
   };
 
-  const handleSubmit = async () => {
-    if (!selectedPatientId || !selectedWardId || !selectedBedId) {
-      return;
-    }
+  const canSubmit =
+    !!selectedPatientId &&
+    !!selectedWardId &&
+    !!selectedBedId &&
+    !!formData.admitting_diagnosis?.trim() &&
+    !createAdmission.isPending;
+
+  const handleSubmit = async (event?: React.FormEvent) => {
+    event?.preventDefault();
+    if (!canSubmit) return;
 
     try {
       await createAdmission.mutateAsync({
@@ -150,385 +160,324 @@ const AdmissionForm: React.FC<AdmissionFormProps> = ({
     }
   };
 
-  const canProceed = () => {
-    switch (step) {
-      case 1:
-        return !!selectedPatientId;
-      case 2:
-        return !!selectedWardId && !!selectedBedId;
-      case 3:
-        return !!formData.admitting_diagnosis && !!formData.admission_type;
-      default:
-        return false;
-    }
-  };
+  const missing = [
+    !selectedPatientId && 'patient',
+    !selectedBedId && 'bed',
+    !formData.admitting_diagnosis?.trim() && 'diagnosis',
+  ].filter(Boolean);
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-white rounded-xl border shadow-sm">
-        {/* Header */}
-        <div className="px-6 py-4 border-b">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-900">New Admission</h2>
-            <button
-              onClick={onCancel}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <X className="h-5 w-5" />
-            </button>
+    <form
+      onSubmit={handleSubmit}
+      className="flex min-h-0 flex-1 flex-col bg-white"
+    >
+      <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-5 py-4">
+        {/* Patient */}
+        <section>
+          <div className="mb-2 flex items-baseline justify-between">
+            <h3 className="text-sm font-bold text-slate-900">Patient</h3>
+            {selectedPatient && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedPatientId('');
+                  setSelectedPatient(null);
+                }}
+                className="text-xs font-semibold text-[#B36845] hover:underline"
+              >
+                Change
+              </button>
+            )}
+          </div>
+          {selectedPatient ? (
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm sm:grid-cols-4">
+              <div>
+                <dt className="text-[11px] text-slate-500">EMR</dt>
+                <dd className="font-semibold text-slate-800">
+                  {selectedPatient.emr_number || 'N/A'}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-[11px] text-slate-500">Name</dt>
+                <dd className="font-semibold text-slate-800">
+                  {[selectedPatient.first_name, selectedPatient.surname]
+                    .filter(Boolean)
+                    .join(' ')}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-[11px] text-slate-500">Phone</dt>
+                <dd className="font-semibold text-slate-800">
+                  {selectedPatient.contact_phone || 'N/A'}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-[11px] text-slate-500">Category</dt>
+                <dd className="font-semibold text-slate-800">
+                  {selectedPatient.patient_category || 'N/A'}
+                </dd>
+              </div>
+            </dl>
+          ) : (
+            <PatientSearchInput
+              value={selectedPatientId}
+              onChange={(patientId, patient) => {
+                setSelectedPatientId(patientId);
+                setSelectedPatient(patient);
+              }}
+              selectedPatient={selectedPatient}
+              placeholder="Search by patient number, name or phone"
+              autoFocus
+            />
+          )}
+        </section>
+
+        {/* Bed */}
+        <section>
+          <div className="mb-2 flex items-baseline justify-between">
+            <h3 className="text-sm font-bold text-slate-900">Bed</h3>
+            <span className="text-xs text-slate-500">
+              {availableBeds.length} available
+            </span>
           </div>
 
-          {/* Progress Steps */}
-          <div className="flex items-center gap-2 mt-4">
-            {[
-              { num: 1, label: 'Patient' },
-              { num: 2, label: 'Ward & Bed' },
-              { num: 3, label: 'Clinical Info' },
-              { num: 4, label: 'Review' },
-            ].map((s, i) => (
-              <React.Fragment key={s.num}>
-                {i > 0 && <div className="flex-1 h-0.5 bg-gray-200" />}
-                <div className="flex items-center gap-2">
-                  <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                      step >= s.num
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 text-gray-500'
+          {bedsLoading ? (
+            <p className="rounded-lg border border-slate-200 px-3 py-4 text-sm text-slate-500">
+              Loading beds…
+            </p>
+          ) : availableBeds.length === 0 ? (
+            <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-sm text-amber-700">
+              No beds are available. Free a bed or add one from the bed board.
+            </p>
+          ) : (
+            <div
+              role="radiogroup"
+              aria-label="Available beds"
+              className="grid grid-cols-3 gap-2 rounded-lg border border-slate-200 p-2 sm:grid-cols-5"
+            >
+              {availableBeds.map((bed) => {
+                const active = bed.bed_id === selectedBedId;
+                return (
+                  <button
+                    key={bed.bed_id}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => {
+                      setSelectedBedId(bed.bed_id);
+                      setSelectedWardId(bed.ward_id);
+                    }}
+                    className={`rounded-lg border px-2 py-2 text-center text-sm font-semibold transition-colors ${
+                      active
+                        ? 'border-[#E9783F] bg-[#FBF1E9] text-[#8A4A2A]'
+                        : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                     }`}
                   >
-                    {s.num}
-                  </div>
-                  <span
-                    className={`text-sm ${step >= s.num ? 'text-gray-900' : 'text-gray-500'}`}
-                  >
-                    {s.label}
-                  </span>
-                </div>
-              </React.Fragment>
-            ))}
-          </div>
-        </div>
-
-        {/* Form Content */}
-        <div className="p-6">
-          {/* Step 1: Patient Selection */}
-          {step === 1 && (
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Search Patient by EMR Number or Name
-                </label>
-                <PatientSearchInput
-                  value={selectedPatientId}
-                  onChange={(patientId, patient) => {
-                    setSelectedPatientId(patientId);
-                    setSelectedPatient(patient);
-                  }}
-                  selectedPatient={selectedPatient}
-                  placeholder="Search by EMR number (e.g., NDC-0001), name, or phone..."
-                  autoFocus
-                />
-              </div>
-
-              {selectedPatient && (
-                <div className="bg-gray-50 rounded-lg p-4 border">
-                  <h4 className="text-sm font-medium text-gray-700 mb-2">
-                    Patient Details
-                  </h4>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-500">EMR Number:</span>
-                      <span className="ml-2 font-medium">
-                        {selectedPatient.emr_number || 'N/A'}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Category:</span>
-                      <span className="ml-2 font-medium">
-                        {selectedPatient.patient_category || 'N/A'}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Phone:</span>
-                      <span className="ml-2 font-medium">
-                        {selectedPatient.contact_phone || 'N/A'}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Insurance:</span>
-                      <span className="ml-2 font-medium">
-                        {selectedPatient.insurance_type || 'N/A'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
+                    {bed.bed_number}
+                  </button>
+                );
+              })}
             </div>
           )}
+        </section>
 
-          {/* Step 2: Ward & Bed Selection */}
-          {step === 2 && (
-            <div className="space-y-6">
-              <WardBedSelector
-                facilityId={facilityId}
-                selectedWardId={selectedWardId}
-                selectedBedId={selectedBedId}
-                onWardSelect={(wardId, ward) => {
-                  setSelectedWardId(wardId);
-                  setSelectedWard(ward);
-                  setSelectedBedId('');
-                  setSelectedBed(null);
-                }}
-                onBedSelect={(bedId, bed) => {
-                  setSelectedBedId(bedId);
-                  setSelectedBed(bed);
-                }}
-                required
-              />
+        {/* Clinical details */}
+        <section>
+          <h3 className="mb-2 text-sm font-bold text-slate-900">
+            Clinical details
+          </h3>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label className={labelClass} htmlFor="admission_type">
+                Admission type
+              </label>
+              <select
+                id="admission_type"
+                name="admission_type"
+                value={formData.admission_type}
+                onChange={handleInputChange}
+                className={fieldClass}
+              >
+                {admissionTypes.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
 
-          {/* Step 3: Clinical Information */}
-          {step === 3 && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Admission Type *
-                  </label>
-                  <select
-                    name="admission_type"
-                    value={formData.admission_type}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    {admissionTypes.map((type) => (
-                      <option key={type.value} value={type.value}>
-                        {type.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+            <div>
+              <label className={labelClass} htmlFor="admission_source">
+                Admission source
+              </label>
+              <select
+                id="admission_source"
+                name="admission_source"
+                value={formData.admission_source}
+                onChange={handleInputChange}
+                className={fieldClass}
+              >
+                {admissionSources.map((source) => (
+                  <option key={source.value} value={source.value}>
+                    {source.label}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Admission Source
-                  </label>
-                  <select
-                    name="admission_source"
-                    value={formData.admission_source}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    {admissionSources.map((source) => (
-                      <option key={source.value} value={source.value}>
-                        {source.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Acuity Level
-                </label>
-                <div className="flex gap-2">
-                  {acuityLevels.map((level) => (
+            <div className="sm:col-span-2">
+              <span className={labelClass}>Urgency</span>
+              <div
+                role="radiogroup"
+                aria-label="Urgency"
+                className="grid grid-cols-4 gap-2"
+              >
+                {acuityLevels.map((level) => {
+                  const active = formData.acuity_level === level.value;
+                  return (
                     <button
                       key={level.value}
                       type="button"
+                      role="radio"
+                      aria-checked={active}
                       onClick={() =>
                         setFormData((prev) => ({
                           ...prev,
                           acuity_level: level.value,
                         }))
                       }
-                      className={`flex-1 py-2.5 rounded-lg border-2 font-medium transition-all ${
-                        formData.acuity_level === level.value
-                          ? `${level.color} border-current`
-                          : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                      className={`rounded-lg border px-2 py-2 text-sm font-semibold transition-colors ${
+                        active
+                          ? 'border-[#E9783F] bg-[#FBF1E9] text-[#8A4A2A]'
+                          : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                       }`}
                     >
                       {level.label}
                     </button>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
+            </div>
 
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Admitting Diagnosis *
-                  </label>
-                  <SavedNotesPopover
-                    category="admission_notes"
-                    subcategory="admitting_diagnosis"
-                    currentValue={formData.admitting_diagnosis}
-                    onInsert={(content) => setFormData(prev => ({ ...prev, admitting_diagnosis: content }))}
-                  />
-                </div>
-                <textarea
-                  name="admitting_diagnosis"
-                  value={formData.admitting_diagnosis}
-                  onChange={handleInputChange}
-                  rows={3}
-                  placeholder="Primary diagnosis for admission..."
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Chief Complaint
-                </label>
-                <input
-                  type="text"
-                  name="chief_complaint"
-                  value={formData.chief_complaint}
-                  onChange={handleInputChange}
-                  placeholder="Patient's main complaint..."
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Reason for Admission
-                </label>
-                <textarea
-                  name="reason_for_admission"
-                  value={formData.reason_for_admission}
-                  onChange={handleInputChange}
-                  rows={2}
-                  placeholder="Detailed reason for hospitalization..."
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  id="isolation_required"
-                  name="isolation_required"
-                  checked={formData.isolation_required}
-                  onChange={handleInputChange}
-                  className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                />
+            <div className="sm:col-span-2">
+              <div className="mb-1 flex items-center justify-between">
                 <label
-                  htmlFor="isolation_required"
-                  className="flex items-center gap-2 text-sm text-gray-700"
+                  className="text-xs font-semibold text-slate-600"
+                  htmlFor="admitting_diagnosis"
                 >
-                  <AlertTriangle className="h-4 w-4 text-amber-500" />
-                  Isolation Required
+                  Admitting diagnosis <span className="text-red-500">*</span>
                 </label>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Expected Discharge Date
-                </label>
-                <input
-                  type="date"
-                  name="expected_discharge_date"
-                  value={formData.expected_discharge_date || ''}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                <SavedNotesPopover
+                  category="admission_notes"
+                  subcategory="admitting_diagnosis"
+                  currentValue={formData.admitting_diagnosis || ''}
+                  onInsert={(content) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      admitting_diagnosis: content,
+                    }))
+                  }
                 />
               </div>
+              <textarea
+                id="admitting_diagnosis"
+                name="admitting_diagnosis"
+                value={formData.admitting_diagnosis}
+                onChange={handleInputChange}
+                rows={2}
+                placeholder="Primary diagnosis for admission"
+                className={fieldClass}
+              />
             </div>
-          )}
 
-          {/* Step 4: Review */}
-          {step === 4 && (
-            <div className="space-y-6">
-              <div className="bg-gray-50 rounded-lg p-6">
-                <h3 className="font-semibold text-gray-900 mb-4">
-                  Admission Summary
-                </h3>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Patient ID</p>
-                    <p className="font-medium text-gray-900">
-                      {selectedPatientId}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Admission Type</p>
-                    <p className="font-medium text-gray-900 capitalize">
-                      {formData.admission_type}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Ward</p>
-                    <p className="font-medium text-gray-900">
-                      {selectedWard?.name}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Bed</p>
-                    <p className="font-medium text-gray-900">
-                      {selectedBed?.bed_number}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Acuity Level</p>
-                    <p className="font-medium text-gray-900 capitalize">
-                      {formData.acuity_level}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Isolation</p>
-                    <p className="font-medium text-gray-900">
-                      {formData.isolation_required ? 'Yes' : 'No'}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-4 border-t">
-                  <p className="text-sm text-gray-500">Admitting Diagnosis</p>
-                  <p className="font-medium text-gray-900">
-                    {formData.admitting_diagnosis}
-                  </p>
-                </div>
-              </div>
+            <div>
+              <label className={labelClass} htmlFor="chief_complaint">
+                Chief complaint
+              </label>
+              <input
+                id="chief_complaint"
+                type="text"
+                name="chief_complaint"
+                value={formData.chief_complaint}
+                onChange={handleInputChange}
+                placeholder="Main complaint"
+                className={fieldClass}
+              />
             </div>
-          )}
-        </div>
 
-        {/* Footer */}
-        <div className="px-6 py-4 border-t bg-gray-50 flex justify-between">
+            <div>
+              <label className={labelClass} htmlFor="expected_discharge_date">
+                Expected discharge
+              </label>
+              <input
+                id="expected_discharge_date"
+                type="date"
+                name="expected_discharge_date"
+                value={formData.expected_discharge_date || ''}
+                onChange={handleInputChange}
+                className={fieldClass}
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className={labelClass} htmlFor="reason_for_admission">
+                Reason for admission
+              </label>
+              <textarea
+                id="reason_for_admission"
+                name="reason_for_admission"
+                value={formData.reason_for_admission}
+                onChange={handleInputChange}
+                rows={2}
+                placeholder="Optional context for the ward team"
+                className={fieldClass}
+              />
+            </div>
+
+            <label className="flex items-center gap-2 text-sm text-slate-700 sm:col-span-2">
+              <input
+                type="checkbox"
+                id="isolation_required"
+                name="isolation_required"
+                checked={formData.isolation_required}
+                onChange={handleInputChange}
+                className="h-4 w-4 rounded border-slate-300 text-[#E9783F] focus:ring-[#E9783F]"
+              />
+              <AlertTriangle className="h-4 w-4 text-amber-500" />
+              Isolation required
+            </label>
+          </div>
+        </section>
+      </div>
+
+      {/* Footer */}
+      <div className="flex shrink-0 items-center justify-between gap-3 border-t border-slate-200 bg-white px-5 py-3">
+        <p className="text-xs text-slate-500">
+          {missing.length > 0
+            ? `Select ${missing.join(', ')} to continue`
+            : selectedBed
+              ? `${selectedBed.bed_number} · ${selectedBed.ward_name}`
+              : ''}
+        </p>
+        <div className="flex items-center gap-2">
           <button
-            onClick={() => (step > 1 ? setStep(step - 1) : onCancel())}
-            className="px-4 py-2 text-gray-600 hover:text-gray-900"
+            type="button"
+            onClick={onCancel}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50"
           >
-            {step > 1 ? 'Back' : 'Cancel'}
+            <X className="h-4 w-4" />
+            Cancel
           </button>
-
-          {step < 4 ? (
-            <button
-              onClick={() => setStep(step + 1)}
-              disabled={!canProceed()}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Continue
-            </button>
-          ) : (
-            <button
-              onClick={handleSubmit}
-              disabled={createAdmission.isPending}
-              className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-            >
-              {createAdmission.isPending && (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              )}
-              Confirm Admission
-            </button>
-          )}
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            className="rounded-lg bg-[#E9783F] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#D96A36] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {createAdmission.isPending ? 'Admitting…' : 'Admit patient'}
+          </button>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 

@@ -155,9 +155,6 @@ interface ValidationError {
 // =============================================================================
 // Constants
 // =============================================================================
-
-const XenoCareLogoSrc = require('../../../../../assets/xenocare-logo.png');
-
 const CONFIDENTIALITY_NOTICE = `
 CONFIDENTIAL MEDICAL RECORD - This document contains protected health information (PHI) 
 and is intended solely for the authorized recipient(s). Unauthorized access, disclosure, 
@@ -1044,11 +1041,7 @@ export function EncounterClinicalReport({
         <div className="bg-gradient-to-r from-primary-700 to-[#008545] text-white p-6 print:p-4">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
-              <img
-                src={XenoCareLogoSrc}
-                alt="XenoCare"
-                className="h-16 w-16 bg-white rounded-lg p-1 object-contain print:h-14 print:w-14"
-              />
+              
               <div>
                 <h1 className="text-xl font-bold tracking-wide">
                   {getFacilityName().toUpperCase()}
@@ -1114,7 +1107,7 @@ export function EncounterClinicalReport({
                   className="col-span-2"
                 />
                 <DataField
-                  label="Hospital/EMR Number"
+                  label="Hospital/Patient number"
                   value={emrNumber}
                   isHighlighted
                 />

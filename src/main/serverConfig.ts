@@ -13,6 +13,7 @@
 import { app, ipcMain } from 'electron';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import log from 'electron-log';
 import { z } from 'zod';
 
@@ -439,6 +440,29 @@ export function getEffectiveConfig(): ServerConfig | null {
  * Register IPC handlers for server configuration
  */
 export function registerServerConfigHandlers(): void {
+  // Synchronous read used by the renderer before creating the Supabase client.
+  ipcMain.on('serverConfig:getSync', (event) => {
+    event.returnValue = getEffectiveConfig();
+  });
+
+  // LAN addresses so a host can tell other machines how to join.
+  ipcMain.handle('serverConfig:lanInfo', async () => {
+    const addresses: string[] = [];
+    const interfaces = os.networkInterfaces();
+    Object.values(interfaces).forEach((entries) => {
+      (entries || []).forEach((entry) => {
+        if (entry.family === 'IPv4' && !entry.internal) {
+          addresses.push(entry.address);
+        }
+      });
+    });
+    return {
+      addresses,
+      port: 54321,
+      apiUrls: addresses.map((ip) => `http://${ip}:54321`),
+    };
+  });
+
   // Get current configuration
   ipcMain.handle('serverConfig:get', async () => {
     return parseOutput(

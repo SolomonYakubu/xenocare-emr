@@ -28,6 +28,8 @@ import {
   Receipt,
 } from 'lucide-react';
 import { Button, Card, StatusBadge, EmptyState } from '../../../components/ui';
+import { getFacilityInfo } from '../../../lib/facility';
+import { isNhisFeatureEnabled } from '../../../config/features';
 import { useTimeTheme } from '../../../hooks/useTimeTheme';
 import { usePharmacyFinancialSummary } from '../hooks/usePharmacy';
 import { useToast } from '../../../components/ui/Toast';
@@ -217,13 +219,9 @@ const BRAND = {
   name: 'XenoCare',
   fullName: 'XenoCare',
   tagline: 'Modern Care. Connected.',
-  phone: '+234 909 977 7440',
-  email: 'support@xenolink.tech',
 };
 
 // XenoCare Logo loader
-const ndcLogoSrc = require('../../../../../assets/xenocare-logo.png');
-
 let ndcLogoBase64: string | null = null;
 
 function tryLoadImage(src: string): Promise<string | null> {
@@ -260,14 +258,9 @@ function tryLoadImage(src: string): Promise<string | null> {
 }
 
 async function loadLogo(): Promise<string | null> {
+  // Printed documents intentionally carry no app logo; the facility name and
+  // colours identify the header.
   if (ndcLogoBase64) return ndcLogoBase64;
-  if (ndcLogoSrc) {
-    const result = await tryLoadImage(ndcLogoSrc);
-    if (result) {
-      ndcLogoBase64 = result;
-      return result;
-    }
-  }
   return null;
 }
 
@@ -695,6 +688,7 @@ async function downloadPDFReport(data: PharmacyFinancialSummary) {
       /* ignore */
     }
   }
+  const facility = getFacilityInfo();
   const tx = logo ? m + 20 : m;
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(14);
@@ -703,7 +697,13 @@ async function downloadPDFReport(data: PharmacyFinancialSummary) {
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
   doc.text(BRAND.tagline, tx, 14);
-  doc.text(`Tel: ${BRAND.phone} | Email: ${BRAND.email}`, tx, 19);
+  const contact = [
+    facility.phone ? `Tel: ${facility.phone}` : '',
+    facility.email ? `Email: ${facility.email}` : '',
+  ]
+    .filter(Boolean)
+    .join(' | ');
+  if (contact) doc.text(contact, tx, 19);
 
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
@@ -1103,7 +1103,7 @@ async function downloadPDFReport(data: PharmacyFinancialSummary) {
     );
     doc.setFontSize(6);
     doc.setTextColor(107, 114, 128);
-    doc.text('Powered by Xenolink', m, ph - 3);
+    doc.text('Powered by XenoCare', m, ph - 3);
   }
 
   doc.save(`${filename}.pdf`);
@@ -1431,13 +1431,15 @@ export default function PharmacyFinancials() {
             {data?.catalogue_total_drugs?.toLocaleString() || 0}
           </span>
         </div>
-        <div className="flex items-center gap-2">
-          <Shield size={14} className="text-emerald-500" />
-          <span className="text-xs text-gray-500">NHIS Covered:</span>
-          <span className="text-sm font-bold text-emerald-600">
-            {data?.catalogue_nhis_covered?.toLocaleString() || 0}
-          </span>
-        </div>
+        {isNhisFeatureEnabled() && (
+          <div className="flex items-center gap-2">
+            <Shield size={14} className="text-emerald-500" />
+            <span className="text-xs text-gray-500">NHIS Covered:</span>
+            <span className="text-sm font-bold text-emerald-600">
+              {data?.catalogue_nhis_covered?.toLocaleString() || 0}
+            </span>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <AlertTriangle size={14} className="text-amber-500" />
           <span className="text-xs text-gray-500">Low Stock:</span>
@@ -1720,15 +1722,17 @@ export default function PharmacyFinancials() {
               iconColor="text-green-600"
               isNightMode={isNightMode}
             />
-            <FinStatCard
-              label="NHIS Covered"
-              value={fmt(data?.total_nhis_payable || 0)}
-              subtitle="Paid by insurance"
-              icon={Shield}
-              iconBg="bg-emerald-100"
-              iconColor="text-emerald-600"
-              isNightMode={isNightMode}
-            />
+            {isNhisFeatureEnabled() && (
+              <FinStatCard
+                label="NHIS Covered"
+                value={fmt(data?.total_nhis_payable || 0)}
+                subtitle="Paid by insurance"
+                icon={Shield}
+                iconBg="bg-emerald-100"
+                iconColor="text-emerald-600"
+                isNightMode={isNightMode}
+              />
+            )}
             <FinStatCard
               label="Patient Out-of-Pocket"
               value={fmt(data?.total_patient_payable || 0)}
@@ -1759,16 +1763,20 @@ export default function PharmacyFinancials() {
                   Revenue Breakdown
                 </h3>
                 <p className="text-xs text-gray-500">
-                  NHIS vs Patient payments
+                  {isNhisFeatureEnabled()
+                    ? 'NHIS vs patient payments'
+                    : 'Patient payments'}
                 </p>
               </div>
               <ExportDropdown onExport={handleExport} disabled={!data} />
             </div>
             <div className="flex items-center gap-4 mb-4">
-              <div className="flex items-center gap-1.5">
-                <div className="h-3 w-3 rounded-full bg-emerald-500" />
-                <span className="text-xs text-gray-500">NHIS Payable</span>
-              </div>
+              {isNhisFeatureEnabled() && (
+                <div className="flex items-center gap-1.5">
+                  <div className="h-3 w-3 rounded-full bg-emerald-500" />
+                  <span className="text-xs text-gray-500">NHIS payable</span>
+                </div>
+              )}
               <div className="flex items-center gap-1.5">
                 <div className="h-3 w-3 rounded-full bg-orange-500" />
                 <span className="text-xs text-gray-500">Patient Payable</span>

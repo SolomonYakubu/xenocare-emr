@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { Button, Card } from '../../../components/ui';
 import { useTimeTheme } from '../../../hooks/useTimeTheme';
+import { isNhisFeatureEnabled } from '../../../config/features';
 import { useDrugs } from '../hooks/usePharmacy';
 import {
   DrugDTO,
@@ -33,7 +34,7 @@ import {
   getStockLevelColor,
 } from '../dtos/pharmacy.dto';
 
-const formatCurrency = (amount: number) => `₦${amount.toLocaleString()}`;
+const formatCurrency = (amount: number) => `NGN ${amount.toLocaleString()}`;
 
 // =============================================================================
 // Types
@@ -120,15 +121,8 @@ function DrugRow({
     >
       {/* Drug icon + name */}
       <div className="flex items-center gap-3 w-64 min-w-0 flex-shrink-0">
-        <div
-          className={`flex-shrink-0 p-2 rounded-lg ${drug.is_nhis_covered ? 'bg-emerald-100' : 'bg-gray-100'}`}
-        >
-          <Pill
-            size={16}
-            className={
-              drug.is_nhis_covered ? 'text-emerald-600' : 'text-gray-500'
-            }
-          />
+        <div className="flex-shrink-0 rounded-lg bg-slate-100 p-2">
+          <Pill size={16} className="text-slate-500" />
         </div>
         <div className="min-w-0">
           <div
@@ -136,50 +130,24 @@ function DrugRow({
           >
             {drug.drug_name}
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-gray-400 truncate">
-            {drug.drug_code && (
-              <span className="font-mono">{drug.drug_code}</span>
-            )}
-            {drug.generic_name && (
-              <>
-                <span className="text-gray-300">·</span>
-                <span className="truncate">{drug.generic_name}</span>
-              </>
-            )}
-          </div>
+          {drug.generic_name && (
+            <div className="truncate text-xs text-gray-400">
+              {drug.generic_name}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Category / type */}
       <div className="w-40 flex-shrink-0 min-w-0">
-        {drug.nhis_category ? (
-          <>
-            <div
-              className={`text-xs font-medium truncate ${isNightMode ? 'text-slate-300' : 'text-gray-700'}`}
-            >
-              {drug.nhis_category}
-            </div>
-            {drug.nhis_subcategory && (
-              <div
-                className="text-xs text-blue-500 truncate"
-                title={drug.nhis_subcategory}
-              >
-                {drug.nhis_subcategory}
-              </div>
-            )}
-          </>
-        ) : (
-          <>
-            <div
-              className={`text-xs font-medium ${isNightMode ? 'text-slate-300' : 'text-gray-700'}`}
-            >
-              {drug.category || 'N/A'}
-            </div>
-            <div className="text-xs text-gray-400">
-              {drug.drug_type || drug.formulation || '-'}
-            </div>
-          </>
-        )}
+        <div
+          className={`text-xs font-medium ${isNightMode ? 'text-slate-300' : 'text-gray-700'}`}
+        >
+          {drug.category || 'N/A'}
+        </div>
+        <div className="text-xs text-gray-400">
+          {drug.drug_type || drug.formulation || '-'}
+        </div>
       </div>
 
       {/* Strength */}
@@ -221,15 +189,8 @@ function DrugRow({
         <div
           className={`text-sm font-semibold ${isNightMode ? 'text-slate-100' : 'text-gray-900'}`}
         >
-          {formatCurrency(drug.nhis_price || drug.price || 0)}
+          {formatCurrency(drug.price || 0)}
         </div>
-        {drug.is_nhis_covered && drug.nhis_price ? (
-          <span className="text-[10px] font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">
-            NHIS
-          </span>
-        ) : (
-          <span className="text-[10px] text-gray-400">Regular</span>
-        )}
       </div>
 
       {/* Status badge */}
@@ -371,7 +332,7 @@ export default function DrugCatalogueList({
     if (viewMode !== 'grouped') return {};
     const groups: Record<string, DrugDTO[]> = {};
     filteredDrugs.forEach((drug) => {
-      const cat = drug.nhis_category || 'Uncategorized';
+      const cat = drug.category || 'Uncategorized';
       if (!groups[cat]) groups[cat] = [];
       groups[cat].push(drug);
     });
@@ -462,7 +423,7 @@ export default function DrugCatalogueList({
       </div>
 
       {/* ── Summary stat cards ─────────────────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-3 gap-3">
         {[
           {
             label: 'Total Drugs',
@@ -470,16 +431,6 @@ export default function DrugCatalogueList({
             icon: Pill,
             accent: 'indigo',
             filter: () => {},
-          },
-          {
-            label: 'NHIS Covered',
-            value: stats.nhis,
-            icon: Shield,
-            accent: 'emerald',
-            filter: () => {
-              setNhisFilter(true);
-              setPage(1);
-            },
           },
           {
             label: 'Low Stock',
@@ -595,23 +546,24 @@ export default function DrugCatalogueList({
           ))}
         </div>
 
-        {/* NHIS toggle */}
-        <button
-          onClick={() => {
-            setNhisFilter(!nhisFilter);
-            setPage(1);
-          }}
-          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-            nhisFilter
-              ? 'bg-emerald-600 text-white'
-              : isNightMode
-                ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
-        >
-          <Shield size={12} className="inline mr-1" />
-          NHIS Only
-        </button>
+        {isNhisFeatureEnabled() && (
+          <button
+            onClick={() => {
+              setNhisFilter(!nhisFilter);
+              setPage(1);
+            }}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+              nhisFilter
+                ? 'bg-emerald-600 text-white'
+                : isNightMode
+                  ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            <Shield size={12} className="inline mr-1" />
+            NHIS Only
+          </button>
+        )}
 
         {/* View mode toggle */}
         <div

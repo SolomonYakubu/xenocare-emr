@@ -55,7 +55,7 @@ export const GOLD_STAGING_SCORE: ClinicalScoreDefinition = {
       min: 3,
       max: 3,
       label: 'GOLD 3 — Severe',
-      color: '#f97316',
+      color: '#E9783F',
       clinical_action:
         'LABA + LAMA combination. ICS if frequent exacerbations. Assess for LTOT.',
     },

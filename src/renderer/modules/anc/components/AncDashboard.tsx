@@ -186,7 +186,7 @@ export default function AncDashboard({
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search by name or EMR number…"
+              placeholder="Search by name or patient number…"
               value={pregSearch}
               onChange={(e) => setPregSearch(e.target.value)}
               className="w-full rounded-lg border border-gray-200 bg-gray-50 py-1.5 pl-8 pr-3 text-xs text-gray-700 placeholder-gray-400 focus:border-pink-300 focus:bg-white focus:outline-none focus:ring-1 focus:ring-pink-200"

@@ -7,7 +7,12 @@
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { isNhisFeatureEnabled } from '../../../config/features';
+import {
+  isMilitaryFeatureEnabled,
+  isNhisCategory,
+  isNhisFeatureEnabled,
+  isSpecialtyClinicsEnabled,
+} from '../../../config/features';
 import PatientAllergySummary from '../../../components/shared/PatientAllergySummary';
 import {
   X,
@@ -631,7 +636,7 @@ function ReviewStep({
             Select Patient
           </h3>
           <p className="text-gray-500 mb-6 max-w-md mx-auto">
-            Search for a registered patient by name, EMR number or phone number
+            Search for a registered patient by name, patient number or phone number
             to begin the consultation.
           </p>
 
@@ -2509,7 +2514,7 @@ function OrdersStep({
                 Patient Referral Information
               </h4>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {selectedPatient.service_number && (
+                {isMilitaryFeatureEnabled() && selectedPatient.service_number && (
                   <div>
                     <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       Service Number
@@ -2519,7 +2524,11 @@ function OrdersStep({
                     </p>
                   </div>
                 )}
-                {selectedPatient.patient_category && (
+                {selectedPatient.patient_category &&
+                  (isMilitaryFeatureEnabled() ||
+                    !['Military', 'Military Participant'].includes(
+                      selectedPatient.patient_category,
+                    )) && (
                   <div>
                     <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       Patient Category
@@ -2535,7 +2544,10 @@ function OrdersStep({
                       Insurance Type
                     </p>
                     <p className="text-sm font-semibold text-gray-900 mt-0.5">
-                      {selectedPatient.insurance_type?.replace('_', ' ')}
+                      {!isNhisFeatureEnabled() &&
+                      isNhisCategory(selectedPatient.insurance_type)
+                        ? 'Private'
+                        : selectedPatient.insurance_type?.replace('_', ' ')}
                     </p>
                   </div>
                 )}
@@ -2550,7 +2562,7 @@ function OrdersStep({
                       </p>
                     </div>
                   )}
-                {selectedPatient.rank && (
+                {isMilitaryFeatureEnabled() && selectedPatient.rank && (
                   <div>
                     <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       Rank
@@ -2560,7 +2572,7 @@ function OrdersStep({
                     </p>
                   </div>
                 )}
-                {selectedPatient.military_branch && (
+                {isMilitaryFeatureEnabled() && selectedPatient.military_branch && (
                   <div>
                     <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                       Branch
@@ -2698,7 +2710,7 @@ function OrdersStep({
               </div>
 
               {/* Internal Referral - Specialty Clinic Dropdown Selection */}
-              {!externalNhisReferral.enabled && (
+              {isSpecialtyClinicsEnabled() && !externalNhisReferral.enabled && (
                 <div className="mt-4 space-y-4">
                   <label className="block text-xs font-medium text-gray-500">
                     Select Specialty Clinic for Internal Referral
@@ -7240,11 +7252,7 @@ export default function ConsultationWizard({
             <div className="flex items-center justify-between px-5 py-3 bg-gradient-to-r from-primary-700 to-primary-600 text-white">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="bg-white rounded-lg p-1.5 shadow flex-shrink-0">
-                  <img
-                    src={require('../../../../../assets/xenocare-logo.png')}
-                    alt="XenoCare"
-                    className="h-6 w-6 object-contain"
-                  />
+                  
                 </div>
                 <div className="min-w-0">
                   <span className="block text-sm font-semibold truncate">

@@ -19,6 +19,7 @@ import {
   ClipboardList,
 } from 'lucide-react';
 import { Button } from '../../../components/ui';
+import { isNhisFeatureEnabled } from '../../../config/features';
 import PatientAllergySummary from '../../../components/shared/PatientAllergySummary';
 import {
   getFacilityAddress,
@@ -38,17 +39,6 @@ import {
   formatPatientName,
   formatDetailedAge,
 } from '../../patient-registration/dtos/patient.dto';
-
-// XenoCare Logo component
-function XenoCareLogo() {
-  return (
-    <img
-      src={require('../../../../../assets/xenocare-logo.png')}
-      alt="XenoCare Logo"
-      className="h-12 w-auto"
-    />
-  );
-}
 
 // =============================================================================
 // Types
@@ -138,9 +128,6 @@ export default function PrescriptionDetailModal({
             {/* Top Bar with Logo and Title */}
             <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-primary-700 to-primary-600">
               <div className="flex items-center gap-4">
-                <div className="bg-white rounded-lg p-1.5 shadow-md">
-                  <XenoCareLogo />
-                </div>
                 <div className="border-l border-white/30 pl-4">
                   <h1 className="text-white font-bold text-lg tracking-wide">
                     {getFacilityName().toUpperCase()}
@@ -476,7 +463,8 @@ export default function PrescriptionDetailModal({
                   </div>
 
                   {/* NHIS Coverage Info */}
-                  {prescription.drug?.nhis_eligible && (
+                  {isNhisFeatureEnabled() &&
+                    prescription.drug?.nhis_eligible && (
                     <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <CreditCard className="h-4 w-4 text-green-600" />

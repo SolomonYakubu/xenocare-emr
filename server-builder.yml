@@ -1,0 +1,25 @@
+appId: com.xenocare.server
+productName: XenoCare Server
+electronVersion: 35.7.5
+directories:
+  app: server-app
+  buildResources: assets
+  output: release/server-build
+files:
+  - main.js
+  - package.json
+extraResources:
+  - from: release/server
+    to: server
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: release/build/.icon-ico/icon.ico
+nsis:
+  oneClick: false
+  perMachine: true
+  allowToChangeInstallationDirectory: true
+  include: installer/server-install.nsh
+  artifactName: XenoCare-Server-Setup-${version}.${ext}

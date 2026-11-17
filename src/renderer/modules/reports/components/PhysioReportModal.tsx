@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR — Physiotherapy Report Modal
+ * XenoCare — Physiotherapy Report Modal
  */
 
 import React, { useState } from 'react';

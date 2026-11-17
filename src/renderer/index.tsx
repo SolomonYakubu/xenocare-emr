@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import App from './App';
+import { applyStoredAppearance } from './hooks/useAppearance';
 import { isVersionConflictError } from './lib/errors/errorNormalization';
 import { AppBootBoundary, AppBootFailure } from './components/AppBootBoundary';
 
@@ -88,6 +89,9 @@ if (typeof window !== 'undefined') {
     root.render(<AppBootFailure error={error} />);
   });
 }
+
+// Apply the saved text size / density before the first paint of the app.
+applyStoredAppearance();
 
 const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);

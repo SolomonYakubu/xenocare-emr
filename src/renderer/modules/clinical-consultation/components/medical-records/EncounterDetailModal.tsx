@@ -48,8 +48,6 @@ import { useEncounterDetails } from '../../hooks/useMedicalRecords';
 import { supabase } from '../../../../api/supabaseClient';
 
 // XenoCare Logo
-const ndcLogoSrc = require('../../../../../../assets/xenocare-logo.png');
-
 // =============================================================================
 // Types
 // =============================================================================
@@ -976,11 +974,7 @@ export function EncounterDetailModal({
                 <div className="flex items-start gap-4">
                   {/* XenoCare Logo */}
                   <div className="flex-shrink-0 bg-white rounded-xl p-2 shadow-lg">
-                    <img
-                      src={ndcLogoSrc}
-                      alt="XenoCare Logo"
-                      className="h-12 w-auto"
-                    />
+                    
                   </div>
 
                   {/* Patient & Encounter Info */}
@@ -1115,7 +1109,7 @@ export function EncounterDetailModal({
             <div className="flex-shrink-0 bg-white border-t border-gray-200 px-6 py-3">
               <div className="flex items-center justify-between text-xs text-gray-500">
                 <div>
-                  Generated from XenoCare EMR System •{' '}
+                  Generated from XenoCare System •{' '}
                   {new Date().toLocaleString()}
                 </div>
                 <button

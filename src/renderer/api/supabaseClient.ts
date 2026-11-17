@@ -14,9 +14,41 @@ import {
  * No dynamic configuration - just straight env vars.
  */
 
+// Prefer the server saved in the desktop app (LAN host), then env vars.
+type RuntimeServerConfig = {
+  supabaseUrl?: string;
+  supabaseAnonKey?: string;
+};
+
+declare global {
+  interface Window {
+    /** Injected by the browser web server (scripts/server/web-server.mjs). */
+    __XENOCARE_CONFIG__?: RuntimeServerConfig;
+  }
+}
+
+let runtimeServerConfig: RuntimeServerConfig | null = null;
+try {
+  if (typeof window !== 'undefined' && window.__XENOCARE_CONFIG__) {
+    // Browser build: the web server injects the host's API URL and anon key.
+    runtimeServerConfig = window.__XENOCARE_CONFIG__;
+  } else if (
+    typeof window !== 'undefined' &&
+    window.electron?.serverConfig?.getSync
+  ) {
+    runtimeServerConfig = window.electron.serverConfig.getSync();
+  }
+} catch {
+  runtimeServerConfig = null;
+}
+
 // Get the URL and key directly from environment variables
-const SUPABASE_URL = process.env.SUPABASE_URL || 'http://127.0.0.1:54321';
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
+const SUPABASE_URL =
+  runtimeServerConfig?.supabaseUrl ||
+  process.env.SUPABASE_URL ||
+  'http://127.0.0.1:54321';
+const SUPABASE_ANON_KEY =
+  runtimeServerConfig?.supabaseAnonKey || process.env.SUPABASE_ANON_KEY || '';
 const SUPABASE_REQUEST_TIMEOUT_MS = Number(
   process.env.SUPABASE_REQUEST_TIMEOUT_MS || 20000,
 );

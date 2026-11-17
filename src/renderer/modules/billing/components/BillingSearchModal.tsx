@@ -68,7 +68,7 @@ export function BillingSearchModal({
   );
   const [isVerifying, setIsVerifying] = useState(false);
 
-  // Filter results based on search query - EMR number is the primary key
+  // Filter results based on search query - patient number is the primary key
   const filteredPayments = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const query = searchQuery.toLowerCase().trim();
@@ -87,7 +87,7 @@ export function BillingSearchModal({
       const amount = payment.amount?.toString() || '';
 
       return (
-        emrNumber.includes(query) || // EMR number is primary search key
+        emrNumber.includes(query) || // patient number is primary search key
         patientName.includes(query) ||
         encounterNum.includes(query) ||
         phone.includes(query) ||
@@ -116,7 +116,7 @@ export function BillingSearchModal({
       const status = (invoice.status || '').toLowerCase();
 
       return (
-        emrNumber.includes(query) || // EMR number is primary search key
+        emrNumber.includes(query) || // patient number is primary search key
         patientName.includes(query) ||
         encounterNum.includes(query) ||
         phone.includes(query) ||
@@ -171,7 +171,7 @@ export function BillingSearchModal({
                   Search Billing Records
                 </h2>
                 <p className="text-sm text-green-100">
-                  Search by EMR number, patient name, receipt, invoice, phone...
+                  Search by patient number, patient name, receipt, invoice, phone...
                 </p>
               </div>
             </div>
@@ -190,7 +190,7 @@ export function BillingSearchModal({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Enter EMR number, patient name, receipt number, invoice number, phone..."
+              placeholder="Enter patient number, patient name, receipt number, invoice number, phone..."
               className="w-full pl-12 pr-4 py-3 rounded-xl border-0 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-green-500"
               autoFocus
             />
@@ -258,13 +258,13 @@ export function BillingSearchModal({
                   Search for Records
                 </h3>
                 <p className="text-sm text-gray-500 max-w-md">
-                  Enter an EMR number, patient name, receipt number, invoice
+                  Enter an patient number, patient name, receipt number, invoice
                   number, or phone number to find billing records
                 </p>
                 <div className="mt-6 grid grid-cols-2 gap-3 text-sm text-gray-500">
                   <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
                     <Hash className="h-4 w-4 text-green-600" />
-                    <span>NDC-0001</span>
+                    <span>MHC-000001</span>
                   </div>
                   <div className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
                     <User className="h-4 w-4 text-green-600" />
@@ -476,7 +476,7 @@ export function BillingSearchModal({
                     </p>
                     <div className="flex items-center gap-2 flex-wrap">
                       <div className="bg-white/20 backdrop-blur px-3 py-1.5 rounded-lg">
-                        <p className="text-xs opacity-80">EMR Number</p>
+                        <p className="text-xs opacity-80">Patient number</p>
                         <p className="font-bold">
                           {selectedPayment.invoice?.patient?.emr_number ||
                             'N/A'}
@@ -620,7 +620,7 @@ export function BillingSearchModal({
                     </p>
                     <div className="flex items-center gap-2 flex-wrap">
                       <div className="bg-white/20 backdrop-blur px-3 py-1.5 rounded-lg">
-                        <p className="text-xs opacity-80">EMR Number</p>
+                        <p className="text-xs opacity-80">Patient number</p>
                         <p className="font-bold">
                           {selectedInvoice.patient?.emr_number || 'N/A'}
                         </p>

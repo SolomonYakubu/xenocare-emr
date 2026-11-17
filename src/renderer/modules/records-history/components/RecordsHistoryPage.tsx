@@ -35,45 +35,6 @@ import {
 } from '../types/records-history.types';
 
 // ---------------------------------------------------------------------------
-// Category tab pills
-// ---------------------------------------------------------------------------
-
-interface CategoryTabsProps {
-  active: RecordCategory | 'all';
-  onChange: (cat: RecordCategory | 'all') => void;
-}
-
-function CategoryTabs({ active, onChange }: CategoryTabsProps) {
-  return (
-    <div className="flex flex-wrap gap-1.5 pb-2">
-      <button
-        onClick={() => onChange('all')}
-        className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-          active === 'all'
-            ? 'bg-gray-800 text-white'
-            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-        }`}
-      >
-        All Records
-      </button>
-      {RECORD_CATEGORIES.map((cat) => (
-        <button
-          key={cat.key}
-          onClick={() => onChange(cat.key)}
-          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-            active === cat.key
-              ? 'bg-gray-800 text-white'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
-        >
-          {cat.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
 // Filter bar
 // ---------------------------------------------------------------------------
 
@@ -85,7 +46,28 @@ interface FilterBarProps {
 
 function FilterBar({ filters, onChange, onReset }: FilterBarProps) {
   return (
-    <div className="flex flex-wrap items-end gap-3 bg-gray-50 rounded-lg p-3">
+    <div className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-white p-3">
+      <div className="flex flex-col gap-1">
+        <label className="text-xs font-medium text-slate-500">Show</label>
+        <select
+          value={filters.category}
+          onChange={(e) =>
+            onChange({
+              category: e.target.value as RecordCategory | 'all',
+              page: 1,
+            })
+          }
+          className="h-9 rounded-lg border border-slate-200 bg-white px-2.5 text-sm text-slate-700 outline-none focus:border-[#E9783F]"
+        >
+          <option value="all">All records</option>
+          {RECORD_CATEGORIES.map((category) => (
+            <option key={category.key} value={category.key}>
+              {category.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Date range */}
       <div className="flex flex-col gap-1">
         <label className="text-xs text-gray-500 font-medium">From</label>
@@ -93,7 +75,7 @@ function FilterBar({ filters, onChange, onReset }: FilterBarProps) {
           type="date"
           value={filters.dateFrom}
           onChange={(e) => onChange({ dateFrom: e.target.value, page: 1 })}
-          className="border border-gray-300 rounded px-2 py-1.5 text-sm w-36 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+          className="border border-gray-300 rounded px-2 py-1.5 text-sm w-36 focus:border-[#E9783F] focus:ring-1 focus:ring-[#E9783F]/20"
         />
       </div>
       <div className="flex flex-col gap-1">
@@ -102,7 +84,7 @@ function FilterBar({ filters, onChange, onReset }: FilterBarProps) {
           type="date"
           value={filters.dateTo}
           onChange={(e) => onChange({ dateTo: e.target.value, page: 1 })}
-          className="border border-gray-300 rounded px-2 py-1.5 text-sm w-36 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+          className="border border-gray-300 rounded px-2 py-1.5 text-sm w-36 focus:border-[#E9783F] focus:ring-1 focus:ring-[#E9783F]/20"
         />
       </div>
 
@@ -113,12 +95,12 @@ function FilterBar({ filters, onChange, onReset }: FilterBarProps) {
           <Search className="absolute left-2 top-2 h-4 w-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Patient name, EMR, test…"
+            placeholder="Patient name, patient number or test"
             value={filters.searchTerm}
             onChange={(e) =>
               onChange({ searchTerm: e.target.value, page: 1 })
             }
-            className="border border-gray-300 rounded pl-8 pr-2 py-1.5 text-sm w-full focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+            className="border border-gray-300 rounded pl-8 pr-2 py-1.5 text-sm w-full focus:border-[#E9783F] focus:ring-1 focus:ring-[#E9783F]/20"
           />
         </div>
       </div>
@@ -131,7 +113,7 @@ function FilterBar({ filters, onChange, onReset }: FilterBarProps) {
           placeholder="e.g. Active, Completed"
           value={filters.status}
           onChange={(e) => onChange({ status: e.target.value, page: 1 })}
-          className="border border-gray-300 rounded px-2 py-1.5 text-sm w-40 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+          className="border border-gray-300 rounded px-2 py-1.5 text-sm w-40 focus:border-[#E9783F] focus:ring-1 focus:ring-[#E9783F]/20"
         />
       </div>
 
@@ -143,7 +125,7 @@ function FilterBar({ filters, onChange, onReset }: FilterBarProps) {
           placeholder="e.g. Lab, Radiology"
           value={filters.department}
           onChange={(e) => onChange({ department: e.target.value, page: 1 })}
-          className="border border-gray-300 rounded px-2 py-1.5 text-sm w-36 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+          className="border border-gray-300 rounded px-2 py-1.5 text-sm w-36 focus:border-[#E9783F] focus:ring-1 focus:ring-[#E9783F]/20"
         />
       </div>
 
@@ -177,7 +159,7 @@ function ExportDropdown({ onExport, isExporting }: ExportDropdownProps) {
       <button
         onClick={() => setOpen(!open)}
         disabled={isExporting}
-        className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+        className="inline-flex items-center gap-1.5 rounded-lg bg-[#E9783F] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#D96A36] disabled:opacity-50"
       >
         {isExporting ? (
           <RefreshCw className="h-4 w-4 animate-spin" />
@@ -192,7 +174,7 @@ function ExportDropdown({ onExport, isExporting }: ExportDropdownProps) {
             className="fixed inset-0 z-10"
             onClick={() => setOpen(false)}
           />
-          <div className="absolute right-0 mt-1 bg-white border rounded-lg shadow-lg z-20 py-1 w-48">
+          <div className="absolute right-0 z-20 mt-1 w-48 rounded-lg border border-slate-200 bg-white py-1">
             <button
               onClick={() => {
                 onExport('pdf');
@@ -405,18 +387,13 @@ export default function RecordsHistoryPage() {
     <div className="space-y-4 p-4 max-w-[1600px] mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-emerald-100 rounded-lg">
-            <History className="h-6 w-6 text-emerald-700" />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">
-              Records History
-            </h1>
-            <p className="text-sm text-gray-500">
-              Browse, filter and export all clinical records across modules
-            </p>
-          </div>
+        <div>
+          <h1 className="font-display text-xl font-bold text-slate-900">
+            Records history
+          </h1>
+          <p className="text-sm text-slate-500">
+            Browse and export records from every department
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -432,12 +409,6 @@ export default function RecordsHistoryPage() {
           <ExportDropdown onExport={handleExport} isExporting={isExporting} />
         </div>
       </div>
-
-      {/* Category tabs */}
-      <CategoryTabs
-        active={filters.category}
-        onChange={(cat) => updateFilters({ category: cat, page: 1 })}
-      />
 
       {/* Filter bar */}
       <FilterBar
@@ -486,7 +457,7 @@ export default function RecordsHistoryPage() {
                   Patient
                 </th>
                 <th className="px-3 py-2.5 text-left text-xs font-semibold text-gray-600 w-24">
-                  EMR
+                  Patient number
                 </th>
                 <th className="px-3 py-2.5 text-left text-xs font-semibold text-gray-600">
                   Title

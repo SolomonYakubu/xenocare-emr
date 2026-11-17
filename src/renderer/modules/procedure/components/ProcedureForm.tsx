@@ -235,7 +235,7 @@ const ProcedureForm: React.FC<ProcedureFormProps> = ({
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Search Patient by EMR Number or Name
+                  Search Patient by Patient number or Name
                 </label>
                 <PatientSearchInput
                   value={selectedPatientId}
@@ -248,7 +248,7 @@ const ProcedureForm: React.FC<ProcedureFormProps> = ({
                     }
                   }}
                   selectedPatient={selectedPatient}
-                  placeholder="Search by EMR number (e.g., NDC-0001), name, or phone..."
+                  placeholder="Search by patient number (e.g., NDC-0001), name, or phone..."
                   autoFocus
                 />
               </div>
@@ -260,7 +260,7 @@ const ProcedureForm: React.FC<ProcedureFormProps> = ({
                   </h4>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-500">EMR Number:</span>
+                      <span className="text-gray-500">Patient number:</span>
                       <span className="ml-2 font-medium">
                         {selectedPatient.emr_number || 'N/A'}
                       </span>

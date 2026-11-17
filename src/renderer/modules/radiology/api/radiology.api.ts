@@ -2036,3 +2036,61 @@ export async function uploadScanImages(
   // If no image_path, throw error
   throw new Error('No image path provided in UploadScanImageDTO');
 }
+
+// =============================================================================
+// EXTERNAL RADIOLOGY — RESULT ENTRY
+// =============================================================================
+// The facility sends imaging studies out and receives a report later. This
+// helper records the external result directly, without the internal
+// scheduling/imaging/reporting state machine.
+// =============================================================================
+
+export interface ExternalRadiologyResultDTO {
+  request_id: string;
+  findings: string;
+  impression: string;
+  report?: string;
+  image?: {
+    file: File;
+    url: string;
+    name: string;
+    size: number;
+    mime_type: string;
+  } | null;
+}
+
+export async function recordExternalRadiologyResult(
+  dto: ExternalRadiologyResultDTO,
+): Promise<void> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const staffRecord = await fetchStaffByUser(user.id, user.email || undefined);
+  const now = new Date().toISOString();
+  const reportText =
+    dto.report ||
+    [dto.findings, dto.impression].filter(Boolean).join('\n\n') ||
+    'External report recorded';
+
+  const { error: updateError } = await supabase
+    .from('radiology_requests')
+    .update({
+      status: 'Final Report',
+      findings: dto.findings || null,
+      impression: dto.impression || null,
+      report: reportText,
+      result_file_url: dto.image?.url || null,
+      performed_at: now,
+      performed_by: staffRecord?.staff_id || null,
+      report_uploaded_at: now,
+      report_uploaded_by: staffRecord?.id || null,
+      updated_at: now,
+    })
+    .eq('request_id', dto.request_id);
+
+  if (updateError) throw updateError;
+
+
+}

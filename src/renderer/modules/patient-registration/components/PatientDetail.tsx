@@ -25,6 +25,7 @@ import {
 import { StatusBadge, Button } from '../../../components/ui';
 import PatientAllergySummary from '../../../components/shared/PatientAllergySummary';
 import {
+  isMilitaryFeatureEnabled,
   isNhisCategory,
   isNhisFeatureEnabled,
 } from '../../../config/features';
@@ -41,8 +42,6 @@ import {
 import { useToast } from '../../../components/ui/Toast';
 
 // XenoCare Logo
-const ndcLogoSrc = require('../../../../../assets/xenocare-logo.png');
-
 // =============================================================================
 // Types
 // =============================================================================
@@ -229,12 +228,14 @@ export default function PatientDetail({
                           {age}
                         </span>
                       )}
-                      {patient.patient_category && (
-                        <span className="flex items-center gap-1 bg-primary-50 px-1.5 py-0.5 rounded text-primary-800 font-semibold">
-                          {getCategoryIcon(patient.patient_category)}
-                          {patient.patient_category}
-                        </span>
-                      )}
+                      {patient.patient_category &&
+                        (isMilitaryFeatureEnabled() ||
+                          patient.patient_category !== 'Military') && (
+                          <span className="flex items-center gap-1 bg-primary-50 px-1.5 py-0.5 rounded text-primary-800 font-semibold">
+                            {getCategoryIcon(patient.patient_category)}
+                            {patient.patient_category}
+                          </span>
+                        )}
                       {patient.patient_type && (
                         <span className="bg-primary-50 px-1.5 py-0.5 rounded text-primary-800 font-semibold">
                           {patient.patient_type}
@@ -287,17 +288,19 @@ export default function PatientDetail({
                 </div>
               </>
             )}
-            {patient.patient_category === 'Military' && !isDependent && (
-              <>
-                <div className="w-px h-3 bg-primary-200" />
-                <div className="flex items-center gap-1.5">
-                  <span className="text-primary-600 font-semibold">SVC#</span>
-                  <span className="font-mono font-semibold text-gray-800">
-                    {(patient.service_number || 'N/A').replace(/-/g, '/')}
-                  </span>
-                </div>
-              </>
-            )}
+            {isMilitaryFeatureEnabled() &&
+              patient.patient_category === 'Military' &&
+              !isDependent && (
+                <>
+                  <div className="w-px h-3 bg-primary-200" />
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-primary-600 font-semibold">SVC#</span>
+                    <span className="font-mono font-semibold text-gray-800">
+                      {(patient.service_number || 'N/A').replace(/-/g, '/')}
+                    </span>
+                  </div>
+                </>
+              )}
           </div>
         </div>
 
@@ -439,7 +442,10 @@ export default function PatientDetail({
                 <span className="text-gray-600 text-xs font-medium">Category</span>
                 <span className="font-semibold text-gray-900 flex items-center gap-1">
                   {getCategoryIcon(patient.patient_category)}
-                  {patient.patient_category || 'N/A'}
+                  {isMilitaryFeatureEnabled() ||
+                  patient.patient_category !== 'Military'
+                    ? patient.patient_category || 'N/A'
+                    : 'Civilian'}
                 </span>
               </div>
               <div className="flex items-center justify-between px-3 py-2">
@@ -477,7 +483,9 @@ export default function PatientDetail({
           </div>
 
           {/* Military or Civilian Employment */}
-          {patient.patient_category === 'Military' && !isDependent && (
+          {isMilitaryFeatureEnabled() &&
+            patient.patient_category === 'Military' &&
+            !isDependent && (
             <div className="bg-white rounded-xl border border-primary-100 overflow-hidden">
               <div className="px-3 py-1.5 bg-primary-50/70 border-b border-primary-100 flex items-center gap-2">
                 <Shield className="h-3.5 w-3.5 text-primary-600" />
@@ -702,7 +710,7 @@ export default function PatientDetail({
             Registered: {new Date(patient.registration_date).toLocaleDateString()}
           </span>
           <div className="flex items-center gap-1.5">
-            <img src={ndcLogoSrc} alt="XenoCare" className="w-4 h-4 opacity-25" />
+            
             <span>XenoCare</span>
           </div>
         </div>

@@ -5,14 +5,13 @@
 import webpack from 'webpack';
 import path from 'path';
 import { merge } from 'webpack-merge';
-import { createRequire } from 'module';
 import _baseConfig from './webpack.config.base.js';
-import _webpackPaths from './webpack.paths.ts';
+import _webpackPaths from './webpack.paths.js';
 import checkNodeEnv from '../scripts/check-node-env.js';
 
 const baseConfig = (_baseConfig as any).default || _baseConfig;
 const webpackPaths = (_webpackPaths as any).default || _webpackPaths;
-const _require = createRequire(import.meta.url);
+const _require = require;
 const { dependencies } = _require('../../package.json');
 
 checkNodeEnv('development');

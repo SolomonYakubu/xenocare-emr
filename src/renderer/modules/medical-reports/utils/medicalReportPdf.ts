@@ -3,7 +3,6 @@ import {
   MedicalReportDTO,
   getReportTypeLabel,
 } from '../dtos/medical-reports.dto';
-import ndcLogo from '../../../../../assets/xenocare-logo.png';
 import {
   getFacilityAddress,
   getFacilityName,

@@ -234,172 +234,72 @@ const EncounterTable: React.FC<EncounterTableProps> = ({
   }
 
   return (
-    <div className="space-y-1.5">
-      {/* Minimal Column Headers */}
-      <div className="grid grid-cols-12 gap-3 px-4 py-2">
-        <div className="col-span-3">
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Patient</span>
-        </div>
-        <div className="col-span-2">
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Encounter</span>
-        </div>
-        <div className="col-span-2">
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Clinic / Doctor</span>
-        </div>
-        <div className="col-span-2">
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Status</span>
-        </div>
-        <div className="col-span-2">
-          <span className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">Priority / Type</span>
-        </div>
-        {showActions && (
-          <div className="col-span-1" />
-        )}
-      </div>
-
-      {/* Encounter Rows */}
+    <div className="space-y-2">
       {encounters.map((encounter) => {
-          const priorityColor = getPriorityColor(
-            (encounter.priority as PriorityLevel) || 'Normal',
-          );
-          const visitTypeColor = getVisitTypeColor(
-            encounter.visit_type as VisitType,
-          );
-          const isOverdue = isEncounterOverdue(
-            encounter,
-            expirySettings?.overdueWarningMinutes,
-          );
-          const patientClassification = getPatientClassification(encounter);
-          const { ageHours, isExpired } = getEncounterAgeStatus(encounter);
-          const statusColor = getEncounterStatusColor(encounter.status);
+        const priorityColor = getPriorityColor(
+          (encounter.priority as PriorityLevel) || 'Normal',
+        );
+        const isOverdue = isEncounterOverdue(
+          encounter,
+          expirySettings?.overdueWarningMinutes,
+        );
+        const patientClassification = getPatientClassification(encounter);
+        const { ageHours, isExpired } = getEncounterAgeStatus(encounter);
+        const statusColor = getEncounterStatusColor(encounter.status);
+        const priority = encounter.priority || 'Normal';
 
-          return (
-            <div
-              key={encounter.id || encounter.visit_id}
-              onClick={() => onRowClick?.(encounter)}
-              className={`group grid grid-cols-12 gap-3 items-center px-4 py-3 rounded-xl border cursor-pointer transition-all duration-150 ${
-                isOverdue
-                  ? 'border-red-200 bg-red-50/40 hover:bg-red-50/70'
-                  : isExpired
-                    ? 'border-amber-200 bg-amber-50/40 hover:bg-amber-50/70'
-                    : 'border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm'
-              }`}
-            >
-              {/* Patient */}
-              <div className="col-span-3 flex items-center gap-3 min-w-0">
-                <div className="relative flex-shrink-0">
-                  <div className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold ${
-                    patientClassification === 'Inpatient'
-                      ? 'bg-purple-50 text-purple-600'
-                      : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    {formatEncounterPatientName(encounter).charAt(0).toUpperCase()}
-                  </div>
-                  {isOverdue && (
-                    <div className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-red-500 border-2 border-white animate-pulse" />
-                  )}
-                  {isExpired && !isOverdue && (
-                    <div className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full bg-amber-500 border-2 border-white" />
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {formatEncounterPatientName(encounter)}
-                  </p>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="text-[11px] font-mono text-gray-400">
-                      {encounter.patient?.emr_number || 'N/A'}
-                    </span>
-                    <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
-                      patientClassification === 'Inpatient'
-                        ? 'bg-purple-50 text-purple-600'
-                        : 'bg-sky-50 text-sky-600'
-                    }`}>
-                      {patientClassification === 'Inpatient' ? 'IPD' : 'OPD'}
-                    </span>
-                    {isExpired && (
-                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600">
-                        EXPIRED
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Encounter # + Date */}
-              <div className="col-span-2 min-w-0">
-                <p className="text-sm font-mono text-gray-700 truncate">
-                  {encounter.encounter_number || encounter.visit_id?.slice(0, 8) || '—'}
+        return (
+          <div
+            key={encounter.id || encounter.visit_id}
+            onClick={() => onRowClick?.(encounter)}
+            className={`group cursor-pointer rounded-xl border bg-white px-3.5 py-3 transition-colors ${
+              isOverdue
+                ? 'border-red-200 hover:bg-red-50/40'
+                : isExpired
+                  ? 'border-amber-200 hover:bg-amber-50/40'
+                  : 'border-slate-200 hover:bg-slate-50'
+            }`}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-slate-900">
+                  {formatEncounterPatientName(encounter)}
                 </p>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="text-[11px] text-gray-400">
-                    {encounter.encounter_date
-                      ? new Date(encounter.encounter_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
-                      : new Date(encounter.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
-                  </span>
-                  <span className="text-gray-300">&middot;</span>
-                  <span className="text-[11px] text-gray-400">
-                    {new Date(encounter.created_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                  {(encounter.status === 'Active' || encounter.status === 'Waiting') && ageHours >= 1 && (
-                    <span className={`text-[11px] ${ageHours > 24 ? 'text-amber-500' : 'text-gray-400'}`}>
-                      ({ageHours < 24 ? `${Math.floor(ageHours)}h` : `${Math.floor(ageHours / 24)}d`})
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Clinic / Doctor */}
-              <div className="col-span-2 min-w-0">
-                <p className="text-sm text-gray-700 truncate">
-                  {encounter.clinic?.clinic_name || 'Unassigned'}
-                </p>
-                <p className="text-[11px] text-gray-400 truncate mt-0.5">
-                  {encounter.attending_doctor
-                    ? `${encounter.attending_doctor.rank ? encounter.attending_doctor.rank + ' ' : ''}${encounter.attending_doctor.first_name} ${encounter.attending_doctor.last_name}`
-                    : 'No doctor'}
+                <p className="mt-0.5 truncate text-xs text-slate-500">
+                  {encounter.patient?.emr_number || 'No patient number'}
+                  {' · '}
+                  {encounter.encounter_number ||
+                    encounter.visit_id?.slice(0, 8) ||
+                    '—'}
                 </p>
               </div>
-
-              {/* Status */}
-              <div className="col-span-2 flex items-center gap-2">
-                {encounter.status === 'Active' && isExpired ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold bg-amber-50 text-amber-700">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                    Expired
-                  </span>
-                ) : (
-                  <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ${statusColor.bg} ${statusColor.text}`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${
-                      encounter.status === 'Active' ? 'bg-green-500 animate-pulse' :
-                      encounter.status === 'Waiting' ? 'bg-amber-500' :
-                      encounter.status === 'In Progress' ? 'bg-blue-500' :
-                      encounter.status === 'Completed' ? 'bg-gray-400' :
-                      'bg-red-400'
-                    }`} />
-                    {encounter.status === 'Active' ? 'Active Encounter' : encounter.status}
-                  </span>
-                )}
-              </div>
-
-              {/* Priority / Type */}
-              <div className="col-span-2 flex items-center gap-1.5">
-                <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${priorityColor.bg} ${priorityColor.text}`}>
-                  {(encounter.priority === 'Emergency' || encounter.priority === 'Urgent') && (
-                    <AlertTriangle className="h-3 w-3" />
-                  )}
-                  {encounter.priority || 'Normal'}
+              <div className="flex shrink-0 items-center gap-1.5">
+                <span
+                  className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold ${statusColor.bg} ${statusColor.text}`}
+                >
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full ${
+                      encounter.status === 'Active'
+                        ? 'bg-green-500'
+                        : encounter.status === 'Waiting'
+                          ? 'bg-amber-500'
+                          : encounter.status === 'In Progress'
+                            ? 'bg-blue-500'
+                            : encounter.status === 'Completed'
+                              ? 'bg-gray-400'
+                              : 'bg-red-400'
+                    }`}
+                  />
+                  {isExpired
+                    ? 'Expired'
+                    : encounter.status === 'Active'
+                      ? 'Active'
+                      : encounter.status}
                 </span>
-                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${visitTypeColor.bg} ${visitTypeColor.text}`}>
-                  {encounter.visit_type?.split(' ')[0] || 'N/A'}
-                </span>
-              </div>
-
-              {/* Actions */}
-              {showActions && (
-                <div className="col-span-1 flex items-center justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                {showActions && (
                   <div className="relative">
                     <button
+                      type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         setOpenMenuId(
@@ -408,59 +308,111 @@ const EncounterTable: React.FC<EncounterTableProps> = ({
                             : encounter.visit_id,
                         );
                       }}
-                      className="rounded-lg p-1.5 hover:bg-gray-100 transition-colors"
+                      aria-label="Visit actions"
+                      className="rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
                     >
-                      <MoreVertical className="h-4 w-4 text-gray-400" />
+                      <MoreVertical className="h-4 w-4" />
                     </button>
 
                     {openMenuId === encounter.visit_id && (
-                      <div className="absolute right-0 top-8 z-20 w-48 rounded-xl border border-gray-100 bg-white py-1 shadow-lg animate-in fade-in slide-in-from-top-2 duration-150">
+                      <div className="absolute right-0 top-8 z-20 w-44 rounded-xl border border-slate-200 bg-white py-1">
                         <button
+                          type="button"
                           onClick={(e) => {
                             e.stopPropagation();
                             onRowClick?.(encounter);
                           }}
-                          className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
                         >
-                          <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
-                          View Details
+                          <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
+                          Open visit
                         </button>
-
                         {(encounter.status === 'Active' ||
                           encounter.status === 'Waiting') && (
-                          <>
-                            <div className="my-1 mx-3 border-t border-gray-100" />
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleCancelClick(encounter);
-                              }}
-                              className="flex w-full items-center gap-2.5 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                            >
-                              <XCircle className="h-3.5 w-3.5" />
-                              Cancel Encounter
-                            </button>
-                          </>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCancelClick(encounter);
+                            }}
+                            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                          >
+                            <XCircle className="h-3.5 w-3.5" />
+                            Cancel visit
+                          </button>
                         )}
                       </div>
                     )}
                   </div>
-                </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
+              <span className="truncate">
+                {encounter.clinic?.clinic_name || 'Unassigned clinic'}
+              </span>
+              <span className="text-slate-300">·</span>
+              <span className="truncate">
+                {encounter.attending_doctor
+                  ? `${encounter.attending_doctor.first_name} ${encounter.attending_doctor.last_name}`
+                  : 'No doctor'}
+              </span>
+              <span className="text-slate-300">·</span>
+              <span>
+                {new Date(
+                  encounter.encounter_date || encounter.created_at,
+                ).toLocaleDateString('en-GB', {
+                  day: '2-digit',
+                  month: 'short',
+                })}
+                {', '}
+                {new Date(encounter.created_at).toLocaleTimeString('en-GB', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </span>
+            </div>
+
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
+              <span className="text-slate-500">
+                {patientClassification === 'Inpatient'
+                  ? 'Inpatient'
+                  : 'Outpatient'}
+              </span>
+              {priority !== 'Normal' && (
+                <span
+                  className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-medium ${priorityColor.bg} ${priorityColor.text}`}
+                >
+                  {(priority === 'Emergency' || priority === 'Urgent') && (
+                    <AlertTriangle className="h-3 w-3" />
+                  )}
+                  {priority}
+                </span>
+              )}
+              {encounter.visit_type && (
+                <span className="text-slate-400">
+                  {encounter.visit_type.split(' ')[0]}
+                </span>
+              )}
+              {isOverdue && (
+                <span className="font-medium text-red-600">Overdue</span>
               )}
             </div>
-          );
-        })}
+          </div>
+        );
+      })}
 
-      {/* Footer */}
-      <div className="flex items-center justify-between px-4 py-2 text-[11px] text-gray-400">
+      <div className="flex items-center justify-between px-1 pt-1 text-[11px] text-slate-400">
         <span>
-          {encounters.length} encounter{encounters.length !== 1 ? 's' : ''}
+          {encounters.length} visit{encounters.length !== 1 ? 's' : ''}
         </span>
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-500" /> Active Encounter</span>
-          <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Expired</span>
-          <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-gray-400" /> Done</span>
-        </div>
+        <button
+          type="button"
+          onClick={() => onRowClick?.(encounters[0])}
+          className="hidden"
+          aria-hidden="true"
+        />
       </div>
 
       {/* Cancel Encounter Confirmation Dialog */}

@@ -724,7 +724,7 @@ export default function PatientCarePanel({
   if (!patient) return null;
 
   const patientName = `${patient.first_name} ${patient.surname || ''}`.trim();
-  // Always use patient.id (UUID) for database queries - patient.patient_id is VARCHAR (EMR number)
+  // Always use patient.id (UUID) for database queries - patient.patient_id is VARCHAR (patient number)
   const patientUuid = patient.id;
   // Keep patient_id for display purposes if needed
   const patientDisplayId = patient.patient_id || patient.id;

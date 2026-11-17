@@ -26,6 +26,13 @@ import {
 } from '../modules/clinical-consultation/api/consultation.api';
 import { consultationKeys } from '../modules/clinical-consultation/hooks/useConsultation';
 import { createScopedLogger } from '../utils/logger';
+import {
+  isEmergencyFeatureEnabled,
+  isHygieneFeatureEnabled,
+  isNhisFeatureEnabled,
+  isSpecialtyModuleEnabled,
+  SPECIALTY_CLINIC_MODULES,
+} from '../config/features';
 
 const log = createScopedLogger('Auth');
 
@@ -138,6 +145,8 @@ export const MODULE_ACCESS: Record<string, UserRole[]> = {
     'lab_technician',
     'radiologist',
     'pharmacist',
+    'billing_clerk',
+    'cashier',
   ],
   // Consultation: GOPD doctors only (department check done separately)
   consultation: ['super_admin', 'admin', 'medical_director', 'doctor'],
@@ -723,6 +732,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (!staff) return false;
       const allowedRoles = MODULE_ACCESS[module];
       if (!allowedRoles) return false;
+
+      // Feature-flagged surfaces are unavailable regardless of role.
+      if (
+        (SPECIALTY_CLINIC_MODULES as readonly string[]).includes(module) &&
+        !isSpecialtyModuleEnabled(module)
+      ) {
+        return false;
+      }
+      if (!isNhisFeatureEnabled() && module === 'nhis') return false;
+      if (!isEmergencyFeatureEnabled() && module === 'emergency') return false;
+      if (!isHygieneFeatureEnabled() && module === 'hygiene') return false;
 
       // Basic role check
       if (!allowedRoles.includes(staff.role)) return false;

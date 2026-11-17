@@ -993,7 +993,7 @@ export function buildCategoryReports(
 // ==================== PDF CONSTANTS ====================
 
 const PDF_COLORS = {
-  primary: [22, 101, 52] as [number, number, number], // Xenolink navy (unified)
+  primary: [22, 101, 52] as [number, number, number], // XenoCare navy (unified)
   secondary: [51, 65, 85] as [number, number, number], // Slate-700
   accent: [37, 99, 235] as [number, number, number], // Blue-600
   success: [22, 163, 74] as [number, number, number],
@@ -1283,7 +1283,7 @@ export async function generateCategoryReportPdf(
     addHeader();
     yPos = 24;
 
-    // Category title bar — Xenolink navy
+    // Category title bar — XenoCare navy
     doc.setFillColor(...PDF_COLORS.primary);
     doc.roundedRect(
       PDF_MARGINS.left,
@@ -1812,7 +1812,7 @@ export async function generateCategoryReportPdf(
   addHeader();
   yPos = 24;
 
-  // Grand total banner — clean Xenolink navy bar
+  // Grand total banner — clean XenoCare navy bar
   doc.setFillColor(...PDF_COLORS.primary);
   doc.roundedRect(
     PDF_MARGINS.left,

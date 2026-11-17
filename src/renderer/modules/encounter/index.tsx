@@ -88,17 +88,6 @@ import {
   type ExternalReferral,
 } from '../../lib/referrals/tracking';
 
-// XenoCare Logo component
-function XenoCareLogo() {
-  return (
-    <img
-      src={require('../../../../assets/xenocare-logo.png')}
-      alt="XenoCare Logo"
-      className="h-12 w-auto"
-    />
-  );
-}
-
 type TabType =
   | 'encounters'
   | 'patients'
@@ -799,7 +788,7 @@ const EncounterModule: React.FC = () => {
       textColor: 'text-red-700',
     },
     {
-      label: 'Total Encounters',
+      label: 'Total visits',
       value: stats?.total || 0,
       icon: Users,
       color: 'bg-gray-500',
@@ -811,7 +800,7 @@ const EncounterModule: React.FC = () => {
   const tabs = [
     {
       id: 'encounters' as TabType,
-      label: 'All Encounters',
+      label: 'All visits',
       icon: Stethoscope,
       count: stats?.total,
     },
@@ -858,15 +847,12 @@ const EncounterModule: React.FC = () => {
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${isNightMode ? 'bg-slate-800' : 'bg-white'} border border-gray-100 shadow-sm`}>
-            <XenoCareLogo />
-          </div>
           <div>
             <h1 className={`text-lg font-semibold ${isNightMode ? 'text-white' : 'text-gray-900'}`}>
-              Encounters
+              Visits
             </h1>
             <p className={`text-xs ${isNightMode ? 'text-gray-400' : 'text-gray-400'}`}>
-              Patient visits & consultations
+              Patient visits and consultations
             </p>
           </div>
         </div>
@@ -930,7 +916,7 @@ const EncounterModule: React.FC = () => {
 
       {/* Tabs */}
       <div className="mb-5">
-        <div className="flex items-center gap-1 p-1 rounded-lg bg-gray-100/80 w-fit">
+        <div className="flex flex-wrap items-center gap-1 rounded-lg bg-gray-100/80 p-1">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -941,7 +927,6 @@ const EncounterModule: React.FC = () => {
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              <tab.icon className="h-3.5 w-3.5" />
               {tab.label}
               {tab.count !== undefined && (
                 <span
@@ -969,7 +954,7 @@ const EncounterModule: React.FC = () => {
               <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search by EMR number..."
+                placeholder="Search by patient number..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-4 text-sm focus:border-primary-700 focus:outline-none focus:ring-1 focus:ring-primary-700/20"
@@ -1397,7 +1382,7 @@ const EncounterModule: React.FC = () => {
         onClose={() => setShowReportModal(false)}
         encounters={encounters}
         filters={advancedFilters}
-        title="Encounter Summary Report"
+        title="Visit summary"
       />
 
       {/* Export Modal - Multi-format export (CSV, Excel, PDF) */}
@@ -2039,11 +2024,7 @@ const EncounterModule: React.FC = () => {
             <div className="flex items-center justify-between px-5 py-3 bg-gradient-to-r from-primary-700 to-primary-600 text-white">
               <div className="flex items-center gap-3">
                 <div className="bg-white rounded-lg p-1.5 shadow">
-                  <img
-                    src={require('../../../../assets/xenocare-logo.png')}
-                    alt="XenoCare"
-                    className="h-6 w-6 object-contain"
-                  />
+                  
                 </div>
                 <span className="text-sm font-semibold">
                   XenoCare AI Assistants

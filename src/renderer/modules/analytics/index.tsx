@@ -15,7 +15,7 @@ import {
   Package,
 } from 'lucide-react';
 import { SkeletonDashboard } from '../../components/ui/SkeletonLoader';
-import { StatsCard, Card, Tabs } from '../../components/ui/DataDisplay';
+import { StatsCard, Card } from '../../components/ui/DataDisplay';
 import { Button, Select } from '../../components/ui/FormElements';
 import {
   SimpleBarChart,
@@ -502,27 +502,43 @@ export default function Analytics() {
     }).format(amount);
 
   const tabs = [
-    { id: 'comprehensive', label: '📊 Dashboard' },
-    { id: 'operational', label: '⚡ Operational' },
-    { id: 'summary-stats', label: 'Summary Stats' },
-    { id: 'encounter', label: 'Encounter' },
+    { id: 'comprehensive', label: 'Dashboard' },
+    { id: 'operational', label: 'Operations' },
+    { id: 'summary-stats', label: 'Summary' },
+    { id: 'encounter', label: 'Visits' },
     { id: 'pharmacy', label: 'Pharmacy' },
-    { id: 'billing', label: 'Billing & Revenue' },
+    { id: 'billing', label: 'Billing' },
   ];
+
+  const reportTabs = (
+    <div className="flex items-center gap-2 border-b border-slate-200 bg-white px-4 py-2">
+      <label
+        htmlFor="analytics-report"
+        className="text-xs font-medium text-slate-500"
+      >
+        Report
+      </label>
+      <select
+        id="analytics-report"
+        value={activeTab}
+        onChange={(event) => setActiveTab(event.target.value as ReportTab)}
+        className="rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm font-semibold text-slate-800 outline-none focus:border-[#E9783F]"
+      >
+        {tabs.map((tab) => (
+          <option key={tab.id} value={tab.id}>
+            {tab.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
 
   // If on operational dashboard, render P1 Analytics full-page
   if (activeTab === 'operational') {
     return (
       <div className="h-full">
         {/* Mini Tab Bar to switch away from operational */}
-        <div className="bg-white border-b border-gray-200 px-4 pt-2">
-          <Tabs
-            activeTab={activeTab}
-            onChange={(id) => setActiveTab(id as ReportTab)}
-            variant="pill"
-            tabs={tabs.map((t) => ({ id: t.id, label: t.label }))}
-          />
-        </div>
+        {reportTabs}
         <P1AnalyticsPage />
       </div>
     );
@@ -533,14 +549,7 @@ export default function Analytics() {
     return (
       <div className="h-full">
         {/* Mini Tab Bar to switch away from comprehensive */}
-        <div className="bg-white border-b border-gray-200 px-4 pt-2">
-          <Tabs
-            activeTab={activeTab}
-            onChange={(id) => setActiveTab(id as ReportTab)}
-            variant="pill"
-            tabs={tabs.map((t) => ({ id: t.id, label: t.label }))}
-          />
-        </div>
+        {reportTabs}
         <ComprehensiveAnalytics />
       </div>
     );
@@ -565,14 +574,7 @@ export default function Analytics() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="border-b border-gray-200">
-        <Tabs
-          activeTab={activeTab}
-          onChange={(id) => setActiveTab(id as ReportTab)}
-          variant="underline"
-          tabs={tabs.map((t) => ({ id: t.id, label: t.label }))}
-        />
-      </div>
+      {reportTabs}
 
       {/* Tab Content */}
       {activeTab === 'summary-stats' && <SummaryStats />}

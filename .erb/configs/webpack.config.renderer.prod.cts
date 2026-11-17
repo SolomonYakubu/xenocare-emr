@@ -8,7 +8,7 @@ import { merge } from 'webpack-merge';
 import TerserPlugin from 'terser-webpack-plugin';
 import dotenv from 'dotenv';
 import baseConfig from './webpack.config.base.js';
-import webpackPaths from './webpack.paths.ts';
+import webpackPaths from './webpack.paths.js';
 import deleteSourceMaps from '../scripts/delete-source-maps.js';
 
 // Load .env file for production builds

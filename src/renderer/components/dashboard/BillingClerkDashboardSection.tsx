@@ -18,6 +18,7 @@ import {
   Users,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { isNhisFeatureEnabled } from '../../config/features';
 import { useBillingStats } from '../../modules/billing/hooks/useBilling';
 import {
   useBillingOrderStats,
@@ -309,7 +310,7 @@ export default function BillingClerkDashboardSection() {
           </div>
           <button
             onClick={() => navigate('/billing')}
-            className="text-xs font-bold text-[#0d5e56] hover:underline flex items-center gap-1"
+            className="text-xs font-bold text-[#11151C] hover:underline flex items-center gap-1"
           >
             View All <ChevronRight size={14} />
           </button>
@@ -348,7 +349,7 @@ export default function BillingClerkDashboardSection() {
                         <Clock size={10} />
                         {formatTimeAgo(item.visit?.start_time)}
                       </span>
-                      {item.is_nhis && (
+                      {isNhisFeatureEnabled() && item.is_nhis && (
                         <>
                           <span className="text-slate-300">·</span>
                           <span className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-blue-50 text-blue-700">

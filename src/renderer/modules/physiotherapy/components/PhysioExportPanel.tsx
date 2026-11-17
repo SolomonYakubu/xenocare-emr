@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR — Physiotherapy Export Panel
+ * XenoCare — Physiotherapy Export Panel
  * Inline export toolbar for the Physiotherapy module page.
  */
 
@@ -31,7 +31,7 @@ export function PhysioExportPanel({ data }: PhysioExportPanelProps) {
   if (!canExport) return null;
 
   const headers = [
-    'EMR Number',
+    'Patient number',
     'Patient',
     'Session Type',
     'Therapist',

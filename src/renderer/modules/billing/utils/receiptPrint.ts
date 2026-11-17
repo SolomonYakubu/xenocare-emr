@@ -10,6 +10,7 @@ import { InvoiceDTO, PaymentDTO } from '../dtos/billing.dto';
 import { getBrand } from './billingExport';
 import { createScopedLogger } from '../../../utils/logger';
 import { APP_POWERED_BY } from '../../../shared/constants/branding';
+import { getFacilityInfo } from '../../../lib/facility';
 
 const log = createScopedLogger('ReceiptPrint');
 
@@ -116,8 +117,11 @@ export function createVerificationURL(
   documentNumber: string,
   verificationCode: string,
 ): string {
-  // In production, this would point to your verification endpoint
-  const baseURL = 'https://xenolink.tech/verify';
+  // Verification lives on the facility's own site; without one the document
+  // still carries a unique code but no public lookup link.
+  const site = getFacilityInfo().website?.trim();
+  if (!site) return '';
+  const baseURL = `${site.replace(/\/+$/, '')}/verify`;
   return `${baseURL}?type=${documentType}&num=${encodeURIComponent(documentNumber)}&code=${encodeURIComponent(verificationCode)}`;
 }
 
@@ -234,36 +238,11 @@ export interface InvoicePrintData {
 // =============================================================================
 
 /**
- * Load XenoCare logo as base64 for PDF
- */
-async function loadLogoAsBase64(): Promise<string> {
-  try {
-    // Try to load the logo image
-    const logoModule = require('../../../../../assets/xenocare-logo.png');
-    return logoModule.default || logoModule;
-  } catch (error) {
-    log.warn('Could not load XenoCare logo:', error);
-    return '';
-  }
-}
-
-/**
  * Add XenoCare receipt header to PDF document
  */
 async function addReceiptHeader(doc: jsPDF, yOffset: number = 10): Promise<number> {
   const pageWidth = doc.internal.pageSize.getWidth();
   const centerX = pageWidth / 2;
-
-  // Try to add logo
-  try {
-    const logoBase64 = await loadLogoAsBase64();
-    if (logoBase64) {
-      doc.addImage(logoBase64, 'PNG', centerX - 12, yOffset, 24, 24);
-      yOffset += 26;
-    }
-  } catch (error) {
-    log.warn('Logo not loaded, using text header');
-  }
 
   // Hospital name
   doc.setFontSize(14);
@@ -351,14 +330,13 @@ function addFooter(
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(100, 100, 100);
   doc.text(
-    'Scan QR code or visit xenolink.tech/verify',
+    qrDataURL
+      ? 'Scan the QR code to verify this document'
+      : 'Quote the code above to verify this document',
     centerX,
     footerY + 14,
     { align: 'center' },
   );
-  doc.text('to verify this document', centerX, footerY + 17, {
-    align: 'center',
-  });
 
   // Legal text
   doc.setFontSize(6);
@@ -447,17 +425,6 @@ export async function generateReceiptPDF(data: ReceiptData): Promise<jsPDF> {
   let yOffset = 2;
 
   // ============ HEADER ============
-  // Try to add logo (smaller size for thermal)
-  try {
-    const logoBase64 = await loadLogoAsBase64();
-    if (logoBase64) {
-      doc.addImage(logoBase64, 'PNG', centerX - 6, yOffset, 12, 12); // Smaller logo
-      yOffset += 13;
-    }
-  } catch (error) {
-    log.warn('Logo not loaded');
-  }
-
   // Hospital name
   doc.setFontSize(7);
   doc.setFont('helvetica', 'bold');
@@ -818,7 +785,9 @@ export async function generateReceiptPDF(data: ReceiptData): Promise<jsPDF> {
       data.receiptNumber,
       data.verificationCode,
     );
-    const qrDataURL = await generateQRCodeDataURL(verificationURL);
+    const qrDataURL = verificationURL
+      ? await generateQRCodeDataURL(verificationURL)
+      : '';
     if (qrDataURL) {
       doc.addImage(qrDataURL, 'PNG', centerX - 10, yOffset, 20, 20);
       yOffset += 22;
@@ -840,7 +809,7 @@ export async function generateReceiptPDF(data: ReceiptData): Promise<jsPDF> {
     align: 'center',
   });
   yOffset += 3;
-  doc.text('Powered by Xenolink', centerX, yOffset, {
+  doc.text('Powered by XenoCare', centerX, yOffset, {
     align: 'center',
   });
   yOffset += 3;
@@ -1214,7 +1183,9 @@ export async function generateReceiptPDFA4(data: ReceiptData): Promise<jsPDF> {
     data.receiptNumber,
     data.verificationCode,
   );
-  const qrDataURL = await generateQRCodeDataURL(verificationURL);
+  const qrDataURL = verificationURL
+    ? await generateQRCodeDataURL(verificationURL)
+    : '';
 
   // Add footer with verification
   addFooter(doc, data.verificationCode, qrDataURL);
@@ -1537,7 +1508,9 @@ export async function generateInvoicePDF(
     data.invoiceNumber,
     data.verificationCode,
   );
-  const qrDataURL = await generateQRCodeDataURL(verificationURL);
+  const qrDataURL = verificationURL
+    ? await generateQRCodeDataURL(verificationURL)
+    : '';
 
   // Add footer with verification
   addFooter(doc, data.verificationCode, qrDataURL);

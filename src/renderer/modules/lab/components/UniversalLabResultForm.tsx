@@ -304,7 +304,7 @@ export default function UniversalLabResultForm({
 
       <div className="fixed inset-0 flex items-center justify-center p-2 sm:p-4">
         <div className="relative flex h-[95vh] w-[96vw] max-w-[1580px] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-[#eef2f6] shadow-2xl">
-          <header className="relative flex flex-shrink-0 flex-wrap items-center justify-between gap-3 bg-[#0e2a47] px-5 py-4 text-white lg:px-7">
+          <header className="relative flex flex-shrink-0 flex-wrap items-center justify-between gap-3 bg-[#E9783F] px-5 py-4 text-white lg:px-7">
             <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-orange-500 via-orange-400 to-transparent" />
             <div className="flex min-w-0 items-center gap-4">
               <div className="rounded-xl bg-white p-1.5 shadow-lg">
@@ -449,7 +449,7 @@ export default function UniversalLabResultForm({
                       onInput={syncEditor}
                       onPaste={handlePaste}
                       data-placeholder="Type or paste the complete laboratory report here..."
-                      className="clinical-data-editor min-h-[460px] cursor-text bg-white px-5 py-4 text-sm leading-7 text-slate-900 outline-none transition-shadow focus:ring-2 focus:ring-inset focus:ring-[#0e2a47]/15 xl:min-h-[560px]"
+                      className="clinical-data-editor min-h-[460px] cursor-text bg-white px-5 py-4 text-sm leading-7 text-slate-900 outline-none transition-shadow focus:ring-2 focus:ring-inset focus:ring-[#11151C]/15 xl:min-h-[560px]"
                       dangerouslySetInnerHTML={{ __html: initialHtml }}
                     />
                   </section>
@@ -473,7 +473,7 @@ export default function UniversalLabResultForm({
                 <aside className="space-y-4 xl:sticky xl:top-0">
                   <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                     <div className="mb-3 flex items-center gap-2">
-                      <FlaskConical className="h-4 w-4 text-[#0e2a47]" />
+                      <FlaskConical className="h-4 w-4 text-[#11151C]" />
                       <h3 className="text-sm font-bold text-slate-900">
                         Laboratory information
                       </h3>
@@ -597,7 +597,7 @@ export default function UniversalLabResultForm({
                       <Button
                         onClick={() => void handleSave()}
                         disabled={isLoading || isLoadingRequests}
-                        className="w-full bg-[#0e2a47] py-2.5 text-white hover:bg-[#173f66]"
+                        className="w-full bg-[#E9783F] py-2.5 text-white hover:bg-[#173f66]"
                       >
                         {isLoading ? (
                           <Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
@@ -622,8 +622,8 @@ export default function UniversalLabResultForm({
           pointer-events: none;
         }
         .clinical-data-editor p { margin: 0 0 0.65rem; }
-        .clinical-data-editor h1 { font-size: 1.5rem; font-weight: 800; margin: 0.9rem 0 0.55rem; color: #0e2a47; }
-        .clinical-data-editor h2 { font-size: 1.25rem; font-weight: 800; margin: 0.85rem 0 0.5rem; color: #0e2a47; }
+        .clinical-data-editor h1 { font-size: 1.5rem; font-weight: 800; margin: 0.9rem 0 0.55rem; color: #11151C; }
+        .clinical-data-editor h2 { font-size: 1.25rem; font-weight: 800; margin: 0.85rem 0 0.5rem; color: #11151C; }
         .clinical-data-editor h3 { font-size: 1.05rem; font-weight: 700; margin: 0.75rem 0 0.45rem; color: #173f66; }
         .clinical-data-editor blockquote {
           margin: 0.65rem 0; padding-left: 0.85rem; border-left: 3px solid #cbd5e1; color: #475569;

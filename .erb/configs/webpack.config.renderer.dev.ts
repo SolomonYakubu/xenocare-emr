@@ -1,8 +1,6 @@
 import 'webpack-dev-server';
 import path from 'path';
 import fs from 'fs';
-import { createRequire } from 'module';
-import { fileURLToPath } from 'url';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import chalk from 'chalk';
@@ -15,11 +13,10 @@ import checkNodeEnv from '../scripts/check-node-env.js';
 const baseConfig = (_baseConfig as any).default || _baseConfig;
 
 // ESM shim for require() — needed to load DLL manifest JSON
-const _require = createRequire(import.meta.url);
+const _require = require;
 const Dotenv = _require('dotenv-webpack');
-const webpackPaths = _require('./webpack.paths.ts').default;
+const webpackPaths = _require('./webpack.paths.js').default;
 // ESM shim for __dirname
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // When an ESLint server is running, we can't set the NODE_ENV so we'll check if it's
 // at the dev webpack config is not accidentally run in a production environment

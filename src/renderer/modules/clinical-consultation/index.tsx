@@ -105,8 +105,6 @@ import { getFacilityName } from '../../lib/facility';
 const log = createScopedLogger('ClinicalConsultation');
 
 // XenoCare logo
-const ndcLogoSrc = require('../../../../assets/xenocare-logo.png');
-
 // =============================================================================
 // Types
 // =============================================================================
@@ -564,7 +562,7 @@ export default function ClinicalConsultation() {
       showToast({
         type: 'error',
         title: 'Missing Patient',
-        message: 'All clinical records must be tied to a patient EMR number.',
+        message: 'All clinical records must be tied to a patient patient number.',
       });
       return;
     }
@@ -785,7 +783,7 @@ export default function ClinicalConsultation() {
           diagnosis: diagnosisArray, // Pass diagnosis from consultation to all orders
           clinicalFindings, // Pass clinical findings for NHIS pre-authorization
           patientName, // Pass patient name for NHIS approval display
-          patientEmrNumber, // Pass EMR number for NHIS approval display
+          patientEmrNumber, // Pass patient number for NHIS approval display
         });
 
         if (batchResult.procedureRlsFallbackTriggered) {
@@ -1292,7 +1290,7 @@ export default function ClinicalConsultation() {
         showToast({
           type: 'error',
           title: 'Missing Patient',
-          message: 'All clinical records must be tied to a patient EMR number.',
+          message: 'All clinical records must be tied to a patient patient number.',
         });
         return;
       }
@@ -1807,11 +1805,7 @@ export default function ClinicalConsultation() {
               <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                 <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/95 p-1.5 shadow-lg ring-2 ring-white/35 sm:h-14 sm:w-14">
-                    <img
-                      src={ndcLogoSrc}
-                      alt="XenoCare"
-                      className="h-full w-full object-contain"
-                    />
+                    
                   </div>
                   <div className="min-w-0">
                     <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/75">
@@ -1845,7 +1839,7 @@ export default function ClinicalConsultation() {
                     <Button
                       variant="outline"
                       onClick={handleNewConsultation}
-                      className="border-white/40 bg-white font-semibold text-[#0d5e56] hover:bg-emerald-50"
+                      className="border-white/40 bg-white font-semibold text-[#11151C] hover:bg-emerald-50"
                     >
                       <Plus className="mr-1 h-4 w-4" />
                       New consultation
@@ -2165,11 +2159,7 @@ export default function ClinicalConsultation() {
             <div className="flex items-center justify-between px-5 py-3 bg-gradient-to-r from-primary-700 to-primary-600 text-white">
               <div className="flex items-center gap-3">
                 <div className="bg-white rounded-lg p-1.5 shadow">
-                  <img
-                    src={ndcLogoSrc}
-                    alt="XenoCare"
-                    className="h-6 w-6 object-contain"
-                  />
+                  
                 </div>
                 <span className="text-sm font-semibold">
                   XenoCare AI Assistant

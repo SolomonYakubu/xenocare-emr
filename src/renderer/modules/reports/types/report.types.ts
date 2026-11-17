@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR
+ * XenoCare
  * Comprehensive Export & Reporting System — Shared Types
  *
  * Covers: Labs, Imaging, Procedures, Dental, Physiotherapy, Ophthalmology

@@ -81,7 +81,7 @@ export default function LabReportsTab({
     );
   }, [requests]);
 
-  // Group requests by patient EMR number
+  // Group requests by patient patient number
   const patientGroups = useMemo(() => {
     const groups = new Map<string, PatientLabGroup>();
 

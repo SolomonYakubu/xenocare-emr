@@ -123,7 +123,7 @@ const BRAND_COLORS = {
   secondary: '#4338ca', // Indigo-700
   accent: '#818cf8', // Indigo-400
   success: '#2563eb', // Blue-600
-  warning: '#ea580c', // Orange-600
+  warning: '#D96A36', // Orange-600
   danger: '#dc2626', // Red-600
   background: '#f8fafc', // Slate-50
   cardBg: '#ffffff',

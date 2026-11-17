@@ -4,32 +4,18 @@
 // =============================================================================
 
 import React, { useState } from 'react';
-import {
-  Building2,
-  Bed,
-  Users,
-  Activity,
-  AlertTriangle,
-  AlertCircle,
-  Plus,
-  X,
-  ClipboardList,
-  LogOut,
-} from 'lucide-react';
-import WardDashboard from '../components/WardDashboard';
-import BedManagement from '../components/BedManagement';
+import { Bed, ClipboardList, Plus, Users, X } from 'lucide-react';
+import FlatBedBoard from '../components/FlatBedBoard';
 import AdmissionForm from '../components/AdmissionForm';
 import MasterAdmissionsTable from '../components/MasterAdmissionsTable';
 import DischargeForm from '../components/DischargeForm';
-import TransferBedModal from '../components/TransferBedModal';
 import { AdmissionCareModal } from '../components/AdmissionCareModal';
 import BedTransferModal from '../components/BedTransferModal';
 import WardRoundNoteForm from '../components/WardRoundNoteForm';
 import EditCareTeamModal from '../components/EditCareTeamModal';
 import PendingAdmissions from '../components/PendingAdmissions';
-import AddWardModal from '../components/AddWardModal';
-import AddBedModal from '../components/AddBedModal';
 import { useWardCensus } from '../hooks/useWards';
+import { useBedAvailability } from '../hooks/useBeds';
 import {
   useAdmissionStatistics,
   useActiveAdmissions,
@@ -41,7 +27,7 @@ import type {
   ActiveAdmissionView,
 } from '../../../types/database.types';
 
-type TabType = 'pending' | 'dashboard' | 'admissions' | 'beds';
+type TabType = 'pending' | 'admissions' | 'beds';
 
 // Helper to convert ActiveAdmissionView to AdmissionWithDetails format
 function toAdmissionWithDetails(
@@ -177,9 +163,10 @@ function toAdmissionWithDetails(
 }
 
 const InPatientPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<TabType>('pending');
+  const [activeTab, setActiveTab] = useState<TabType>('beds');
   const [selectedWardId, setSelectedWardId] = useState<string | null>(null);
   const [preSelectedBedId, setPreSelectedBedId] = useState<string>('');
+  const [preSelectedWardId, setPreSelectedWardId] = useState<string>('');
   const [selectedAdmission, setSelectedAdmission] =
     useState<AdmissionWithDetails | null>(null);
   const [showDischargeForm, setShowDischargeForm] = useState(false);
@@ -190,17 +177,12 @@ const InPatientPage: React.FC = () => {
   const [showWardRoundModal, setShowWardRoundModal] = useState(false);
   const [showAdmissionModal, setShowAdmissionModal] = useState(false);
   const [showEditCareTeamModal, setShowEditCareTeamModal] = useState(false);
-  const [showAddWardModal, setShowAddWardModal] = useState(false);
-  const [showAddBedModal, setShowAddBedModal] = useState(false);
   const [selectedAdmissionForModal, setSelectedAdmissionForModal] = useState<
     AdmissionWithDetails | ActiveAdmissionView | null
   >(null);
 
-  const {
-    data: wardCensus,
-    isLoading: censusLoading,
-    refetch: refetchWardCensus,
-  } = useWardCensus();
+  const { data: wardCensus } = useWardCensus();
+  const { data: bedAvailability = [] } = useBedAvailability();
   const { data: admissionStats } = useAdmissionStatistics();
   const { refetch: refetchAdmissions } = useActiveAdmissions();
   const { data: pendingAdmissions = [] } = usePendingAdmissionRequests();
@@ -214,15 +196,15 @@ const InPatientPage: React.FC = () => {
       icon: ClipboardList,
       badge: pendingCount,
     },
-    { id: 'dashboard' as TabType, label: 'Ward Dashboard', icon: Building2 },
     { id: 'admissions' as TabType, label: 'Active Patients', icon: Users },
-    { id: 'beds' as TabType, label: 'Bed Management', icon: Bed },
+    { id: 'beds' as TabType, label: 'Beds', icon: Bed },
   ];
 
-  // Calculate summary stats
-  const totalBeds = wardCensus?.reduce((sum, w) => sum + w.total_beds, 0) || 0;
-  const occupiedBeds =
-    wardCensus?.reduce((sum, w) => sum + w.occupied_beds, 0) || 0;
+  // Live bed board is the source of truth for occupancy.
+  const totalBeds = bedAvailability.length;
+  const occupiedBeds = bedAvailability.filter(
+    (bed: any) => String(bed.status || '').toLowerCase() === 'occupied',
+  ).length;
   const criticalPatients =
     wardCensus?.reduce((sum, w) => sum + w.critical_patients, 0) || 0;
   const isolationPatients =
@@ -344,102 +326,61 @@ const InPatientPage: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-gray-50 overflow-hidden">
+    <div className="h-full flex flex-col bg-[#F7F6F3] overflow-hidden">
       {/* Header */}
       <div className="bg-white border-b px-6 py-3 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-gray-900">
-              In-Patient Management
+            <h1 className="font-display text-xl font-bold text-slate-900">
+              In-patients
             </h1>
             <p className="text-xs text-gray-500 mt-0.5">
-              Ward management, admissions, and bed tracking
+              Beds and admissions
             </p>
           </div>
           <button
             onClick={handleAdmitPatient}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+            className="flex items-center gap-2 rounded-xl bg-[#E9783F] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#D96A36]"
           >
             <Plus className="h-4 w-4" />
             New Admission
           </button>
         </div>
 
-        {/* Stats Pills - Compact */}
-        <div className="flex flex-wrap items-center gap-3 mt-3">
-          <div className="flex items-center gap-3 bg-blue-50 rounded-lg px-4 py-2.5 border border-blue-200">
-            <div className="bg-blue-500 p-2 rounded-md">
-              <Users className="h-4 w-4 text-white" />
-            </div>
-            <div>
-              <p className="text-xl font-bold text-blue-900 leading-tight">
-                {admissionStats?.totalActive || 0}
-              </p>
-              <p className="text-xs text-blue-600 font-medium">
-                Total Patients
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 bg-green-50 rounded-lg px-4 py-2.5 border border-green-200">
-            <div className="bg-green-500 p-2 rounded-md">
-              <Bed className="h-4 w-4 text-white" />
-            </div>
-            <div>
-              <p className="text-xl font-bold text-green-900 leading-tight">
-                {occupiedBeds}/{totalBeds}
-              </p>
-              <p className="text-xs text-green-600 font-medium">
-                Bed Occupancy
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 bg-purple-50 rounded-lg px-4 py-2.5 border border-purple-200">
-            <div className="bg-purple-500 p-2 rounded-md">
-              <LogOut className="h-4 w-4 text-white" />
-            </div>
-            <div>
-              <p className="text-xl font-bold text-purple-900 leading-tight">
-                {admissionStats?.monthlyDischarges || 0}
-              </p>
-              <p className="text-xs text-purple-600 font-medium">
-                Discharged (Month)
-              </p>
-            </div>
-          </div>
-
+        {/* Summary */}
+        <div className="mt-3 flex flex-wrap items-baseline gap-x-6 gap-y-2 text-sm">
+          <span className="flex items-baseline gap-1.5">
+            <span className="font-display text-xl font-bold text-slate-900">
+              {admissionStats?.totalActive || 0}
+            </span>
+            <span className="text-slate-500">admitted</span>
+          </span>
+          <span className="flex items-baseline gap-1.5">
+            <span className="font-display text-xl font-bold text-slate-900">
+              {occupiedBeds}/{totalBeds}
+            </span>
+            <span className="text-slate-500">beds in use</span>
+          </span>
+          <span className="flex items-baseline gap-1.5">
+            <span className="font-display text-xl font-bold text-slate-900">
+              {admissionStats?.monthlyDischarges || 0}
+            </span>
+            <span className="text-slate-500">discharged this month</span>
+          </span>
           {criticalPatients > 0 && (
-            <div className="flex items-center gap-3 bg-red-50 rounded-lg px-4 py-2.5 border border-red-300 animate-pulse">
-              <div className="bg-red-500 p-2 rounded-md">
-                <AlertTriangle className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <p className="text-xl font-bold text-red-900 leading-tight">
-                  {criticalPatients}
-                </p>
-                <p className="text-xs text-red-600 font-medium">Critical</p>
-              </div>
-            </div>
+            <span className="font-semibold text-red-600">
+              {criticalPatients} critical
+            </span>
           )}
-
           {isolationPatients > 0 && (
-            <div className="flex items-center gap-3 bg-amber-50 rounded-lg px-4 py-2.5 border border-amber-200">
-              <div className="bg-amber-500 p-2 rounded-md">
-                <Activity className="h-4 w-4 text-white" />
-              </div>
-              <div>
-                <p className="text-xl font-bold text-amber-900 leading-tight">
-                  {isolationPatients}
-                </p>
-                <p className="text-xs text-amber-600 font-medium">Isolation</p>
-              </div>
-            </div>
+            <span className="font-semibold text-amber-600">
+              {isolationPatients} in isolation
+            </span>
           )}
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex items-center gap-1 bg-white p-1 rounded-lg border shadow-sm w-fit mt-3">
+        <div className="mt-3 flex w-fit items-center gap-1 rounded-xl border border-slate-200 bg-white p-1">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -449,19 +390,19 @@ const InPatientPage: React.FC = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                   isActive
-                    ? 'bg-blue-50 text-blue-700 shadow-sm'
+                    ? 'bg-[#FBF1E9] text-[#B36845]'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
                 <Icon
-                  className={`h-4 w-4 ${isActive ? 'text-blue-600' : 'text-gray-500'}`}
+                  className={`h-4 w-4 ${isActive ? 'text-[#C96A3A]' : 'text-slate-400'}`}
                 />
                 {tab.label}
                 {tab.badge !== undefined && tab.badge > 0 && (
                   <span
                     className={`px-1.5 py-0.5 text-xs font-bold rounded-full ${
                       isActive
-                        ? 'bg-blue-600 text-white'
+                        ? 'bg-[#E9783F] text-white'
                         : 'bg-red-500 text-white'
                     }`}
                   >
@@ -481,27 +422,9 @@ const InPatientPage: React.FC = () => {
             <InlineGuidance
               module="in-patient"
               title="Admission Requests"
-              message="Process incoming admission requests from doctors. Assign wards and beds to waiting patients."
+              message="Process incoming admission requests from doctors. Assign a bed to waiting patients."
             />
             <PendingAdmissions />
-          </>
-        )}
-
-        {activeTab === 'dashboard' && (
-          <>
-            <InlineGuidance
-              module="in-patient"
-              title="Ward Overview"
-              message="Bed occupancy and ward status. Manage beds and ward configurations here."
-            />
-            <WardDashboard
-              wardCensus={wardCensus || []}
-              isLoading={censusLoading}
-              onViewWard={handleViewWard}
-              onAdmitPatient={() => setShowAdmissionModal(true)}
-              onAddWard={() => setShowAddWardModal(true)}
-              onAddBed={() => setShowAddBedModal(true)}
-            />
           </>
         )}
 
@@ -524,19 +447,12 @@ const InPatientPage: React.FC = () => {
 
         {activeTab === 'beds' && (
           <>
-            <InlineGuidance
-              module="in-patient"
-              title="Bed Management"
-              message="Detailed bed availability and maintenance status."
-            />
-            <BedManagement
-              wardId={selectedWardId}
-              onWardChange={setSelectedWardId}
-              onAdmitToBed={(bedId) => {
+            <FlatBedBoard
+              onAdmitToBed={(bedId, wardId) => {
                 setPreSelectedBedId(bedId);
+                setPreSelectedWardId(wardId);
                 setShowAdmissionModal(true);
               }}
-              onAddBed={() => setShowAddBedModal(true)}
             />
           </>
         )}
@@ -561,21 +477,6 @@ const InPatientPage: React.FC = () => {
           </div>
         )}
 
-        {/* Transfer Modal */}
-        {showTransferModal && selectedAdmission && (
-          <TransferBedModal
-            admission={selectedAdmission}
-            onSuccess={() => {
-              setShowTransferModal(false);
-              setSelectedAdmission(null);
-              refetchAdmissions();
-            }}
-            onClose={() => {
-              setShowTransferModal(false);
-              setSelectedAdmission(null);
-            }}
-          />
-        )}
       </div>
 
       {/* View Details Modal */}
@@ -616,39 +517,34 @@ const InPatientPage: React.FC = () => {
 
       {/* New Admission Modal */}
       {showAdmissionModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-5xl h-[85vh] overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-blue-600 to-blue-700">
-              <div>
-                <h2 className="text-lg font-semibold text-white">
-                  New Admission
-                </h2>
-                <p className="text-sm text-blue-100">
-                  XenoCare - Patient Admission
-                </p>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-3 sm:p-6">
+          <div className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white">
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-5 py-3">
+              <h2 className="font-display text-lg font-bold text-slate-900">
+                New admission
+              </h2>
               <button
+                type="button"
+                aria-label="Close admission form"
                 onClick={() => setShowAdmissionModal(false)}
-                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
               >
-                <X className="h-5 w-5 text-white" />
+                <X className="h-5 w-5" />
               </button>
             </div>
-            <div className="flex-1 overflow-auto">
-              <AdmissionForm
-                onSuccess={() => {
-                  setShowAdmissionModal(false);
-                  setPreSelectedBedId('');
-                  refetchAdmissions();
-                }}
-                onCancel={() => {
-                  setShowAdmissionModal(false);
-                  setPreSelectedBedId('');
-                }}
-                initialWardId={selectedWardId || undefined}
-                initialBedId={preSelectedBedId || undefined}
-              />
-            </div>
+            <AdmissionForm
+              onSuccess={() => {
+                setShowAdmissionModal(false);
+                setPreSelectedBedId('');
+                refetchAdmissions();
+              }}
+              onCancel={() => {
+                setShowAdmissionModal(false);
+                setPreSelectedBedId('');
+              }}
+              initialWardId={preSelectedWardId || undefined}
+              initialBedId={preSelectedBedId || undefined}
+            />
           </div>
         </div>
       )}
@@ -663,24 +559,10 @@ const InPatientPage: React.FC = () => {
         }}
       />
 
-      {/* Add Ward Modal */}
-      <AddWardModal
-        isOpen={showAddWardModal}
-        onClose={() => setShowAddWardModal(false)}
-        onSuccess={() => {
-          refetchWardCensus();
-        }}
-      />
+
 
       {/* Add Bed Modal */}
-      <AddBedModal
-        isOpen={showAddBedModal}
-        onClose={() => setShowAddBedModal(false)}
-        onSuccess={() => {
-          refetchWardCensus();
-        }}
-        preSelectedWardId={selectedWardId}
-      />
+
     </div>
   );
 };

@@ -64,7 +64,7 @@ export function QueueDisplay() {
             <span>Auto-refreshing every 10 seconds</span>
           </div>
           <div className="text-gray-400 text-sm">
-            XenoCare EMR System
+            XenoCare System
           </div>
         </div>
       </div>

@@ -133,7 +133,7 @@ export function ConsultationClinicalAlerts({
             : 'border-amber-300 bg-amber-50 text-amber-950'
         } ${className}`}
       >
-        Could not load patient safety data. Verify EMR linkage.
+        Could not load patient safety data. Verify the patient record link.
       </div>
     );
   }

@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build output
+release/app/dist/
+release/build/
+release/server/
+release/server-build/
+.erb/dll/
+
+# Local environment
+.env
+.env.local
+
+# Supabase local cache
+supabase/.temp/
+
+# OS files
+.DS_Store
+**/.DS_Store
+
+# Logs
+*.log

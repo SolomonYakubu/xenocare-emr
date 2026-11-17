@@ -26,7 +26,7 @@ import type {
 // ==================== CONSTANTS ====================
 
 const COLORS = {
-  primary: [22, 101, 52] as [number, number, number], // Xenolink navy (facility brand)
+  primary: [22, 101, 52] as [number, number, number], // XenoCare navy (facility brand)
   secondary: [51, 65, 85] as [number, number, number], // Slate-700
   accent: [37, 99, 235] as [number, number, number], // Blue-600
   success: [22, 163, 74] as [number, number, number], // Green-600
@@ -35,7 +35,7 @@ const COLORS = {
   light: [248, 250, 252] as [number, number, number], // Slate-50
   text: [17, 24, 39] as [number, number, number], // Gray-900
   muted: [100, 116, 139] as [number, number, number], // Slate-500
-  tableHeader: [22, 101, 52] as [number, number, number], // Xenolink navy — primary tables
+  tableHeader: [22, 101, 52] as [number, number, number], // XenoCare navy — primary tables
   tableAlt: [248, 250, 252] as [number, number, number], // Slate-50
 };
 
@@ -736,13 +736,13 @@ export async function generateComprehensiveNhisClaimsPdf(
   const pageHeight = doc.internal.pageSize.getHeight();
   let yPos = MARGINS.top;
 
-  // Xenolink navy color
+  // XenoCare navy color
   const NDC_GREEN: [number, number, number] = [22, 101, 52];
   const NDC_GREEN_LIGHT: [number, number, number] = [240, 253, 244];
 
   // Add header to each page
   const addHeader = (): void => {
-    // Xenolink navy Header Banner
+    // XenoCare navy Header Banner
     doc.setFillColor(...NDC_GREEN);
     doc.rect(0, 0, pageWidth, 14, 'F');
     // Centered facility name

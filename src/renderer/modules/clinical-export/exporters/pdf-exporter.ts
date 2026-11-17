@@ -19,7 +19,7 @@ import { getICD10ChapterTitle } from '../standards';
 // ==================== CONSTANTS ====================
 
 const COLORS = {
-  primary: [22, 101, 52] as [number, number, number], // Xenolink navy
+  primary: [22, 101, 52] as [number, number, number], // XenoCare navy
   secondary: [51, 65, 85] as [number, number, number], // Slate-700
   accent: [37, 99, 235] as [number, number, number], // Blue-600
   success: [22, 163, 74] as [number, number, number], // Green-600
@@ -29,7 +29,7 @@ const COLORS = {
   text: [17, 24, 39] as [number, number, number], // Gray-900
   muted: [100, 116, 139] as [number, number, number], // Slate-500
   confidential: [139, 0, 0] as [number, number, number], // Dark red for confidential
-  tableHeader: [22, 101, 52] as [number, number, number], // Xenolink navy
+  tableHeader: [22, 101, 52] as [number, number, number], // XenoCare navy
   tableAlt: [248, 250, 252] as [number, number, number], // Slate-50
 };
 
@@ -52,7 +52,7 @@ const MARGINS = {
 
 const CONFIDENTIALITY_NOTICE =
   'CONFIDENTIAL MEDICAL RECORD – UNAUTHORIZED DISCLOSURE IS PROHIBITED';
-const SYSTEM_NAME = 'XenoCare EMR v2.0';
+const SYSTEM_NAME = 'XenoCare v2.0';
 
 // ==================== HELPER FUNCTIONS ====================
 
@@ -1675,7 +1675,7 @@ export class ClinicalPDFExporter {
     this.addSectionTitle('13. AUTHORIZATION & CERTIFICATION');
 
     this.addParagraph(
-      "This document is a certified export of electronic medical records from the XenoCare EMR system. The information contained herein has been extracted directly from the patient's electronic health record without modification.",
+      "This document is a certified export of electronic medical records from the XenoCare system. The information contained herein has been extracted directly from the patient's electronic health record without modification.",
       { italic: false },
     );
 

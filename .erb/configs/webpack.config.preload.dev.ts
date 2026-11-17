@@ -3,7 +3,7 @@ import webpack from 'webpack';
 import { merge } from 'webpack-merge';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import _baseConfig from './webpack.config.base.js';
-import webpackPaths from './webpack.paths.ts';
+import webpackPaths from './webpack.paths.js';
 import checkNodeEnv from '../scripts/check-node-env.js';
 
 const baseConfig = (_baseConfig as any).default || _baseConfig;

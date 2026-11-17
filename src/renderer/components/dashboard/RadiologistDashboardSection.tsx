@@ -290,7 +290,7 @@ export default function RadiologistDashboardSection() {
             </div>
             <button
               onClick={() => navigate('/radiology')}
-              className="text-xs font-bold text-[#0d5e56] hover:underline flex items-center gap-1"
+              className="text-xs font-bold text-[#11151C] hover:underline flex items-center gap-1"
             >
               View All <ChevronRight size={14} />
             </button>
@@ -380,7 +380,7 @@ export default function RadiologistDashboardSection() {
             </div>
             <button
               onClick={() => navigate('/radiology')}
-              className="text-xs font-bold text-[#0d5e56] hover:underline flex items-center gap-1"
+              className="text-xs font-bold text-[#11151C] hover:underline flex items-center gap-1"
             >
               View All <ChevronRight size={14} />
             </button>
@@ -455,7 +455,7 @@ export default function RadiologistDashboardSection() {
       {/* ─── Radiology Pipeline Summary ───────────────────────────────────── */}
       <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-5">
         <h3 className="text-sm font-bold text-slate-800 mb-4">
-          Radiology Workflow Pipeline
+          Radiology queue
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[

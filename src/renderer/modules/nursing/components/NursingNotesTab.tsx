@@ -78,8 +78,6 @@ import { createMultipleInterventions } from '../api/nursing-interventions.api';
 import { formatPatientName } from '../../patient-registration/dtos/patient.dto';
 
 // XenoCare Logo
-const ndcLogoSrc = require('../../../../../assets/xenocare-logo.png');
-
 // =============================================================================
 // Types
 // =============================================================================
@@ -828,11 +826,7 @@ function NoteForm({
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 flex-shrink-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <img
-                  src={ndcLogoSrc}
-                  alt="XenoCare Logo"
-                  className="h-10 w-10 rounded-lg bg-white p-1"
-                />
+                
                 <div>
                   <h2 className="text-lg font-bold text-white">
                     {editingNote ? 'Edit Nursing Report' : 'Add Nursing Report'}
@@ -1421,7 +1415,7 @@ export default function NursingNotesTab({
     // Build logo as base64 for HTML
     let logoBase64 = '';
     try {
-      logoBase64 = ndcLogoSrc;
+      logoBase64 = '';
     } catch (e) {
       console.warn('Could not load XenoCare logo for print');
     }

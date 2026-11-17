@@ -1418,81 +1418,32 @@ function MedicalRecordsFilterModal({
 // =============================================================================
 
 function StatsCards({ stats }: { stats: any }) {
+  const cards = [
+    { label: 'Total patients', value: stats?.totalPatients || 0 },
+    { label: 'Outpatient visits', value: stats?.gopdCount || 0 },
+    {
+      label: 'Specialty visits',
+      value:
+        (stats?.dentalCount || 0) +
+        (stats?.ophthalCount || 0) +
+        (stats?.physioCount || 0),
+    },
+    { label: "Today's records", value: stats?.todayCount || 0 },
+  ];
+
   return (
-    <div className="mb-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-      <div
-        className="group relative cursor-help rounded-2xl border border-slate-200/90 bg-white p-4 shadow-[0_4px_20px_-8px_rgba(15,80,72,0.12)] ring-1 ring-slate-100"
-        title="Total unique patients in the system"
-      >
-        <div className="flex items-center justify-between gap-2">
-          <div>
-            <p className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
-              Total patients
-              <Info size={12} className="text-slate-400" />
-            </p>
-            <p className="text-2xl font-bold tabular-nums text-slate-900">
-              {stats?.totalPatients || 0}
-            </p>
-          </div>
-          <Users className="shrink-0 text-sky-600 opacity-80" size={26} />
+    <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      {cards.map((card) => (
+        <div
+          key={card.label}
+          className="rounded-xl border border-slate-200 bg-white px-4 py-3"
+        >
+          <p className="text-xs font-medium text-slate-500">{card.label}</p>
+          <p className="mt-1 font-display text-2xl font-bold tabular-nums text-slate-900">
+            {card.value}
+          </p>
         </div>
-      </div>
-      <div
-        className="group relative cursor-help rounded-2xl border border-slate-200/90 bg-white p-4 shadow-[0_4px_20px_-8px_rgba(15,80,72,0.12)] ring-1 ring-slate-100"
-        title="Visits to General Outpatient Department"
-      >
-        <div className="flex items-center justify-between gap-2">
-          <div>
-            <p className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
-              GOPD visits
-              <Info size={12} className="text-slate-400" />
-            </p>
-            <p className="text-2xl font-bold tabular-nums text-slate-900">
-              {stats?.gopdCount || 0}
-            </p>
-          </div>
-          <Stethoscope
-            className="shrink-0 text-emerald-600 opacity-80"
-            size={26}
-          />
-        </div>
-      </div>
-      <div
-        className="group relative cursor-help rounded-2xl border border-slate-200/90 bg-white p-4 shadow-[0_4px_20px_-8px_rgba(15,80,72,0.12)] ring-1 ring-slate-100"
-        title="Combined visits to Dental, Ophthalmology, Physiotherapy"
-      >
-        <div className="flex items-center justify-between gap-2">
-          <div>
-            <p className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
-              Specialty visits
-              <Info size={12} className="text-slate-400" />
-            </p>
-            <p className="text-2xl font-bold tabular-nums text-slate-900">
-              {(stats?.dentalCount || 0) +
-                (stats?.ophthalCount || 0) +
-                (stats?.physioCount || 0)}
-            </p>
-          </div>
-          <Activity className="shrink-0 text-violet-600 opacity-80" size={26} />
-        </div>
-      </div>
-      <div
-        className="group relative cursor-help rounded-2xl border border-slate-200/90 bg-white p-4 shadow-[0_4px_20px_-8px_rgba(15,80,72,0.12)] ring-1 ring-slate-100"
-        title="Encounters recorded today"
-      >
-        <div className="flex items-center justify-between gap-2">
-          <div>
-            <p className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
-              Today&apos;s records
-              <Info size={12} className="text-slate-400" />
-            </p>
-            <p className="text-2xl font-bold tabular-nums text-slate-900">
-              {stats?.todayCount || 0}
-            </p>
-          </div>
-          <Calendar className="shrink-0 text-amber-700 opacity-80" size={26} />
-        </div>
-      </div>
+      ))}
     </div>
   );
 }
@@ -1770,78 +1721,32 @@ function MedicalRecordsExportModal({
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
                         <div className="flex items-center gap-1">
                           Patient
-                          <span
-                            className="text-gray-400 font-normal normal-case"
-                            title="Name, EMR and Service Number"
-                          >
-                            ℹ️
-                          </span>
                         </div>
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
                         <div className="flex items-center gap-1">
                           Category
-                          <span
-                            className="text-gray-400 font-normal normal-case"
-                            title="Civilian, Military, Dependent, etc."
-                          >
-                            ℹ️
-                          </span>
                         </div>
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
-                        <div className="flex items-center gap-1">
-                          Clinics
-                          <span
-                            className="text-gray-400 font-normal normal-case"
-                            title="All departments the patient has visited"
-                          >
-                            ℹ️
-                          </span>
-                        </div>
-                      </th>
+                      
                       <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">
                         <div className="flex items-center justify-center gap-1">
                           Visits
-                          <span
-                            className="text-gray-400 font-normal normal-case"
-                            title="Total number of encounters/visits"
-                          >
-                            ℹ️
-                          </span>
                         </div>
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
                         <div className="flex items-center gap-1">
                           Last Visit
-                          <span
-                            className="text-gray-400 font-normal normal-case"
-                            title="Date of most recent encounter"
-                          >
-                            ℹ️
-                          </span>
                         </div>
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
                         <div className="flex items-center gap-1">
                           Last Dept
-                          <span
-                            className="text-gray-400 font-normal normal-case"
-                            title="Department of most recent visit"
-                          >
-                            ℹ️
-                          </span>
                         </div>
                       </th>
                       <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase w-16">
                         <div className="flex items-center justify-center gap-1">
                           View
-                          <span
-                            className="text-gray-400 font-normal normal-case"
-                            title="Click to open full record"
-                          >
-                            ℹ️
-                          </span>
                         </div>
                       </th>
                     </tr>
@@ -1887,38 +1792,23 @@ function MedicalRecordsExportModal({
                               {patient.patient_category || '-'}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-center">
-                            <span className="inline-flex items-center justify-center w-7 h-7 bg-blue-100 text-blue-700 text-sm font-medium rounded-full">
-                              {patient.total_encounters}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <span className="inline-flex items-center justify-center w-7 h-7 bg-green-100 text-green-700 text-sm font-medium rounded-full">
-                              {patient.total_encounters}
-                            </span>
+                          <td className="px-4 py-3 text-center text-sm font-semibold text-slate-900">
+                            {patient.total_encounters}
                           </td>
                           <td className="px-4 py-3">
                             {patient.last_encounter_date ? (
-                              <div>
-                                <p className="text-sm text-gray-900">
-                                  {format(
-                                    parseISO(patient.last_encounter_date),
-                                    'dd MMM yyyy',
-                                  )}
-                                </p>
-                                <p className="text-xs text-gray-500">
-                                  {formatDistanceToNow(
-                                    parseISO(patient.last_encounter_date),
-                                    { addSuffix: true },
-                                  )}
-                                </p>
-                              </div>
+                              <span className="text-sm text-gray-900">
+                                {format(
+                                  parseISO(patient.last_encounter_date),
+                                  'dd MMM yyyy',
+                                )}
+                              </span>
                             ) : (
                               <span className="text-gray-400">—</span>
                             )}
                           </td>
-                          <td className="px-4 py-3">
-                            <span className="text-sm text-gray-700">
+                          <td className="hidden px-4 py-3 xl:table-cell">
+                            <span className="text-sm capitalize text-gray-700">
                               {patient.last_department || '—'}
                             </span>
                           </td>
@@ -2468,7 +2358,7 @@ function PatientRow({
         isNightMode
           ? 'border-slate-800 hover:bg-slate-800/60'
           : 'border-gray-100 hover:bg-emerald-50/70'
-      } ${isSelected ? (isNightMode ? 'bg-slate-800/80' : 'bg-emerald-50') : ''}`}
+      } ${isSelected ? (isNightMode ? 'bg-slate-800/80' : 'bg-[#FDF8F4]') : ''}`}
     >
       {/* Selection Checkbox */}
       <td className="px-3 py-3">
@@ -2480,7 +2370,7 @@ function PatientRow({
           className="p-1 rounded hover:bg-gray-200 transition-colors"
         >
           {isSelected ? (
-            <CheckSquare size={18} className="text-green-600" />
+            <CheckSquare size={18} className="text-[#E9783F]" />
           ) : (
             <Square size={18} className="text-gray-400" />
           )}
@@ -2488,19 +2378,9 @@ function PatientRow({
       </td>
 
       {/* Patient Info */}
-      <td className="px-4 py-3 cursor-pointer" onClick={onClick}>
+      <td className="px-3 py-3 cursor-pointer sm:px-4" onClick={onClick}>
         <div className="flex items-center gap-3">
-          <div
-            className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${
-              isNightMode ? 'bg-slate-800' : 'bg-slate-100'
-            }`}
-          >
-            <User
-              size={20}
-              className={isNightMode ? 'text-slate-400' : 'text-slate-500'}
-            />
-          </div>
-          <div className="min-w-0">
+          <div className="min-w-0 max-w-full">
             <p
               className={`truncate font-semibold ${isNightMode ? 'text-slate-100' : 'text-slate-900'}`}
             >
@@ -2509,65 +2389,48 @@ function PatientRow({
             <div
               className={`flex flex-wrap items-center gap-2 text-xs ${isNightMode ? 'text-slate-400' : 'text-slate-500'}`}
             >
-              <span className="flex items-center gap-1">
-                <CreditCard size={12} />
-                {patient.emr_number}
+              <span>{patient.emr_number}</span>
+              <span className="lg:hidden">
+                · {patient.patient_category || '—'}
               </span>
-              {patient.service_number && (
-                <span className="truncate">SN: {patient.service_number}</span>
-              )}
             </div>
           </div>
         </div>
       </td>
 
       {/* Category */}
-      <td className="px-4 py-3 cursor-pointer" onClick={onClick}>
-        {patient.patient_category && (
-          <span
-            className={`px-2 py-0.5 text-xs font-medium rounded-full ${categoryColor}`}
-          >
-            {patient.patient_category}
-          </span>
-        )}
-      </td>
-
-      {/* Departments Visited */}
-      <td className="px-4 py-3 cursor-pointer" onClick={onClick}>
-        <DepartmentBadges departments={patient.departments_visited} />
+      <td className="hidden cursor-pointer px-4 py-3 lg:table-cell" onClick={onClick}>
+        <span
+          className={`text-sm ${isNightMode ? 'text-slate-300' : 'text-slate-600'}`}
+        >
+          {patient.patient_category || '—'}
+        </span>
       </td>
 
       {/* Total Encounters */}
       <td className="px-4 py-3 text-center cursor-pointer" onClick={onClick}>
-        <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-sm font-semibold text-sky-950">
+        <span
+          className={`text-sm font-semibold ${isNightMode ? 'text-slate-100' : 'text-slate-900'}`}
+        >
           {patient.total_encounters}
         </span>
       </td>
 
       {/* Last Visit */}
-      <td className="px-4 py-3 cursor-pointer" onClick={onClick}>
+      <td className="hidden cursor-pointer px-4 py-3 xl:table-cell" onClick={onClick}>
         {patient.last_encounter_date ? (
-          <div>
-            <p
-              className={`text-sm ${isNightMode ? 'text-slate-100' : 'text-slate-900'}`}
-            >
-              {format(parseISO(patient.last_encounter_date), 'dd MMM yyyy')}
-            </p>
-            <p
-              className={`text-xs ${isNightMode ? 'text-slate-400' : 'text-slate-500'}`}
-            >
-              {formatDistanceToNow(parseISO(patient.last_encounter_date), {
-                addSuffix: true,
-              })}
-            </p>
-          </div>
+          <span
+            className={`text-sm ${isNightMode ? 'text-slate-100' : 'text-slate-900'}`}
+          >
+            {format(parseISO(patient.last_encounter_date), 'dd MMM yyyy')}
+          </span>
         ) : (
           <span className="text-gray-400">—</span>
         )}
       </td>
 
       {/* Last Department */}
-      <td className="px-4 py-3 cursor-pointer" onClick={onClick}>
+      <td className="hidden cursor-pointer px-4 py-3 xl:table-cell" onClick={onClick}>
         <span
           className={`text-sm ${isNightMode ? 'text-slate-200' : 'text-slate-700'}`}
         >
@@ -2791,152 +2654,32 @@ export default function MedicalRecordsModule() {
       className={`min-h-screen ${isNightMode ? 'bg-slate-950 text-slate-100' : 'bg-slate-50'}`}
     >
       <div className="space-y-6 p-4 sm:p-6">
-        <div
-          className={`relative overflow-hidden rounded-2xl border border-white/20 px-5 py-5 shadow-[0_22px_55px_-22px_rgba(13,94,86,0.4)] sm:rounded-3xl sm:px-7 sm:py-6 ${headerGradient}`}
-        >
-          <div
-            className={`pointer-events-none absolute -top-16 right-0 h-52 w-52 rounded-full ${themeColors.header.decorativeCircle} blur-3xl opacity-35`}
-          />
-          <div className="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex min-w-0 items-center gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/95 p-2 shadow-lg ring-2 ring-white/35">
-                <FolderHeart
-                  className="text-primary-700"
-                  size={26}
-                  strokeWidth={2.25}
-                />
-              </div>
-              <div className="min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/80">
-                  Clinical repository
-                </p>
-                <h1 className="text-xl font-bold tracking-tight text-white [text-rendering:optimizeLegibility] sm:text-2xl">
-                  Patient medical records
-                </h1>
-                <p className={`mt-0.5 text-sm ${themeColors.accent.muted}`}>
-                  Unified chart · all departments
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setShowExportModal(true)}
-                className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-[#0d5e56] shadow-lg ring-1 ring-white/60 transition hover:bg-emerald-50"
-                title="Export records"
-              >
-                <Download size={16} />
-                Export
-              </button>
-              <Button
-                variant="outline"
-                onClick={() => refetch()}
-                className="flex items-center gap-2 border-white/40 bg-white/15 text-white hover:bg-white/25"
-              >
-                <RefreshCw size={16} />
-                Refresh
-              </Button>
-            </div>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="font-display text-2xl font-bold text-slate-900">
+              Medical records
+            </h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Patient charts across every department.
+            </p>
           </div>
-        </div>
-
-        {/* Quick guide — high-contrast body text */}
-        <div
-          className={`mb-0 rounded-2xl border p-4 shadow-sm sm:p-5 ${
-            isNightMode
-              ? 'border-slate-700 bg-slate-900/80'
-              : 'border-slate-200 bg-white'
-          }`}
-        >
-          <div className="flex items-start gap-3">
-            <div
-              className={`flex-shrink-0 rounded-xl p-2 ${
-                isNightMode
-                  ? 'bg-primary-900/50 text-emerald-300'
-                  : 'bg-emerald-50 text-primary-700'
-              }`}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => refetch()}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50"
             >
-              <HelpCircle size={20} strokeWidth={2.25} />
-            </div>
-            <div className="min-w-0 flex-1">
-              <h3
-                className={`mb-2 text-sm font-semibold tracking-tight ${
-                  isNightMode ? 'text-slate-100' : 'text-slate-900'
-                }`}
-              >
-                How to use medical records
-              </h3>
-              <div
-                className={`grid grid-cols-1 gap-3 text-sm leading-relaxed md:grid-cols-3 ${
-                  isNightMode ? 'text-slate-300' : 'text-slate-700'
-                }`}
-              >
-                <div className="flex gap-2">
-                  <span
-                    className={`h-6 min-w-[1.5rem] rounded-md px-1.5 text-center text-xs font-bold leading-6 ${
-                      isNightMode
-                        ? 'bg-slate-700 text-white'
-                        : 'bg-slate-200 text-slate-900'
-                    }`}
-                  >
-                    1
-                  </span>
-                  <span>
-                    <strong
-                      className={
-                        isNightMode ? 'text-slate-100' : 'text-slate-900'
-                      }
-                    >
-                      Search & filter:
-                    </strong>{' '}
-                    Find patients by name, EMR, or phone; narrow by date and
-                    department.
-                  </span>
-                </div>
-                <div className="flex gap-2">
-                  <span
-                    className={`h-6 min-w-[1.5rem] rounded-md px-1.5 text-center text-xs font-bold leading-6 ${
-                      isNightMode
-                        ? 'bg-slate-700 text-white'
-                        : 'bg-slate-200 text-slate-900'
-                    }`}
-                  >
-                    2
-                  </span>
-                  <span>
-                    <strong
-                      className={
-                        isNightMode ? 'text-slate-100' : 'text-slate-900'
-                      }
-                    >
-                      Open chart:
-                    </strong>{' '}
-                    Row click opens the longitudinal record for that patient.
-                  </span>
-                </div>
-                <div className="flex gap-2">
-                  <span
-                    className={`h-6 min-w-[1.5rem] rounded-md px-1.5 text-center text-xs font-bold leading-6 ${
-                      isNightMode
-                        ? 'bg-slate-700 text-white'
-                        : 'bg-slate-200 text-slate-900'
-                    }`}
-                  >
-                    3
-                  </span>
-                  <span>
-                    <strong
-                      className={
-                        isNightMode ? 'text-slate-100' : 'text-slate-900'
-                      }
-                    >
-                      Drill down:
-                    </strong>{' '}
-                    Pick an encounter and module for labs, imaging, and notes.
-                  </span>
-                </div>
-              </div>
-            </div>
+              <RefreshCw size={15} />
+              Refresh
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowExportModal(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[#E9783F] px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#D96A36]"
+            >
+              <Download size={15} />
+              Export
+            </button>
           </div>
         </div>
 
@@ -2947,10 +2690,10 @@ export default function MedicalRecordsModule() {
         <Card
           className={`mb-6 overflow-hidden rounded-2xl border shadow-sm ${isNightMode ? 'border-slate-700 bg-slate-900' : 'border-slate-200/90'}`}
         >
-          <div className="p-4 sm:p-5">
-            <div className="flex items-center justify-between">
+          <div className="p-3 sm:p-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               {/* Search - Primary Filter */}
-              <div className="flex-1 max-w-xl">
+              <div className="w-full sm:flex-1 sm:max-w-xl">
                 <div className="relative">
                   <Search
                     className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
@@ -2988,7 +2731,7 @@ export default function MedicalRecordsModule() {
                 )}
                 <button
                   onClick={() => setShowFilterModal(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-primary-700 to-[#008545] text-white text-sm font-medium rounded-xl hover:shadow-lg transition-all"
+                  className="flex shrink-0 items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
                 >
                   <SlidersHorizontal size={16} />
                   Advanced Filter
@@ -3087,11 +2830,6 @@ export default function MedicalRecordsModule() {
               </div>
             )}
           </div>
-          <p
-            className={`text-xs ${isNightMode ? 'text-slate-500' : 'text-slate-500'}`}
-          >
-            Checkbox: multi-select · Row: open chart
-          </p>
         </div>
 
         {/* Patient Table */}
@@ -3106,7 +2844,7 @@ export default function MedicalRecordsModule() {
             <SkeletonTable rows={8} columns={4} />
           ) : patients && patients.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full table-fixed">
                 <thead
                   className={`border-b ${
                     isNightMode
@@ -3123,7 +2861,7 @@ export default function MedicalRecordsModule() {
                         title={selectAll ? 'Deselect all' : 'Select all'}
                       >
                         {selectAll ? (
-                          <CheckSquare size={18} className="text-green-600" />
+                          <CheckSquare size={18} className="text-[#E9783F]" />
                         ) : (
                           <Square size={18} className="text-gray-400" />
                         )}
@@ -3136,87 +2874,43 @@ export default function MedicalRecordsModule() {
                     >
                       <div className="flex items-center gap-1">
                         Patient
-                        <span
-                          className="text-gray-400 font-normal normal-case"
-                          title="Name, EMR and Service Number"
-                        >
-                          ℹ️
-                        </span>
                       </div>
                     </th>
                     <th
-                      className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
+                      className={`hidden px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider lg:table-cell ${
                         isNightMode ? 'text-slate-300' : 'text-slate-600'
                       }`}
                     >
                       <div className="flex items-center gap-1">
                         Category
-                        <span
-                          className="text-gray-400 font-normal normal-case"
-                          title="Civilian, Military, Dependent, etc."
-                        >
-                          ℹ️
-                        </span>
                       </div>
                     </th>
+                    
                     <th
-                      className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
-                        isNightMode ? 'text-slate-300' : 'text-slate-600'
-                      }`}
-                    >
-                      <div className="flex items-center gap-1">
-                        Clinics
-                        <span
-                          className="text-gray-400 font-normal normal-case"
-                          title="All departments the patient has visited"
-                        >
-                          ℹ️
-                        </span>
-                      </div>
-                    </th>
-                    <th
-                      className={`px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider ${
+                      className={`w-14 px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider ${
                         isNightMode ? 'text-slate-300' : 'text-slate-600'
                       }`}
                     >
                       <div className="flex items-center justify-center gap-1">
                         Visits
-                        <span
-                          className="text-gray-400 font-normal normal-case"
-                          title="Total number of encounters/visits"
-                        >
-                          ℹ️
-                        </span>
                       </div>
                     </th>
                     <th
-                      className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
+                      className={`hidden px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider xl:table-cell ${
                         isNightMode ? 'text-slate-300' : 'text-slate-600'
                       }`}
                     >
                       <div className="flex items-center gap-1">
                         Last Visit
-                        <span
-                          className="text-gray-400 font-normal normal-case"
-                          title="Date of most recent encounter"
-                        >
-                          ℹ️
-                        </span>
                       </div>
                     </th>
                     <th
-                      className={`px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider ${
+                      className={`hidden px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider xl:table-cell ${
                         isNightMode ? 'text-slate-300' : 'text-slate-600'
                       }`}
                     >
                       <div className="flex items-center gap-1">
                         Last Dept
-                        <span
-                          className="text-gray-400 font-normal normal-case"
-                          title="Department of most recent visit"
-                        >
-                          ℹ️
-                        </span>
                       </div>
                     </th>
                     <th
@@ -3226,12 +2920,6 @@ export default function MedicalRecordsModule() {
                     >
                       <div className="flex items-center justify-center gap-1">
                         View
-                        <span
-                          className="text-gray-400 font-normal normal-case"
-                          title="Click to open full record"
-                        >
-                          ℹ️
-                        </span>
                       </div>
                     </th>
                   </tr>

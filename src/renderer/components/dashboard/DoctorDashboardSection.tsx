@@ -20,6 +20,10 @@ import {
   Scissors,
 } from 'lucide-react';
 import { useAuth, AE_DEPARTMENTS } from '../../contexts/AuthContext';
+import {
+  isEmergencyFeatureEnabled,
+  isSpecialtyClinicsEnabled,
+} from '../../config/features';
 import { supabase } from '../../api/supabaseClient';
 import {
   EncounterDTO,
@@ -68,13 +72,18 @@ export default function DoctorDashboardSection() {
   const specialtyCode = (staff?.specialty_code || '').toUpperCase();
   // Only route to A&E if doctor is explicitly in an emergency department;
   // all other doctors (GOPD, specialty, unset) default to Consultation.
-  const isAE = AE_DEPARTMENTS.some(
+  const isAE =
+    isEmergencyFeatureEnabled() &&
+    AE_DEPARTMENTS.some(
     (dept) =>
       userDept.includes(dept.toLowerCase()) ||
       dept.toLowerCase().includes(userDept),
   );
   const isSpecialtyDoctor = Boolean(
-    specialtyCode && specialtyCode !== 'EMERGENCY' && !isAE,
+    isSpecialtyClinicsEnabled() &&
+      specialtyCode &&
+      specialtyCode !== 'EMERGENCY' &&
+      !isAE,
   );
 
   const { data: specialtyDashboard, isLoading: specialtyLoading } =
@@ -482,7 +491,7 @@ export default function DoctorDashboardSection() {
       className="w-full flex items-center justify-between px-5 py-3 hover:bg-slate-50 transition-colors text-left"
     >
       <div className="flex items-center gap-3 min-w-0">
-        <div className="h-9 w-9 rounded-full bg-[#e2f1f0] flex items-center justify-center text-[#0d5e56] font-bold text-xs flex-shrink-0">
+        <div className="h-9 w-9 rounded-full bg-[#e2f1f0] flex items-center justify-center text-[#11151C] font-bold text-xs flex-shrink-0">
           {p.patient_name
             .split(' ')
             .map((n) => n[0])
@@ -528,7 +537,7 @@ export default function DoctorDashboardSection() {
             label: primaryLabel,
             icon: isAE ? Siren : Stethoscope,
             path: primaryPath,
-            color: 'bg-[#0d5e56]',
+            color: 'bg-[#E9783F]',
           },
           {
             label: 'Medical Records',
@@ -565,7 +574,7 @@ export default function DoctorDashboardSection() {
             >
               <action.icon size={16} />
             </div>
-            <span className="font-semibold text-slate-700 text-xs group-hover:text-[#0d5e56] transition-colors truncate">
+            <span className="font-semibold text-slate-700 text-xs group-hover:text-[#11151C] transition-colors truncate">
               {action.label}
             </span>
           </button>
@@ -578,17 +587,17 @@ export default function DoctorDashboardSection() {
         <div className="bg-white rounded-xl border border-slate-100 shadow-sm">
           <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
             <h3 className="font-bold text-slate-800 flex items-center gap-2">
-              <Stethoscope size={16} className="text-[#0d5e56]" />
+              <Stethoscope size={16} className="text-[#11151C]" />
               My Patients
               {myPatients.length > 0 && (
-                <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-bold bg-[#e2f1f0] text-[#0d5e56]">
+                <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-bold bg-[#e2f1f0] text-[#11151C]">
                   {myPatients.length}
                 </span>
               )}
             </h3>
             <button
               onClick={() => navigate(primaryPath)}
-              className="text-xs font-bold text-[#0d5e56] hover:underline flex items-center gap-1"
+              className="text-xs font-bold text-[#11151C] hover:underline flex items-center gap-1"
             >
               Open {primaryLabel} <ChevronRight size={14} />
             </button>
@@ -614,7 +623,7 @@ export default function DoctorDashboardSection() {
                 </p>
                 <button
                   onClick={() => navigate(primaryPath)}
-                  className="mt-3 text-xs font-bold text-[#0d5e56] hover:underline"
+                  className="mt-3 text-xs font-bold text-[#11151C] hover:underline"
                 >
                   Go to {primaryLabel} →
                 </button>

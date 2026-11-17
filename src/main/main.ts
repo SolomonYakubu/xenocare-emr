@@ -12,7 +12,7 @@ import 'dotenv/config'; // Load .env file first
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, screen } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { z } from 'zod';
@@ -309,6 +309,12 @@ if (isDebug) {
 }
 
 const installExtensions = async () => {
+  // Dev escape hatch: the extension download can hang on restricted networks,
+  // which blocks window creation. Set SKIP_DEVTOOLS=true to boot without it.
+  if (isEnvEnabled(process.env.SKIP_DEVTOOLS)) {
+    return;
+  }
+
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
   const extensions = ['REACT_DEVELOPER_TOOLS'];
@@ -347,10 +353,22 @@ const createWindow = async () => {
     }
   };
 
+  const workArea = screen.getPrimaryDisplay().workAreaSize;
+  const initialWidth = Math.min(
+    1600,
+    Math.max(1280, Math.round(workArea.width * 0.92)),
+  );
+  const initialHeight = Math.min(
+    1000,
+    Math.max(820, Math.round(workArea.height * 0.92)),
+  );
+
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    width: initialWidth,
+    height: initialHeight,
+    minWidth: 1100,
+    minHeight: 720,
     icon: getAssetPath('xenocare-logo.png'),
     backgroundColor: '#006838', // XenoCare green - shows immediately while loading
     webPreferences: {

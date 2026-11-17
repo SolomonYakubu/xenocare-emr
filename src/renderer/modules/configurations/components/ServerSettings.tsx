@@ -158,7 +158,7 @@ export default function ServerSettings() {
               Server Connection
             </h2>
             <p className="text-sm text-gray-500">
-              Manage your EMR server connection
+              Connect this computer to the hospital server
             </p>
           </div>
         </div>

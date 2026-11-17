@@ -60,6 +60,8 @@ const electronHandler = {
   // Server configuration (for client setup)
   serverConfig: {
     get: () => ipcRenderer.invoke('serverConfig:get'),
+    getSync: () => ipcRenderer.sendSync('serverConfig:getSync'),
+    lanInfo: () => ipcRenderer.invoke('serverConfig:lanInfo'),
     needsSetup: () => ipcRenderer.invoke('serverConfig:needsSetup'),
     testConnection: (serverUrl: string) =>
       ipcRenderer.invoke('serverConfig:testConnection', serverUrl),

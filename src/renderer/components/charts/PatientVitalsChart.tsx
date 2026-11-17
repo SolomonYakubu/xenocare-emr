@@ -218,7 +218,7 @@ function TempChart({ data }: { data: any[] }) {
         <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#9ca3af' }} />
         <YAxis domain={[35, 42]} tick={{ fontSize: 10, fill: '#9ca3af' }} />
         <Tooltip content={<TempTooltip />} />
-        <Area type="monotone" dataKey="temperature" stroke="#f97316" fill="#fff7ed" strokeWidth={2.5} dot={{ r: 4, fill: '#f97316', strokeWidth: 1, stroke: '#fff' }} connectNulls />
+        <Area type="monotone" dataKey="temperature" stroke="#E9783F" fill="#fff7ed" strokeWidth={2.5} dot={{ r: 4, fill: '#E9783F', strokeWidth: 1, stroke: '#fff' }} connectNulls />
       </ComposedChart>
     </ResponsiveContainer>
   );

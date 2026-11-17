@@ -2,6 +2,18 @@
 
 This repository contains the NDC Medical Centre desktop EMR. This root README is written as both a product overview and a user training guide so staff, supervisors, trainers, administrators, and IT support teams can use one document as the starting point.
 
+## Deployment notes (MUHEDA)
+
+This installation is intentionally narrowed:
+
+- **A&E** and **Hygiene & Infection Control** are hidden.
+- **Specialty Clinics**, **Dental**, **Ophthalmology** and **Physiotherapy** are hidden.
+- **NHIS** and **military-specific** fields/workflows are hidden.
+- **In-Patient** uses a flat bed board — no ward selection is required.
+- **Radiology** records external results (text + optional image) without internal scheduling/imaging phases.
+
+These switches live in `src/renderer/config/features.ts`.
+
 Module visibility in the app is role-based. If a module described below does not appear in the left sidebar for a user, that is usually expected behavior based on role, department, or specialty assignment.
 
 ## Table of Contents
@@ -2137,6 +2149,21 @@ Expected environment variables include the Supabase URL and key settings used by
 npm install
 npm start
 ```
+
+### Run a Windows server (LAN)
+
+One PC runs the database/API with Docker; every other PC runs the app as a
+client and joins it from **Server settings** on the login screen.
+
+```powershell
+npm install
+powershell -NoProfile -ExecutionPolicy Bypass `
+  -File .\scripts\local-db\install-server-task.ps1
+```
+
+That adds the firewall rules, registers a start-at-sign-in task, starts the
+stack, seeds the database only if it is empty, and prints the LAN URL and anon
+key. Full details: `scripts/local-db/README.md`.
 
 ### Package the Desktop App
 

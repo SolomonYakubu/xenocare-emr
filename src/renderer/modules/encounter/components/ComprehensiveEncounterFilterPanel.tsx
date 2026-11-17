@@ -976,7 +976,7 @@ export function ComprehensiveEncounterFilterPanel({
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                     <input
                       type="text"
-                      placeholder="Global search - Search by patient name, EMR number, phone, diagnosis..."
+                      placeholder="Global search - Search by patient name, patient number, phone, diagnosis..."
                       value={filters.searchQuery}
                       onChange={(e) =>
                         updateFilter('searchQuery', e.target.value)
@@ -1013,7 +1013,7 @@ export function ComprehensiveEncounterFilterPanel({
                     <Hash className="h-4 w-4 text-primary-700" />
                     Identity Search
                   </h3>
-                  <p className="text-[10px] italic text-indigo-500/70 mb-2 -mt-2">Search by encounter number, EMR number, or patient name.</p>
+                  <p className="text-[10px] italic text-indigo-500/70 mb-2 -mt-2">Search by encounter number, patient number, or patient name.</p>
                   <div className="space-y-3">
                     <div>
                       <label className="block text-xs text-gray-500 mb-1.5 font-medium">
@@ -1031,11 +1031,11 @@ export function ComprehensiveEncounterFilterPanel({
                     </div>
                     <div>
                       <label className="block text-xs text-gray-500 mb-1.5 font-medium">
-                        EMR Number
+                        Patient number
                       </label>
                       <input
                         type="text"
-                        placeholder="EMR number..."
+                        placeholder="patient number..."
                         value={filters.emrNumber}
                         onChange={(e) =>
                           updateFilter('emrNumber', e.target.value)
@@ -1346,7 +1346,11 @@ export function ComprehensiveEncounterFilterPanel({
                     <Shield className="h-4 w-4 text-primary-700" />
                     Patient Category
                   </h3>
-                  <p className="text-[10px] italic text-indigo-500/70 mb-2 -mt-2">Choose NHIS, private, or other payment categories.</p>
+                  <p className="text-[10px] italic text-indigo-500/70 mb-2 -mt-2">
+                    {isNhisFeatureEnabled()
+                      ? 'Choose NHIS, private, or other payment categories.'
+                      : 'Choose the payment category for this visit.'}
+                  </p>
                   <div className="space-y-3">
                     <div>
                       <label className="block text-xs text-gray-500 mb-1.5 font-medium">

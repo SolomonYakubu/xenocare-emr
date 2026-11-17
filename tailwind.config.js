@@ -5,18 +5,40 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Xenolink ink scale — primary action/chrome colour
         primary: {
-          50: '#f2fcf5',
-          100: '#e1f8e8',
-          200: '#c3eed2',
-          300: '#94deb2',
-          400: '#5bc68b',
-          500: '#34a868',
-          600: '#258850',
-          700: '#006400', // NDC Green — single source of truth
-          800: '#195838',
-          900: '#154830',
-          950: '#0b281b',
+          50: '#fff4ee',
+          100: '#ffe6d8',
+          200: '#ffcbb0',
+          300: '#ffa77f',
+          400: '#ff814d',
+          500: '#e9783f', // action orange
+          600: '#d96a36',
+          700: '#c25b2e',
+          800: '#a53e0c',
+          900: '#86340d',
+          950: '#4a1a05',
+        },
+        // Xenolink orange accent
+        accent: {
+          50: '#fff4ef',
+          100: '#ffe6da',
+          200: '#ffcab3',
+          300: '#ffa681',
+          400: '#ff7f4f',
+          500: '#ff5a1f', // Xenolink orange
+          600: '#e14e16',
+          700: '#c13f0f',
+          800: '#99320c',
+          900: '#7a2a0b',
+        },
+        brand: {
+          ink: '#11151c',
+          paper: '#f4f2ee',
+          'paper-deep': '#eceae4',
+          accent: '#e9783f',
+          'accent-deep': '#d96a36',
+          muted: '#6b7280',
         },
         // Semantic status tokens — use instead of raw emerald/red/amber/blue
         success: {
@@ -58,6 +80,25 @@ module.exports = {
           subtle: '#f3f4f6', // gray-100
           raised: '#ffffff',
         },
+      },
+      fontFamily: {
+        sans: [
+          'InterVariable',
+          'Inter',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'Helvetica Neue',
+          'Arial',
+          'sans-serif',
+        ],
+        display: [
+          'PlusJakarta',
+          'InterVariable',
+          'Inter',
+          '-apple-system',
+          'sans-serif',
+        ],
       },
       borderRadius: {
         // Enterprise radius scale

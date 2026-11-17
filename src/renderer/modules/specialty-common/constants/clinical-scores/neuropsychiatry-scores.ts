@@ -147,7 +147,7 @@ export const PHQ9_SCORE: ClinicalScoreDefinition = {
       min: 15,
       max: 19,
       label: 'Moderately Severe',
-      color: '#f97316',
+      color: '#E9783F',
       clinical_action:
         'Active treatment required. Antidepressants and/or psychotherapy strongly recommended.',
     },
@@ -477,7 +477,7 @@ export const MMSE_SCORE: ClinicalScoreDefinition = {
       min: 10,
       max: 17,
       label: 'Moderate Impairment',
-      color: '#f97316',
+      color: '#E9783F',
       clinical_action:
         'Moderate dementia or significant cognitive impairment. Functional assessment and carer involvement required.',
     },

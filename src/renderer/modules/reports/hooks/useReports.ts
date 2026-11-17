@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR
+ * XenoCare
  * Report System — TanStack Query Hooks
  *
  * These hooks are used by the per-module export panels and report modals.

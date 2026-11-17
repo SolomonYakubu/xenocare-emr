@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR
+ * XenoCare
  * Export Audit Logger
  *
  * Every export action is logged to the clinical_audit_log via the

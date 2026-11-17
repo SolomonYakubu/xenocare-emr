@@ -194,7 +194,7 @@ export default function NursingCareList({
           </div>
           <input
             type="text"
-            placeholder="Search by patient name, EMR number, or phone number..."
+            placeholder="Search by patient name, patient number, or phone number..."
             value={searchQuery}
             onChange={handleSearch}
             className="w-full pl-10 pr-4 py-3 text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent placeholder-gray-400"

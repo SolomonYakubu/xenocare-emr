@@ -39,7 +39,7 @@ export const GlobalLoading: React.FC = () => {
 
   return (
     <div className="fixed top-0 left-0 w-full h-1 z-[9999]">
-      <div className="h-full bg-blue-600 animate-progress origin-left" />
+      <div className="h-full bg-[#E9783F] animate-progress origin-left" />
     </div>
   );
 };

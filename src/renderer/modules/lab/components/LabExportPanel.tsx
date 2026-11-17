@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR — Lab Export Panel
+ * XenoCare — Lab Export Panel
  * Inline export toolbar for the Lab module page.
  */
 
@@ -31,7 +31,7 @@ export function LabExportPanel({ data }: LabExportPanelProps) {
   if (!canExport) return null;
 
   const headers = [
-    'EMR Number',
+    'Patient number',
     'Patient',
     'Test Name',
     'Category',

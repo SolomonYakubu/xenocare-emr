@@ -1,6 +1,6 @@
 /**
  * =============================================================================
- * XenoCare EMR — Central Application Branding
+ * XenoCare — Central Application Branding
  *
  * Single source of truth for the APPLICATION brand (the software product).
  * The FACILITY brand (the hospital/clinic using the software) is configurable
@@ -11,21 +11,21 @@
 
 export const APP_NAME = 'XenoCare';
 export const APP_NAME_UPPER = 'XENOCARE';
-export const APP_FULL_NAME = 'XenoCare EMR';
-export const APP_TAGLINE = 'Modern Care. Connected.';
-export const APP_VENDOR = 'Xenolink Technologies';
-export const APP_VENDOR_SHORT = 'Xenolink';
-export const APP_POWERED_BY = 'Powered by Xenolink';
-export const APP_WEBSITE = 'https://xenolink.tech';
+export const APP_FULL_NAME = 'XenoCare';
+export const APP_TAGLINE = 'Clinical systems, connected.';
+export const APP_VENDOR = 'XenoCare';
+export const APP_VENDOR_SHORT = 'XenoCare';
+export const APP_POWERED_BY = 'XenoCare';
+export const APP_WEBSITE = '';
 
 /**
- * Xenolink conventional palette (from the corporate wordmark):
+ * XenoCare conventional palette (from the corporate wordmark):
  * deep navy is the primary brand colour, orange is the accent.
  */
-export const APP_PRIMARY_COLOR_RGB: [number, number, number] = [14, 42, 71];
-export const APP_PRIMARY_COLOR_HEX = '#0E2A47';
-export const APP_ACCENT_COLOR_RGB: [number, number, number] = [249, 115, 22];
-export const APP_ACCENT_COLOR_HEX = '#F97316';
+export const APP_PRIMARY_COLOR_RGB: [number, number, number] = [17, 21, 28];
+export const APP_PRIMARY_COLOR_HEX = '#11151C';
+export const APP_ACCENT_COLOR_RGB: [number, number, number] = [255, 90, 31];
+export const APP_ACCENT_COLOR_HEX = '#E9783F';
 
 /** Clinical green retained by existing document themes (RGB for jsPDF). */
 export const APP_BRAND_COLOR_RGB: [number, number, number] = [22, 101, 52];
@@ -68,7 +68,7 @@ export const FACILITY_BRAND_COLORS: FacilityBrand['colors'] = {
   secondary: '#15803d', // Green-700
   accent: '#22c55e', // Green-500
   success: '#16a34a', // Green-600 (semantic)
-  warning: '#ea580c', // Orange-600 (semantic)
+  warning: '#D96A36', // Orange-600 (semantic)
   danger: '#dc2626', // Red-600 (semantic)
   text: '#111827', // Gray-900
   textLight: '#6b7280', // Gray-500

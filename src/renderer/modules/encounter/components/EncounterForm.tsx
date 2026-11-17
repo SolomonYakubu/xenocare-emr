@@ -54,21 +54,13 @@ import {
   useReferralQueue,
 } from '../../nhis/hooks';
 import { createScopedLogger } from '../../../utils/logger';
-import { isNhisFeatureEnabled } from '../../../config/features';
+import {
+  isEmergencyFeatureEnabled,
+  isNhisFeatureEnabled,
+} from '../../../config/features';
 import { DEPLOYMENT } from '../../../config/deployment';
 
 const log = createScopedLogger('EncounterForm');
-
-// XenoCare Logo component
-function XenoCareLogo() {
-  return (
-    <img
-      src={require('../../../../../assets/xenocare-logo.png')}
-      alt="XenoCare Logo"
-      className="h-10 w-auto"
-    />
-  );
-}
 
 // Patient search result type - mapped from PatientDTO
 interface PatientSearchResult {
@@ -717,8 +709,9 @@ const EncounterForm: React.FC<EncounterFormProps> = ({
     }
     return (Array.from(VisitTypes) as VisitType[]).filter(
       (visitType) =>
-        isNhisFeatureEnabled() ||
-        visitType !== 'Referred NHIS Patient (External)',
+        (isNhisFeatureEnabled() ||
+          visitType !== 'Referred NHIS Patient (External)') &&
+        (isEmergencyFeatureEnabled() || visitType !== 'A&E'),
     );
   }, [isReferralAndUnverified]);
 
@@ -1045,9 +1038,6 @@ const EncounterForm: React.FC<EncounterFormProps> = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 {/* XenoCare Logo */}
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white p-1.5">
-                  <XenoCareLogo />
-                </div>
                 <div>
                   <h2 className="text-lg font-bold text-white">
                     New Encounter
@@ -1116,7 +1106,7 @@ const EncounterForm: React.FC<EncounterFormProps> = ({
                     <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
                     <input
                       type="text"
-                      placeholder="Search by name, service number, EMR number, or phone..."
+                      placeholder="Search by name, service number, patient number, or phone..."
                       value={patientSearchQuery}
                       onChange={(e) => setPatientSearchQuery(e.target.value)}
                       className="w-full rounded-lg border-2 border-gray-300 py-3 pl-10 pr-4 text-sm focus:border-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-700/20"
@@ -1211,7 +1201,7 @@ const EncounterForm: React.FC<EncounterFormProps> = ({
                 <div className="flex items-center gap-2 text-sm text-gray-500 bg-amber-50 border border-amber-200 rounded-lg p-3">
                   <AlertCircle className="h-4 w-4 text-amber-600" />
                   <span>
-                    Search by name, phone, EMR number (e.g. "1" or "000001"
+                    Search by name, phone, patient number (e.g. "1" or "000001"
                     for {DEPLOYMENT.emrPrefix}-000001)
                   </span>
                 </div>
@@ -2433,7 +2423,7 @@ const EncounterForm: React.FC<EncounterFormProps> = ({
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">EMR Number</span>
+                      <span className="text-gray-600">Patient number</span>
                       <span className="font-medium">
                         {selectedPatient?.emr_number || '-'}
                       </span>

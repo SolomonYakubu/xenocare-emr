@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR — Physiotherapy Report API
+ * XenoCare — Physiotherapy Report API
  */
 
 import { supabase } from '../../../api/supabaseClient';

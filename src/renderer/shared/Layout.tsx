@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import type { LucideIcon } from 'lucide-react';
 import {
   LogOut,
   ChevronLeft,
@@ -8,6 +9,9 @@ import {
   Sun,
   Moon,
   Sparkles,
+  Table2,
+  Waves,
+  RotateCcw,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { menuItems as staticMenuItems } from '../config/menu';
@@ -16,12 +20,19 @@ import { NotificationBell } from '../components/ui/NotificationBell';
 import { useTimeTheme } from '../hooks/useTimeTheme';
 import { useUnreadCount } from '../modules/messaging/hooks/useMessaging';
 import { GlobalPatientSearch } from '../components/shared/GlobalPatientSearch';
-import XenoCareLogo from '../components/shared/XenoCareLogo';
-import { APP_POWERED_BY } from '../shared/constants/branding';
+import {
+  TEXT_SIZE_MAX,
+  TEXT_SIZE_MIN,
+  useAppearance,
+} from '../hooks/useAppearance';
 
 interface SidebarItemProps {
   to: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{
+    className?: string;
+    size?: number;
+    strokeWidth?: number;
+  }>;
   label: string;
   collapsed?: boolean;
   onClick?: () => void;
@@ -67,7 +78,7 @@ function SidebarItem({
         className={`flex items-center ${collapsed ? 'justify-center' : ''} px-3 py-2.5 rounded-[1.1rem] transition-all duration-300 group relative antialiased ${
           isActive
             ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-700/25 ring-1 ring-white/25'
-            : 'text-stone-800 hover:bg-white/80 hover:text-emerald-800 hover:shadow-md hover:shadow-stone-200/80'
+            : 'text-stone-800 hover:bg-white/80 hover:text-[#11151C] hover:shadow-md hover:shadow-stone-200/80'
         }`}
       >
         <div
@@ -117,12 +128,12 @@ function SidebarItem({
         title={collapsed ? label : undefined}
         className={`flex items-center antialiased ${collapsed ? 'justify-center px-2' : 'px-3.5 mx-1.5'} py-2.5 rounded-[1.1rem] transition-all duration-200 group relative ${
           isActive
-            ? 'bg-white/22 text-white shadow-[0_6px_20px_-6px_rgba(0,0,0,0.4),inset_0_1px_0_0_rgba(255,255,255,0.25)] ring-1 ring-white/30 font-bold'
-            : 'text-white/95 hover:bg-white/14 hover:text-white hover:shadow-lg hover:shadow-black/15 font-semibold'
+            ? 'bg-[#E9783F] text-white shadow-[0_10px_24px_-10px_rgba(255,90,31,0.8)] ring-1 ring-white/25 font-bold'
+            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 font-semibold'
         }`}
       >
         <div
-          className={`${collapsed ? '' : 'mr-3'} shrink-0 ${isActive ? 'text-cyan-50' : 'text-teal-50/90 group-hover:text-white'}`}
+          className={`${collapsed ? '' : 'mr-3'} shrink-0 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-700'}`}
         >
           {imageSrc ? (
             <img
@@ -139,7 +150,7 @@ function SidebarItem({
           )}
         </div>
         {!collapsed && (
-          <span className="text-[15px] sm:text-[16px] leading-snug tracking-tight [text-rendering:optimizeLegibility]">
+          <span className="text-[14px] sm:text-[14.5px] leading-snug tracking-tight whitespace-nowrap [text-rendering:optimizeLegibility]">
             {label}
           </span>
         )}
@@ -151,7 +162,7 @@ function SidebarItem({
         )}
         {!isActive && BadgeComponent}
         {isActive && !collapsed && !badge && (
-          <span className="absolute right-3.5 top-1/2 -translate-y-1/2 h-1.5 w-1.5 rounded-full bg-cyan-100 shadow-[0_0_10px_rgba(207,250,254,0.95)] ring-1 ring-white/40" />
+          <span className="absolute right-3.5 top-1/2 -translate-y-1/2 h-1.5 w-1.5 rounded-full bg-white/90 shadow-[0_0_10px_rgba(255,255,255,0.9)] ring-1 ring-white/40" />
         )}
       </Link>
     );
@@ -165,12 +176,12 @@ function SidebarItem({
       title={collapsed ? label : undefined}
       className={`flex items-center antialiased ${collapsed ? 'justify-center' : ''} px-4 py-2.5 transition-all duration-200 group relative rounded-[1.1rem] mx-1.5 shadow-sm ${
         isActive
-          ? 'bg-emerald-50 text-[#0d5e56] border border-emerald-200/80 font-bold shadow-md'
+          ? 'bg-[#E9783F]/10 text-[#11151C] border border-[#E9783F]/25 font-bold shadow-md'
           : 'text-slate-700 hover:bg-white hover:text-slate-900 border border-transparent font-semibold hover:shadow'
       }`}
     >
       <div
-        className={`${collapsed ? '' : 'mr-3'} ${isActive ? 'text-[#0d5e56]' : 'text-slate-400 group-hover:text-[#0d5e56]'}`}
+        className={`${collapsed ? '' : 'mr-3'} ${isActive ? 'text-[#11151C]' : 'text-slate-400 group-hover:text-[#11151C]'}`}
       >
         {imageSrc ? (
           <img
@@ -198,12 +209,130 @@ function SidebarItem({
   );
 }
 
+function PreferenceToggle({
+  icon: Icon,
+  label,
+  description,
+  checked,
+  onChange,
+  isNightMode,
+}: {
+  icon: LucideIcon;
+  label: string;
+  description?: string;
+  checked: boolean;
+  onChange: (value: boolean) => void;
+  isNightMode: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className={`flex w-full items-center justify-between gap-3 rounded-lg px-2 py-1.5 text-left transition-colors ${
+        isNightMode ? 'hover:bg-slate-700' : 'hover:bg-slate-50'
+      }`}
+    >
+      <span className="flex items-center gap-2">
+        <Icon
+          size={14}
+          className={isNightMode ? 'text-slate-400' : 'text-slate-500'}
+        />
+        <span>
+          <span
+            className={`block text-xs font-semibold ${
+              isNightMode ? 'text-slate-200' : 'text-slate-700'
+            }`}
+          >
+            {label}
+          </span>
+          {description && (
+            <span
+              className={`block text-[11px] ${
+                isNightMode ? 'text-slate-400' : 'text-slate-500'
+              }`}
+            >
+              {description}
+            </span>
+          )}
+        </span>
+      </span>
+      <span
+        className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${
+          checked
+            ? 'bg-[#E9783F]'
+            : isNightMode
+              ? 'bg-slate-600'
+              : 'bg-slate-200'
+        }`}
+      >
+        <span
+          className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
+            checked ? 'translate-x-[18px]' : 'translate-x-0.5'
+          }`}
+        />
+      </span>
+    </button>
+  );
+}
+
 export default function Layout() {
   const { user, signOut, canAccessModule, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  // Dev-only E2E hook so the module sweep can exercise routes that are not
+  // exposed in the sidebar (Queue, Profile, Sync Center).
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') {
+      (
+        window as unknown as {
+          __xenoNavigate?: typeof navigate;
+          __xenoSignOut?: typeof signOut;
+        }
+      ).__xenoNavigate = navigate;
+      (
+        window as unknown as {
+          __xenoSignOut?: typeof signOut;
+        }
+      ).__xenoSignOut = signOut;
+    }
+  }, [navigate, signOut]);
+
   const location = useLocation();
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+    try {
+      return window.localStorage.getItem('xenocare.sidebar-collapsed') === '1';
+    } catch {
+      return false;
+    }
+  });
+  const toggleSidebar = () => {
+    setSidebarCollapsed((collapsed) => {
+      const next = !collapsed;
+      try {
+        window.localStorage.setItem(
+          'xenocare.sidebar-collapsed',
+          next ? '1' : '0',
+        );
+      } catch {
+        /* ignore storage errors */
+      }
+      return next;
+    });
+  };
+
+  // User-adjustable text size, table density and motion preferences.
+  const {
+    textSize,
+    compactTables,
+    reduceMotion,
+    setTextSize,
+    setCompactTables,
+    setReduceMotion,
+    resetAppearance,
+  } = useAppearance();
 
   // Get dynamic menu items based on user's specialty
   const { menuItems } = useDynamicMenuItems();
@@ -280,101 +409,58 @@ export default function Layout() {
   const sidebarShellClass = useMemo(() => {
     const width =
       'transition-[width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]';
-    if (isCrystalMode) {
-      return `${width} bg-gradient-to-b from-[#fafcfb] via-white to-[#f3f7f5] border-r border-stone-200/80`;
-    }
-    if (themeMode === 'navy') {
-      return `${width} bg-gradient-to-b ${themeColors.sidebar.gradient} border-r border-white/12`;
-    }
-    if (isNightMode) {
-      return `${width} bg-gradient-to-b ${themeColors.sidebar.gradient} border-r border-slate-600/50`;
-    }
-    return `${width} bg-gradient-to-b ${themeColors.header.gradient} border-r border-white/20`;
-  }, [
-    isCrystalMode,
-    themeMode,
-    isNightMode,
-    themeColors.sidebar.gradient,
-    themeColors.header.gradient,
-  ]);
+    return `${width} bg-white border-r border-slate-200/80`;
+  }, []);
 
-  const sidebarElevation = useMemo(() => {
-    if (isCrystalMode) {
-      return 'shadow-[16px_0_48px_-14px_rgba(13,94,86,0.16),6px_0_20px_-6px_rgba(0,0,0,0.08)]';
-    }
-    if (isNightMode) {
-      return 'shadow-[16px_0_40px_-12px_rgba(0,0,0,0.58),inset_-1px_0_0_rgba(255,255,255,0.05)]';
-    }
-    return 'shadow-[18px_0_50px_-14px_rgba(13,94,86,0.32),10px_0_32px_-10px_rgba(15,23,42,0.14),inset_-1px_0_0_rgba(255,255,255,0.14)]';
-  }, [isCrystalMode, isNightMode]);
+  const sidebarElevation = useMemo(
+    () => '',
+    [],
+  );
 
   return (
     <div
-      className={`flex h-screen min-h-0 w-full min-w-0 overflow-x-hidden ${isNightMode ? 'bg-slate-900' : 'bg-gray-100'}`}
+      className="flex h-screen min-h-0 w-full min-w-0 overflow-x-hidden bg-[#F5F5F7]"
     >
       {/* Sidebar ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â compact width, soft geometry, floating shadow stack */}
       <aside
         className={`${
           sidebarCollapsed
             ? 'w-[3.75rem]'
-            : 'w-[12.5rem] sm:w-[13rem] lg:w-[13.5rem]'
-        } max-h-screen flex flex-col shrink-0 relative z-20 overflow-hidden rounded-r-[1.65rem] antialiased [text-rendering:optimizeLegibility] ${sidebarElevation} ${sidebarShellClass}`}
+            : 'w-[13.5rem] sm:w-[14.5rem] lg:w-[15rem]'
+        } max-h-screen flex flex-col shrink-0 relative z-20 overflow-hidden antialiased [text-rendering:optimizeLegibility] ${sidebarElevation} ${sidebarShellClass}`}
       >
         <div
           className={`flex-shrink-0 border-b ${
             isCrystalMode
               ? 'border-stone-200/70 bg-white/55'
-              : 'border-white/12 bg-black/10'
+              : 'border-slate-200 bg-white'
           } ${sidebarCollapsed ? 'px-2 pt-3 pb-2.5' : 'px-3 pt-3.5 pb-3'}`}
         >
           <div
             className={`flex ${sidebarCollapsed ? 'flex-col items-center gap-2.5' : 'items-center gap-2.5'}`}
           >
-            <div
-              className={`relative flex items-center justify-center flex-shrink-0 rounded-[1.25rem] shadow-[0_6px_18px_-6px_rgba(0,0,0,0.22)] ring-1 transition-all duration-300 ${
-                isCrystalMode
-                  ? 'bg-white ring-stone-200/85'
-                  : 'bg-white ring-white/40'
-              } ${sidebarCollapsed ? 'h-9 w-9 p-1' : 'h-10 w-10 sm:h-11 sm:w-11 p-1.5'}`}
-            >
-              <XenoCareLogo
-                variant="brand"
-                compact
-                className="h-full w-full"
-              />
-            </div>
-
-            {!sidebarCollapsed && (
-              <div className="min-w-0 flex-1 pr-0.5">
-                <p
-                  className={`text-[10px] font-bold uppercase tracking-[0.17em] leading-tight ${
-                    isCrystalMode ? 'text-emerald-800' : 'text-white/95'
-                  }`}
-                >
+            {sidebarCollapsed ? (
+              <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-[#E9783F]/10 text-[9px] font-black uppercase tracking-[0.08em] text-[#D96A36]">
+                XC
+              </div>
+            ) : (
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[15px] font-bold tracking-tight text-slate-900">
                   XenoCare
-                </p>
-                <p
-                  className={`mt-0.5 text-[17px] font-bold leading-tight tracking-tight ${
-                    isCrystalMode
-                      ? 'text-[#0d5e56]'
-                      : 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.18)]'
-                  }`}
-                >
-                  EMR
                 </p>
               </div>
             )}
 
             <button
               type="button"
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              onClick={toggleSidebar}
               aria-label={
                 sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
               }
               className={`flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-full border text-sm transition-all duration-200 shadow-[0_4px_12px_-2px_rgba(0,0,0,0.25)] ${
                 isCrystalMode
-                  ? 'border-stone-200/90 bg-white text-[#0d5e56] hover:bg-emerald-50 hover:shadow-lg'
-                  : 'border-white/30 bg-white/15 text-white hover:bg-white/25 hover:shadow-lg'
+                  ? 'border-stone-200/90 bg-white text-[#11151C] hover:bg-[#E9783F]/10 hover:shadow-lg'
+                  : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:shadow-sm'
               }`}
             >
               {sidebarCollapsed ? (
@@ -388,11 +474,7 @@ export default function Layout() {
 
         <nav
           className={`mt-0.5 flex-1 overflow-y-auto space-y-1 px-1.5 pb-3 scrollbar-thin ${
-            surfaceDeep && isNightMode
-              ? 'scrollbar-thumb-slate-600'
-              : surfaceDeep
-                ? 'scrollbar-thumb-teal-300/40'
-                : 'scrollbar-thumb-stone-300'
+            'scrollbar-thumb-slate-200'
           }`}
         >
           {accessibleNavItems.map((item) => (
@@ -411,22 +493,13 @@ export default function Layout() {
         </nav>
 
         <div className="mt-auto flex flex-col pb-5 pt-1 px-1.5">
-          {!sidebarCollapsed && (
-            <p
-              className={`mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.14em] ${
-                isCrystalMode ? 'text-emerald-700' : 'text-green-200/80'
-              }`}
-            >
-              {APP_POWERED_BY}
-            </p>
-          )}
           <button
             type="button"
             onClick={handleSignOut}
             className={`flex items-center antialiased ${sidebarCollapsed ? 'justify-center px-2' : 'mx-0 px-3'} py-2.5 text-[15px] font-semibold transition-all duration-200 group rounded-[1.1rem] border border-transparent [text-rendering:optimizeLegibility] ${
               isCrystalMode
                 ? 'text-stone-600 hover:bg-stone-100 hover:text-stone-900 hover:shadow-sm'
-                : 'text-white/90 hover:bg-white/12 hover:text-white hover:shadow-md hover:shadow-black/10'
+                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
             }`}
           >
             <LogOut
@@ -450,11 +523,11 @@ export default function Layout() {
               ? 'bg-slate-950'
               : themeMode === 'navy'
                 ? 'bg-[#f4f7f6]'
-                : 'bg-gradient-to-r from-teal-100/45 via-[#eef6f5] to-[#eef6f5]'
+                : 'bg-[#F7F6F3]'
         }`}
       >
         <header
-          className={`shadow-[0_2px_10px_rgba(0,0,0,0.02)] z-10 sticky top-0 shrink-0 min-w-0 ${isNightMode ? 'bg-slate-800' : 'bg-white'}`}
+          className={`shadow-[0_2px_10px_rgba(0,0,0,0.02)] z-40 sticky top-0 shrink-0 min-w-0 ${isNightMode ? 'bg-slate-800' : 'bg-white'}`}
         >
           <div className="px-3 sm:px-5 md:px-6 py-3 sm:py-3.5 flex flex-col gap-3 min-[520px]:flex-row min-[520px]:justify-between min-[520px]:items-center min-h-[4rem] sm:min-h-[4.5rem] min-w-0">
             {/* Left side Search */}
@@ -473,7 +546,7 @@ export default function Layout() {
                   }`}
                 >
                   <span className="truncate pr-2">
-                    Search patient, records or workflows...
+                    Search patients, records or pages
                   </span>
                 </button>
               </div>
@@ -492,15 +565,17 @@ export default function Layout() {
               {/* Header User Avatar + Profile Menu */}
               <div className="relative">
                 <button
+                  type="button"
+                  aria-label="Open user menu"
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="w-10 h-10 rounded-full bg-[#0d5e56] overflow-hidden border-2 border-white shadow-sm flex items-center justify-center text-white font-bold"
+                  className="w-10 h-10 rounded-full bg-[#E9783F] overflow-hidden border-2 border-white flex items-center justify-center text-white font-bold"
                 >
                   {getUserInitials()}
                 </button>
 
                 {showUserMenu && (
                   <div
-                    className={`absolute right-0 top-12 w-72 rounded-2xl border shadow-xl z-50 overflow-hidden ${isNightMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}
+                    className={`absolute right-0 top-12 z-50 max-h-[80vh] w-72 overflow-y-auto rounded-2xl border shadow-xl ${isNightMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}
                   >
                     <div
                       className={`px-4 py-3 ${isNightMode ? 'border-b border-slate-700' : 'border-b border-slate-100'}`}
@@ -526,7 +601,7 @@ export default function Layout() {
                       <div className="grid grid-cols-3 gap-2">
                         <button
                           onClick={() => setThemeMode('auto')}
-                          className={`px-2 py-1.5 rounded-lg text-xs font-semibold transition-colors ${themeMode === 'auto' ? 'bg-[#0d5e56] text-white' : isNightMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+                          className={`px-2 py-1.5 rounded-lg text-xs font-semibold transition-colors ${themeMode === 'auto' ? 'bg-[#E9783F] text-white' : isNightMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
                         >
                           <span className="inline-flex items-center gap-1">
                             <Sun size={12} />
@@ -535,7 +610,7 @@ export default function Layout() {
                         </button>
                         <button
                           onClick={() => setThemeMode('navy')}
-                          className={`px-2 py-1.5 rounded-lg text-xs font-semibold transition-colors ${themeMode === 'navy' ? 'bg-[#0d5e56] text-white' : isNightMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+                          className={`px-2 py-1.5 rounded-lg text-xs font-semibold transition-colors ${themeMode === 'navy' ? 'bg-[#E9783F] text-white' : isNightMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
                         >
                           <span className="inline-flex items-center gap-1">
                             <Moon size={12} />
@@ -544,7 +619,7 @@ export default function Layout() {
                         </button>
                         <button
                           onClick={() => setThemeMode('crystal')}
-                          className={`px-2 py-1.5 rounded-lg text-xs font-semibold transition-colors ${themeMode === 'crystal' ? 'bg-[#0d5e56] text-white' : isNightMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+                          className={`px-2 py-1.5 rounded-lg text-xs font-semibold transition-colors ${themeMode === 'crystal' ? 'bg-[#E9783F] text-white' : isNightMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
                         >
                           <span className="inline-flex items-center gap-1">
                             <Sparkles size={12} />
@@ -558,6 +633,72 @@ export default function Layout() {
                         className={`w-full mt-3 px-3 py-2 rounded-lg text-xs font-semibold transition-colors ${isNightMode ? 'bg-slate-700 text-slate-200 hover:bg-slate-600' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
                       >
                         Cycle Theme Mode
+                      </button>
+
+                      <div className="mt-4">
+                        <div className="mb-2 flex items-center justify-between">
+                          <p
+                            className={`text-xs font-semibold uppercase tracking-wide ${isNightMode ? 'text-slate-400' : 'text-slate-500'}`}
+                          >
+                            Text size
+                          </p>
+                          <span
+                            className={`rounded-md px-1.5 py-0.5 text-[11px] font-bold ${isNightMode ? 'bg-slate-700 text-slate-200' : 'bg-slate-100 text-slate-600'}`}
+                          >
+                            {textSize}px
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`text-[11px] font-bold ${isNightMode ? 'text-slate-400' : 'text-slate-500'}`}
+                          >
+                            A
+                          </span>
+                          <input
+                            type="range"
+                            min={TEXT_SIZE_MIN}
+                            max={TEXT_SIZE_MAX}
+                            step={1}
+                            value={textSize}
+                            onChange={(event) =>
+                              setTextSize(Number(event.target.value))
+                            }
+                            aria-label="Text size"
+                            className="h-1.5 w-full cursor-pointer accent-[#E9783F]"
+                          />
+                          <span
+                            className={`text-base font-bold ${isNightMode ? 'text-slate-200' : 'text-slate-700'}`}
+                          >
+                            A
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="mt-3 space-y-1">
+                        <PreferenceToggle
+                          icon={Table2}
+                          label="Compact tables"
+                          description="Tighter rows in data tables"
+                          checked={compactTables}
+                          onChange={setCompactTables}
+                          isNightMode={isNightMode}
+                        />
+                        <PreferenceToggle
+                          icon={Waves}
+                          label="Reduce motion"
+                          description="Turn off transitions and animation"
+                          checked={reduceMotion}
+                          onChange={setReduceMotion}
+                          isNightMode={isNightMode}
+                        />
+                      </div>
+
+                      <button
+                        onClick={resetAppearance}
+                        className={`mt-2 inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-semibold transition-colors ${isNightMode ? 'text-slate-400 hover:bg-slate-700 hover:text-slate-200' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700'}`}
+                      >
+                        <RotateCcw size={12} />
+                        Reset appearance
                       </button>
                     </div>
 

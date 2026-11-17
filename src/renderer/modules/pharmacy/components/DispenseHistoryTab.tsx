@@ -66,7 +66,7 @@ export default function DispenseHistoryTab({
     );
   }, [prescriptions]);
 
-  // Group prescriptions by patient EMR number
+  // Group prescriptions by patient patient number
   const patientGroups = useMemo(() => {
     const groups = new Map<string, PatientPrescriptionGroup>();
 

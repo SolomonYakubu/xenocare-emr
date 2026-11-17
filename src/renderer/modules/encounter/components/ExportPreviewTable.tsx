@@ -33,7 +33,7 @@ export interface ExportColumn {
 export const ALL_EXPORT_COLUMNS: ExportColumn[] = [
   { key: 'encounter_number', label: 'Encounter #', visible: true, width: 'w-28' },
   { key: 'patient_name', label: 'Patient Name', visible: true, width: 'w-40' },
-  { key: 'emr_number', label: 'EMR Number', visible: true, width: 'w-24' },
+  { key: 'emr_number', label: 'Patient number', visible: true, width: 'w-24' },
   { key: 'gender', label: 'Gender', visible: true, width: 'w-16' },
   { key: 'age', label: 'Age', visible: true, width: 'w-16' },
   { key: 'visit_type', label: 'Visit Type', visible: true, width: 'w-24' },

@@ -8,7 +8,7 @@ import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import { merge } from 'webpack-merge';
 import checkNodeEnv from '../scripts/check-node-env.js';
 import _baseConfig from './webpack.config.base.js';
-import webpackPaths from './webpack.paths.ts';
+import webpackPaths from './webpack.paths.js';
 
 // CJS→ESM interop: unwrap { default: … } when needed
 const baseConfig = (_baseConfig as any).default || _baseConfig;

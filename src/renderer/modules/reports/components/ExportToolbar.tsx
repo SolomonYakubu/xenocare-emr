@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR
+ * XenoCare
  * Export Toolbar — reusable CSV / Excel / PDF export button group
  *
  * Renders three export buttons. Calls the parent's `onExport` callback

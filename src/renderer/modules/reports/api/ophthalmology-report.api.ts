@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR — Ophthalmology Report API
+ * XenoCare — Ophthalmology Report API
  */
 
 import { supabase } from '../../../api/supabaseClient';

@@ -383,7 +383,7 @@ const SurgeryForm: React.FC = () => {
                 onFocus={() =>
                   patientResults.length > 0 && setShowPatientDropdown(true)
                 }
-                placeholder="Search by name or EMR number..."
+                placeholder="Search by name or patient number..."
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>

@@ -554,7 +554,7 @@ const ProcedureHistoryList: React.FC<ProcedureHistoryListProps> = ({
                     Patient
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    EMR Number
+                    Patient number
                   </th>
                   <th className="px-4 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     Total Procedures

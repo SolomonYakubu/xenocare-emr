@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR — Dental Report API
+ * XenoCare — Dental Report API
  */
 
 import { supabase } from '../../../api/supabaseClient';

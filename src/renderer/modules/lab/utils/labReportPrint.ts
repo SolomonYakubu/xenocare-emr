@@ -458,7 +458,7 @@ export async function printUniversalLabReport(
     }
     .action-bar {
       position: fixed; top: 0; left: 0; right: 0; z-index: 20;
-      background: #0e2a47; color: #fff; padding: 10px 18px;
+      background: #11151C; color: #fff; padding: 10px 18px;
       display: flex; align-items: center; justify-content: space-between;
     }
     .action-bar strong { font-size: 10pt; letter-spacing: .8px; }
@@ -466,30 +466,30 @@ export async function printUniversalLabReport(
       border: 0; border-radius: 6px; padding: 7px 15px; cursor: pointer;
       font-weight: 700; font-size: 9pt; margin-left: 8px;
     }
-    .btn-primary { background: #f97316; color: #fff; }
-    .btn-secondary { background: #fff; color: #0e2a47; }
+    .btn-primary { background: #E9783F; color: #fff; }
+    .btn-secondary { background: #fff; color: #11151C; }
     .page {
       width: 210mm; min-height: 297mm; margin: 58px auto 24px; padding: 13mm 12mm;
       background: #fff; box-shadow: 0 10px 35px rgba(15, 23, 42, .12);
     }
-    .header { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; border-bottom: 3px solid #0e2a47; padding-bottom: 10px; }
+    .header { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; border-bottom: 3px solid #11151C; padding-bottom: 10px; }
     .brand { display: flex; gap: 12px; align-items: center; }
     .logo { width: 58px; height: 58px; object-fit: contain; }
-    .logo-fallback { width: 58px; height: 58px; display: flex; align-items: center; justify-content: center; border: 2px solid #0e2a47; color: #0e2a47; font-weight: 900; font-size: 14pt; }
-    .facility-name { font-size: 16pt; font-weight: 900; color: #0e2a47; text-transform: uppercase; letter-spacing: .4px; }
+    .logo-fallback { width: 58px; height: 58px; display: flex; align-items: center; justify-content: center; border: 2px solid #11151C; color: #11151C; font-weight: 900; font-size: 14pt; }
+    .facility-name { font-size: 16pt; font-weight: 900; color: #11151C; text-transform: uppercase; letter-spacing: .4px; }
     .facility-meta { margin-top: 3px; color: #4b5563; font-size: 8.5pt; }
     .report-meta { text-align: right; min-width: 150px; }
-    .report-title { display: inline-block; background: #0e2a47; color: #fff; padding: 5px 12px; font-size: 10pt; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+    .report-title { display: inline-block; background: #11151C; color: #fff; padding: 5px 12px; font-size: 10pt; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
     .report-subtitle { margin-top: 7px; color: #6b7280; font-size: 8pt; }
-    .section-title { margin: 13px 0 5px; color: #0e2a47; font-size: 8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; }
+    .section-title { margin: 13px 0 5px; color: #11151C; font-size: 8pt; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #cbd5e1; padding-bottom: 3px; }
     .info-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
     .info-table td { border: 1px solid #d1d5db; padding: 5px 7px; vertical-align: top; }
     .info-label { color: #6b7280; font-size: 7pt; text-transform: uppercase; font-weight: 700; letter-spacing: .4px; }
     .info-value { margin-top: 2px; font-size: 9.5pt; font-weight: 700; color: #111827; }
     .result-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
-    .result-table th { background: #0e2a47; color: #fff; border: 1px solid #0e2a47; padding: 7px 6px; text-align: left; font-size: 7.5pt; text-transform: uppercase; letter-spacing: .4px; }
+    .result-table th { background: #11151C; color: #fff; border: 1px solid #11151C; padding: 7px 6px; text-align: left; font-size: 7.5pt; text-transform: uppercase; letter-spacing: .4px; }
     .result-table td { border: 1px solid #d1d5db; padding: 6px 6px; vertical-align: top; font-size: 8.6pt; }
-    .department-row td { background: #f1f5f9; color: #0e2a47; font-weight: 800; font-size: 8pt; text-transform: uppercase; letter-spacing: .7px; }
+    .department-row td { background: #f1f5f9; color: #11151C; font-weight: 800; font-size: 8pt; text-transform: uppercase; letter-spacing: .7px; }
     .investigation { font-weight: 700; color: #111827; }
     .investigation-detail { color: #6b7280; font-size: 7.5pt; margin-top: 1px; }
     .result-value { font-weight: 800; color: #111827; }
@@ -512,7 +512,7 @@ export async function printUniversalLabReport(
     .clinical-data th, .clinical-data td { border: 1px solid #9ca3af; padding: 5px 6px; vertical-align: top; }
     .clinical-data th { background: #f1f5f9; font-weight: 700; }
     .clinical-data blockquote { margin: 6px 0; padding-left: 10px; border-left: 3px solid #cbd5e1; color: #475569; }
-    .note-box { border: 1px solid #d1d5db; border-left: 4px solid #f97316; padding: 8px 10px; margin-top: 6px; background: #fffaf5; }
+    .note-box { border: 1px solid #d1d5db; border-left: 4px solid #E9783F; padding: 8px 10px; margin-top: 6px; background: #fffaf5; }
     .note-box ul { margin: 4px 0 0 16px; padding: 0; }
     .note-box li { margin-bottom: 3px; }
     .signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 18px; page-break-inside: avoid; }
@@ -616,7 +616,7 @@ export async function printUniversalLabReport(
 
     <div class="footer">
       <span>${escapeHtml(facilityName)} · Laboratory Services</span>
-      <span>Printed ${escapeHtml(formatDateTime(new Date().toISOString()))} · XenoCare EMR</span>
+      <span>Printed ${escapeHtml(formatDateTime(new Date().toISOString()))} · XenoCare</span>
     </div>
   </div>
 </body>

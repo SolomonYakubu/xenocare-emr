@@ -228,7 +228,7 @@ function UrinalysisChart({ data }: { data: ReturnType<typeof Array<any>> }) {
         <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#9ca3af' }} />
         <YAxis domain={[0, 5]} tick={{ fontSize: 11, fill: '#9ca3af' }} ticks={[0, 1, 2, 3, 4]} tickFormatter={numToUrine} />
         <Tooltip content={<UrinalysisTooltip />} />
-        <Line type="monotone" dataKey="urineProtein" stroke="#f97316" strokeWidth={2.5} dot={{ r: 4, fill: '#f97316', strokeWidth: 1, stroke: '#fff' }} name="Protein" connectNulls />
+        <Line type="monotone" dataKey="urineProtein" stroke="#E9783F" strokeWidth={2.5} dot={{ r: 4, fill: '#E9783F', strokeWidth: 1, stroke: '#fff' }} name="Protein" connectNulls />
         <Line type="monotone" dataKey="urineGlucose" stroke="#06b6d4" strokeWidth={2.5} dot={{ r: 4, fill: '#06b6d4', strokeWidth: 1, stroke: '#fff' }} name="Glucose" connectNulls />
       </ComposedChart>
     </ResponsiveContainer>

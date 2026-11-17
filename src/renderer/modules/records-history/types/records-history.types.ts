@@ -9,7 +9,13 @@
 // Record categories mirroring clinical modules
 // ---------------------------------------------------------------------------
 
-import { isNhisFeatureEnabled } from '../../../config/features';
+import {
+  isDentalEnabled,
+  isNhisFeatureEnabled,
+  isOphthalmologyEnabled,
+  isPhysiotherapyEnabled,
+  isSpecialtyClinicsEnabled,
+} from '../../../config/features';
 
 export type RecordCategory =
   | 'encounter'
@@ -35,7 +41,7 @@ export interface RecordCategoryMeta {
 }
 
 const ALL_RECORD_CATEGORIES: RecordCategoryMeta[] = [
-  { key: 'encounter', label: 'Encounters', color: 'bg-emerald-500' },
+  { key: 'encounter', label: 'Visits', color: 'bg-emerald-500' },
   { key: 'consultation', label: 'Consultations', color: 'bg-green-500' },
   { key: 'specialty', label: 'Specialty Clinics', color: 'bg-violet-500' },
   { key: 'lab', label: 'Laboratory', color: 'bg-yellow-500' },
@@ -52,9 +58,23 @@ const ALL_RECORD_CATEGORIES: RecordCategoryMeta[] = [
   { key: 'nhis_claim', label: 'NHIS Claims', color: 'bg-green-600' },
 ];
 
-export const RECORD_CATEGORIES: RecordCategoryMeta[] = isNhisFeatureEnabled()
-  ? ALL_RECORD_CATEGORIES
-  : ALL_RECORD_CATEGORIES.filter((category) => category.key !== 'nhis_claim');
+export const RECORD_CATEGORIES: RecordCategoryMeta[] =
+  ALL_RECORD_CATEGORIES.filter((category) => {
+    switch (category.key) {
+      case 'nhis_claim':
+        return isNhisFeatureEnabled();
+      case 'specialty':
+        return isSpecialtyClinicsEnabled();
+      case 'dental':
+        return isDentalEnabled();
+      case 'ophthalmology':
+        return isOphthalmologyEnabled();
+      case 'physiotherapy':
+        return isPhysiotherapyEnabled();
+      default:
+        return true;
+    }
+  });
 
 // ---------------------------------------------------------------------------
 // Unified record row displayed in the history table

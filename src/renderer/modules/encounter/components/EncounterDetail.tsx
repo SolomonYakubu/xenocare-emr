@@ -60,17 +60,6 @@ import {
 } from '../../../lib/workflow/api';
 import { useToast } from '../../../components/ui/Toast';
 
-// XenoCare Logo component
-function XenoCareLogo() {
-  return (
-    <img
-      src={require('../../../../../assets/xenocare-logo.png')}
-      alt="XenoCare Logo"
-      className="h-10 w-auto"
-    />
-  );
-}
-
 interface EncounterDetailProps {
   encounter: Encounter;
   isOpen: boolean;
@@ -342,15 +331,12 @@ const EncounterDetail: React.FC<EncounterDetailProps> = ({
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-4">
                 {/* XenoCare Logo */}
-                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white p-1.5 shadow-sm">
-                  <XenoCareLogo />
-                </div>
                 <div>
                   <h2 className="text-xl font-bold text-white">
                     {formatEncounterPatientName(encounter)}
                   </h2>
                   <p className="text-sm text-white/80">
-                    {encounter.patient?.emr_number || 'No EMR Number'}
+                    {encounter.patient?.emr_number || 'No Patient number'}
                   </p>
                   <div className="mt-2 flex items-center gap-2">
                     <span
@@ -430,7 +416,7 @@ const EncounterDetail: React.FC<EncounterDetailProps> = ({
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">EMR Number</span>
+                      <span className="text-gray-500">Patient number</span>
                       <span className="font-mono font-medium text-gray-900">
                         {encounter.patient?.emr_number || '-'}
                       </span>

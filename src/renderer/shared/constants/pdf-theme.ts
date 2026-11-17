@@ -256,7 +256,7 @@ export function renderPageFooter(doc: import('jspdf').jsPDF, pageNumber: number)
   const address = getFacilityAddress();
   const identity = address ? `${facility}  •  ${address}` : facility;
   doc.text(
-    `${identity} | Page ${pageNumber} | Powered by Xenolink`,
+    `${identity} | Page ${pageNumber} | Powered by XenoCare`,
     pageWidth / 2,
     pageHeight - 8,
     { align: 'center' },

@@ -518,7 +518,7 @@ export function NhisReferralQueue({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search by patient name, EMR number, or referral code..."
+            placeholder="Search by patient name, patient number, or referral code..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 focus:border-green-500"
@@ -878,7 +878,7 @@ export function NhisReferralQueue({
                   </div>
                   <div className="flex items-center gap-1">
                     <Hash size={12} className="text-gray-400" />
-                    <span className="text-gray-500">EMR Number:</span>
+                    <span className="text-gray-500">Patient number:</span>
                     <span className="ml-2 font-mono font-medium">
                       {selectedItem.patient?.emr_number}
                     </span>

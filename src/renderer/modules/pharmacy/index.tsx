@@ -77,14 +77,11 @@ import { useToast } from '../../components/ui/Toast';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTimeTheme } from '../../hooks/useTimeTheme';
 import { NhisApprovalStatus } from '../../types/database.types';
-import { InlineGuidance } from '../../components/guidance/InlineGuidance';
 import { createScopedLogger } from '../../utils/logger';
 
 const log = createScopedLogger('PharmacyModule');
 
 // XenoCare Logo
-const ndcLogoSrc = require('../../../../assets/xenocare-logo.png');
-
 // =============================================================================
 // Component
 // =============================================================================
@@ -1007,34 +1004,13 @@ export default function Pharmacy() {
       className={`space-y-8 px-4 pb-10 sm:px-6 lg:px-8 ${isNightMode ? 'bg-slate-900' : 'bg-[#f9fafb]'}`}
     >
       {/* Header */}
-      <div
-        className={`${headerGradient} rounded-2xl p-7 text-white relative overflow-hidden sm:p-8`}
-      >
-        {/* Decorative elements */}
-        <div
-          className={`absolute top-0 right-0 w-48 h-48 ${themeColors.header.decorativeCircle} rounded-full blur-3xl opacity-30 -translate-y-1/2 translate-x-1/2`}
-        />
-
-        <div className="relative z-10 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div
-              className={`p-3 ${themeColors.header.decorativeCircle} rounded-xl backdrop-blur-sm`}
-            >
-              <Pill className="h-8 w-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2">
-                Pharmacy
-              </h1>
-              <p
-                className={`mt-1 text-sm ${themeColors.accent.muted} flex items-center gap-2`}
-              >
-                <TimeIcon className="h-4 w-4" />
-                Dispense medications and manage drug inventory
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="rounded-xl border border-slate-200 bg-white px-5 py-4">
+        <h1 className="font-display text-xl font-bold text-slate-900">
+          Pharmacy
+        </h1>
+        <p className="mt-0.5 text-sm text-slate-500">
+          Dispense medicines and manage stock.
+        </p>
       </div>
 
       <details
@@ -1097,38 +1073,6 @@ export default function Pharmacy() {
 
       {/* Tabs */}
       <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
-
-      {activeTab === 'prescriptions' && (
-        <InlineGuidance
-          module="pharmacy"
-          title="Prescription Management"
-          message="Prescriptions flow directly to central billing. Dispense here once payment or billing authorization is confirmed."
-        />
-      )}
-
-      {activeTab === 'catalogue' && (
-        <InlineGuidance
-          module="pharmacy"
-          title="Drug Master List"
-          message="Maintain the central registry of all medications. Set prices, reorder levels, and toggle NHIS eligibility here."
-        />
-      )}
-
-      {activeTab === 'inventory' && (
-        <InlineGuidance
-          module="pharmacy"
-          title="Stock Monitoring"
-          message="Track inventory levels. Items below their reorder level appear here automatically."
-        />
-      )}
-
-      {activeTab === 'batches' && (
-        <InlineGuidance
-          module="pharmacy"
-          title="Batch Management"
-          message="Manage drug batches and expiration dates. The system uses First-Expired-First-Out (FEFO) logic for dispensing."
-        />
-      )}
 
       {/* Tab Content */}
       {activeTab === 'prescriptions' && (
@@ -1302,11 +1246,7 @@ export default function Pharmacy() {
             <div className="flex items-center justify-between px-5 py-3 bg-gradient-to-r from-primary-700 to-primary-600 text-white">
               <div className="flex items-center gap-3">
                 <div className="bg-white rounded-lg p-1.5 shadow">
-                  <img
-                    src={ndcLogoSrc}
-                    alt="XenoCare"
-                    className="h-6 w-6 object-contain"
-                  />
+                  
                 </div>
                 <span className="text-sm font-semibold">
                   XenoCare AI Assistant

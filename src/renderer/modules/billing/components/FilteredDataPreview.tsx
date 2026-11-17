@@ -222,17 +222,6 @@ export function FilteredDataPreview({
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              {/* XenoCare Logo placeholder */}
-              <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                <img
-                  src="../../assets/xenocare-logo.png"
-                  alt="XenoCare Logo"
-                  className="w-10 h-10 object-contain"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                  }}
-                />
-              </div>
               <div>
                 <h2 className="text-xl font-bold">{config.title}</h2>
                 <p className="text-blue-100 text-sm">{config.description}</p>
@@ -315,28 +304,28 @@ export function FilteredDataPreview({
           <div className="flex items-center gap-2">
             <button
               onClick={() => onExport('excel')}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors"
+              className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50"
             >
               <FileSpreadsheet className="h-4 w-4" />
               Excel
             </button>
             <button
               onClick={() => onExport('csv')}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+              className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50"
             >
               <FileText className="h-4 w-4" />
               CSV
             </button>
             <button
               onClick={() => onExport('pdf')}
-              className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors"
+              className="flex items-center gap-2 rounded-lg bg-[#E9783F] px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#D96A36]"
             >
               <Download className="h-4 w-4" />
               PDF
             </button>
             <button
               onClick={onPrint}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors"
+              className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50"
             >
               <Printer className="h-4 w-4" />
               Print

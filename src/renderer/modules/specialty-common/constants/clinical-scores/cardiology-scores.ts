@@ -66,7 +66,7 @@ export const NYHA_SCORE: ClinicalScoreDefinition = {
       min: 3,
       max: 3,
       label: 'Class III — Marked limitation',
-      color: '#f97316',
+      color: '#E9783F',
       clinical_action:
         'Aggressive medical management. Consider device therapy. 3-monthly review.',
     },

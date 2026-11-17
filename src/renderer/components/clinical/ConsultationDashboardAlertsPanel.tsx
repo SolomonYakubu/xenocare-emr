@@ -105,12 +105,12 @@ export function ConsultationDashboardAlertsPanel({
                   className="relative overflow-hidden rounded-lg border border-slate-100 bg-white text-left shadow-sm dark:border-slate-700 dark:bg-slate-800"
                 >
                   <div
-                    className={`absolute top-0 bottom-0 left-0 w-0.5 ${isUrgent ? 'bg-[#c53030]' : 'bg-[#0d5e56]'}`}
+                    className={`absolute top-0 bottom-0 left-0 w-0.5 ${isUrgent ? 'bg-[#c53030]' : 'bg-[#E9783F]'}`}
                   />
                   <div className="px-3 py-2.5 pl-3.5">
                     <div
                       className={`mb-1 flex items-start justify-between gap-2 text-[9px] font-bold uppercase tracking-wider ${
-                        isUrgent ? 'text-[#c53030]' : 'text-[#0d5e56]'
+                        isUrgent ? 'text-[#c53030]' : 'text-[#11151C]'
                       }`}
                     >
                       <span className="line-clamp-1">

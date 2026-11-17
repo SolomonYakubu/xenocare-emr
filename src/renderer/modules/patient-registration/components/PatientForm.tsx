@@ -29,8 +29,6 @@ import {
   Camera,
   Upload,
   Trash2,
-  Maximize2,
-  Minimize2,
   Plus,
   Loader2,
   GraduationCap,
@@ -60,6 +58,7 @@ import {
 } from '../dtos/patient.dto';
 import { Gender, StaffCategory, MilitaryBranch } from '../../../types';
 import {
+  isMilitaryFeatureEnabled,
   isNhisCategory,
   isNhisFeatureEnabled,
 } from '../../../config/features';
@@ -86,17 +85,6 @@ import {
   usePatientAllergies,
   useSavePatientAllergies,
 } from '../hooks/usePatientAllergies';
-
-// XenoCare Logo component
-function XenoCareLogo() {
-  return (
-    <img
-      src={require('../../../../../assets/xenocare-logo.png')}
-      alt="XenoCare Logo"
-      className="h-full max-h-9 w-auto object-contain sm:max-h-10"
-    />
-  );
-}
 
 // =============================================================================
 // Constants
@@ -403,8 +391,13 @@ const getInitialFormData = (
   },
   // Deployment defaults for MUHEDA CLINIC: general civilian/self-pay patient.
   // Existing records keep their stored classification when edited.
-  patient_category: patient?.patient_category || 'Civilian',
-  insurance_type: (patient?.insurance_type as InsuranceType) || 'Private',
+  patient_category: isMilitaryFeatureEnabled()
+    ? patient?.patient_category || 'Civilian'
+    : 'Civilian',
+  insurance_type:
+    isMilitaryFeatureEnabled() || isNhisFeatureEnabled()
+      ? ((patient?.insurance_type as InsuranceType) || 'Private')
+      : 'Private',
   patient_type: patient?.patient_type || 'Private',
   principal_id: patient?.principal_id || '',
   relationship_to_principal: patient?.relationship_to_principal || '',
@@ -416,7 +409,7 @@ const getInitialFormData = (
   // Civilian-specific fields
   occupation: patient?.occupation || patient?.civilian_info?.occupation || '',
   employer: patient?.employer || patient?.civilian_info?.employer || '',
-  title: patient?.title || '', // Title/Rank for Civilian and Civilian Participant
+  title: patient?.title || '', // Title / Designation for Civilian and Civilian Participant
   // Participant-specific fields
   course: patient?.course || '', // Course name for Participants
   // Security Services NHIS fields
@@ -563,7 +556,6 @@ export default function PatientForm({
   );
 
   // Expansion state for fullscreen modal
-  const [isExpanded, setIsExpanded] = useState(false);
 
   // Course management state
   const [showAddCourseModal, setShowAddCourseModal] = useState(false);
@@ -793,7 +785,7 @@ export default function PatientForm({
 
   // Auto-set DHML as default scheme for military patients
   useEffect(() => {
-    if (isMilitary) {
+    if (isMilitaryFeatureEnabled() && isMilitary) {
       setFormData((prev) => ({
         ...prev,
         insurance_type: 'Military_NHIS',
@@ -1203,7 +1195,7 @@ export default function PatientForm({
   const showDependentFields = isDependent;
   // Show military fields for Military and Military Participant (not dependents)
   const showMilitaryFields =
-    (isMilitary || isMilitaryParticipant) && !isDependent;
+    isMilitaryFeatureEnabled() && (isMilitary || isMilitaryParticipant) && !isDependent;
   // Show civilian fields for Civilian and Civilian Participant (not dependents)
   const showCivilianFields =
     (isCivilian || isCivilianParticipant) && !isDependent;
@@ -1260,161 +1252,48 @@ export default function PatientForm({
       {/* Modal Container - Full height with smooth entrance */}
       <div className="fixed inset-0 flex items-center justify-center p-0 transition-all duration-300 min-[480px]:p-3 sm:p-4 md:p-6">
         <div
-          className={`relative flex w-full flex-col overflow-hidden border border-slate-200/80 bg-gradient-to-b from-slate-50 to-white shadow-[0_32px_64px_-24px_rgba(15,80,72,0.35),0_0_0_1px_rgba(255,255,255,0.8)_inset] animate-slideUp transition-all duration-300 min-[480px]:max-h-[min(100dvh,56rem)] min-[480px]:rounded-2xl sm:max-h-[min(100dvh,52rem)] ${
-            isExpanded
-              ? 'max-h-[100dvh] min-h-0 max-w-full rounded-none min-[480px]:rounded-none'
-              : 'max-h-[100dvh] min-h-0 max-w-6xl'
-          }`}
+          className="relative flex max-h-[100dvh] w-full max-w-4xl flex-col overflow-hidden rounded-none border border-slate-200 bg-white transition-all duration-300 min-[480px]:max-h-[min(100dvh,56rem)] min-[480px]:rounded-2xl"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex-shrink-0 border-b border-white/10 bg-gradient-to-r from-primary-800 via-primary-700 to-teal-700 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.35)]">
-            <div className="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-3.5">
-              <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/95 p-1.5 shadow-lg shadow-black/15 ring-2 ring-white/40 sm:h-12 sm:w-12">
-                  <XenoCareLogo />
-                </div>
-                <div className="min-w-0 border-l border-white/25 pl-3 sm:pl-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-white/70">
-                    XenoCare
-                  </p>
-                  <h1 className="truncate text-sm font-bold tracking-tight text-white sm:text-base">
-                    Medical centre · Electronic medical records
-                  </h1>
-                </div>
-              </div>
-              <div className="flex items-center justify-end gap-2 sm:gap-3">
-                <div className="mr-1 hidden text-right sm:mr-4 sm:block">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-white/95">
-                    {isEditing ? 'Edit patient' : 'New registration'}
-                  </p>
-                  <p className="text-[11px] text-emerald-100/90">
-                    {new Date().toLocaleDateString('en-NG', {
-                      weekday: 'short',
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setIsExpanded(!isExpanded)}
-                  className="rounded-xl p-2 text-white transition hover:bg-white/15 active:scale-95"
-                  title={isExpanded ? 'Collapse' : 'Expand'}
-                >
-                  {isExpanded ? (
-                    <Minimize2 className="h-5 w-5" strokeWidth={2.25} />
-                  ) : (
-                    <Maximize2 className="h-5 w-5" strokeWidth={2.25} />
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="rounded-xl p-2 text-white transition hover:bg-white/15 active:scale-95"
-                  aria-label="Close"
-                >
-                  <X className="h-5 w-5" strokeWidth={2.25} />
-                </button>
-              </div>
+          <div className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 sm:px-6">
+            <div className="min-w-0">
+              <h1 className="font-display truncate text-lg font-bold text-slate-900">
+                {isEditing ? 'Edit patient' : 'New patient'}
+              </h1>
+              <p className="truncate text-xs text-slate-500">
+                {isEditing
+                  ? 'Update demographics and contact details'
+                  : 'Demographics, contact and next of kin'}
+              </p>
             </div>
-
-            <div className="border-t border-white/10 bg-slate-50/95 px-3 py-3.5 backdrop-blur-sm sm:px-6 sm:py-4">
-              <div className="mx-auto flex max-w-3xl items-center justify-between gap-0.5">
-                {steps.map((step, index) => {
-                  const isActive = currentStep === index;
-                  const isCompleted = currentStep > index;
-                  const StepIcon = step.icon;
-
-                  return (
-                    <React.Fragment key={step.id}>
-                      <button
-                        type="button"
-                        onClick={() => goToStep(index)}
-                        className={`group relative flex flex-col items-center gap-1.5 rounded-xl px-2 py-1.5 transition-all duration-200 sm:px-3 ${
-                          isActive
-                            ? 'bg-white shadow-md ring-1 ring-primary-700/15 scale-[1.02]'
-                            : 'hover:bg-white/60'
-                        }`}
-                      >
-                        {/* Step Circle with Icon */}
-                        <div
-                          className={`
-                          w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 border-2 shadow-sm
-                          ${
-                            isCompleted
-                              ? 'bg-primary-700 border-primary-700 text-white shadow-primary-700/25'
-                              : isActive
-                                ? 'bg-white border-primary-700 text-primary-700 shadow-primary-700/15'
-                                : 'bg-white border-gray-200 text-gray-400 group-hover:border-gray-300 group-hover:text-gray-500'
-                          }
-                        `}
-                        >
-                          {isCompleted ? (
-                            <Check className="h-5 w-5" strokeWidth={2.5} />
-                          ) : (
-                            <StepIcon className="h-4 w-4" />
-                          )}
-                        </div>
-                        {/* Step Label */}
-                        <div className="text-center">
-                          <span
-                            className={`text-xs font-semibold block transition-colors ${
-                              isActive
-                                ? 'text-primary-700'
-                                : isCompleted
-                                  ? 'text-gray-700'
-                                  : 'text-gray-400'
-                            }`}
-                          >
-                            {step.title}
-                          </span>
-                          <span className="text-[10px] text-gray-400 hidden sm:block mt-0.5">
-                            {step.description}
-                          </span>
-                        </div>
-                      </button>
-                      {/* Connecting Line */}
-                      {index < steps.length - 1 && (
-                        <div className="flex-1 mx-1.5">
-                          <div
-                            className={`h-0.5 rounded-full transition-all duration-500 ${
-                              currentStep > index
-                                ? 'bg-primary-700'
-                                : 'bg-gray-200'
-                            }`}
-                          />
-                        </div>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-              </div>
-            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
 
           {/* Form Content */}
           <form
             id="patient-form"
             onSubmit={handleSubmit}
-            className="min-h-0 flex-1 scroll-smooth overflow-y-auto bg-gradient-to-b from-slate-50/95 to-slate-100/80"
+            className="min-h-0 flex-1 overflow-y-auto bg-[#F7F6F3]"
           >
-            <div className="p-3 sm:p-5 md:p-6">
+            <div className="p-4 sm:p-5">
               {/* Step 1: Personal Information */}
-              {currentStep === 0 && (
-                <div className="space-y-5 animate-fadeIn">
+              {(<div className="space-y-5">
                   <div className="rounded-2xl border border-slate-200/80 bg-white shadow-[0_2px_16px_-4px_rgba(15,80,72,0.08)] overflow-hidden">
                     <div className="flex items-center gap-3 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white px-5 py-4">
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-700 shadow-sm shadow-primary-700/25">
-                        <User className="h-4 w-4 text-white" />
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F1EAE4]">
+                        <User className="h-4 w-4 text-[#B36845]" />
                       </div>
                       <div>
                         <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-900">
                           Personal information
                         </h3>
-                        <p className="text-xs text-slate-500">
-                          Required patient identification details
-                        </p>
                       </div>
                     </div>
 
@@ -1424,68 +1303,55 @@ export default function PatientForm({
                       {(staff?.role === 'admin' ||
                         staff?.role === 'super_admin' ||
                         staff?.role === 'receptionist') && (
-                        <div className="mb-6 pb-5 border-b border-gray-100">
-                          <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-3">
-                            Profile Photo (optional)
-                          </label>
-                          <div className="flex items-center gap-4">
-                            {/* Photo Preview */}
-                            <div className="relative group">
-                              {photoPreview ? (
-                                <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-primary-700/20 shadow-lg transition-transform duration-200 group-hover:scale-105">
-                                  <img
-                                    src={photoPreview}
-                                    alt="Patient photo"
-                                    className="w-full h-full object-cover"
-                                  />
-                                </div>
-                              ) : (
-                                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-gray-100 to-gray-50 border-4 border-gray-200 flex items-center justify-center transition-all duration-200 group-hover:border-primary-700/30 group-hover:scale-105">
-                                  <Camera className="h-8 w-8 text-gray-400 group-hover:text-primary-700 transition-colors" />
-                                </div>
-                              )}
-                              {photoPreview && (
-                                <button
-                                  type="button"
-                                  onClick={handleRemovePhoto}
-                                  className="absolute -top-1 -right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow"
-                                  title="Remove photo"
-                                >
-                                  <Trash2 className="h-3 w-3" />
-                                </button>
-                              )}
-                            </div>
-
-                            {/* Upload Button */}
-                            <div className="flex-1">
-                              <input
-                                ref={fileInputRef}
-                                type="file"
-                                accept="image/*"
-                                onChange={handlePhotoUpload}
-                                className="hidden"
-                                id="photo-upload"
-                              />
-                              <label
-                                htmlFor="photo-upload"
-                                className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-primary-700/10 to-primary-600/10 hover:from-primary-700/20 hover:to-primary-600/20 text-primary-700 rounded-xl cursor-pointer transition-all duration-200 font-medium text-sm hover:scale-[1.02] active:scale-[0.98] shadow-sm hover:shadow"
-                              >
-                                <Upload className="h-4 w-4" />
-                                {photoPreview ? 'Change Photo' : 'Upload Photo'}
-                              </label>
-                              <p className="text-xs text-gray-500 mt-1.5">
-                                JPG, PNG or GIF. Max 5MB.
-                              </p>
-                            </div>
+                        <div className="mb-5 flex items-center gap-3 border-b border-slate-100 pb-4">
+                          {photoPreview ? (
+                            <img
+                              src={photoPreview}
+                              alt="Patient"
+                              className="h-12 w-12 shrink-0 rounded-full border border-slate-200 object-cover"
+                            />
+                          ) : (
+                            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-400">
+                              <Camera className="h-5 w-5" />
+                            </span>
+                          )}
+                          <div className="min-w-0">
+                            <input
+                              ref={fileInputRef}
+                              type="file"
+                              accept="image/*"
+                              onChange={handlePhotoUpload}
+                              className="hidden"
+                              id="photo-upload"
+                            />
+                            <label
+                              htmlFor="photo-upload"
+                              className="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-[#B36845] hover:underline"
+                            >
+                              <Upload className="h-3.5 w-3.5" />
+                              {photoPreview ? 'Change photo' : 'Add photo'}
+                            </label>
+                            <p className="text-[11px] text-slate-400">
+                              Optional · JPG, PNG or GIF, max 5MB
+                            </p>
                           </div>
+                          {photoPreview && (
+                            <button
+                              type="button"
+                              onClick={handleRemovePhoto}
+                              className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-slate-500 transition-colors hover:text-rose-600"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                              Remove
+                            </button>
+                          )}
                         </div>
                       )}
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {/* Surname */}
                         <div className="space-y-2 group">
                           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 group-focus-within:text-primary-700 transition-colors">
-                            <User className="h-4 w-4 text-gray-400 group-focus-within:text-primary-700" />
                             Surname <span className="text-red-500">*</span>
                           </label>
                           <div className="relative">
@@ -1498,9 +1364,6 @@ export default function PatientForm({
                               className={`w-full pl-4 pr-10 py-3 border-2 rounded-xl transition-all duration-200 text-sm focus:ring-2 focus:ring-primary-700/20 focus:border-primary-700 ${errors.surname ? 'border-red-400 bg-red-50/50' : 'border-gray-200 hover:border-gray-300 bg-gray-50/50 focus:bg-white'}`}
                               placeholder="Enter surname"
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                              <User className="h-5 w-5" />
-                            </span>
                           </div>
                           {errors.surname && (
                             <p className="text-xs text-red-600 flex items-center gap-1">
@@ -1513,7 +1376,6 @@ export default function PatientForm({
                         {/* First Name */}
                         <div className="space-y-2 group">
                           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 group-focus-within:text-primary-700 transition-colors">
-                            <User className="h-4 w-4 text-gray-400 group-focus-within:text-primary-700" />
                             First Name <span className="text-red-500">*</span>
                           </label>
                           <div className="relative">
@@ -1526,9 +1388,6 @@ export default function PatientForm({
                               className={`w-full pl-4 pr-10 py-3 border-2 rounded-xl transition-all duration-200 text-sm focus:ring-2 focus:ring-primary-700/20 focus:border-primary-700 ${errors.first_name ? 'border-red-400 bg-red-50/50' : 'border-gray-200 hover:border-gray-300 bg-gray-50/50 focus:bg-white'}`}
                               placeholder="Enter first name"
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                              <User className="h-5 w-5" />
-                            </span>
                           </div>
                           {errors.first_name && (
                             <p className="text-xs text-red-600 flex items-center gap-1">
@@ -1541,7 +1400,6 @@ export default function PatientForm({
                         {/* Middle Name */}
                         <div className="space-y-2 group">
                           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 group-focus-within:text-primary-700 transition-colors">
-                            <User className="h-4 w-4 text-gray-400 group-focus-within:text-primary-700" />
                             Middle Name
                           </label>
                           <div className="relative">
@@ -1554,9 +1412,6 @@ export default function PatientForm({
                               className="w-full pl-4 pr-10 py-3 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:ring-2 focus:ring-primary-700/20 focus:border-primary-700 transition-all duration-200 text-sm bg-gray-50/50 focus:bg-white"
                               placeholder="Optional"
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                              <User className="h-5 w-5" />
-                            </span>
                           </div>
                         </div>
                       </div>
@@ -1565,28 +1420,30 @@ export default function PatientForm({
                       <div className="grid grid-cols-2 gap-5 mt-5">
                         <div className="space-y-2 group">
                           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 group-focus-within:text-primary-700 transition-colors">
-                            <Users className="h-4 w-4 text-gray-400 group-focus-within:text-primary-700" />
                             Gender <span className="text-red-500">*</span>
                           </label>
-                          <div className="relative">
-                            <SearchableSelect
-                              options={GENDER_OPTIONS}
-                              value={formData.gender}
-                              onChange={(value) =>
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  gender: value as Gender,
-                                }))
-                              }
-                              placeholder="Select Gender"
-                              className={`w-full border-2 rounded-xl transition-all duration-200 text-sm focus:ring-2 focus:ring-primary-700/20 focus:border-primary-700 ${errors.gender ? 'border-red-400 bg-red-50/50' : 'border-gray-200 hover:border-gray-300 bg-gray-50/50 focus:bg-white'}`}
-                            />
-                          </div>
+                          <select
+                            name="gender"
+                            value={formData.gender || ''}
+                            onChange={(event) =>
+                              setFormData((prev) => ({
+                                ...prev,
+                                gender: event.target.value as Gender,
+                              }))
+                            }
+                            className={`w-full rounded-xl border-2 px-4 py-3 text-sm outline-none transition-all focus:border-primary-700 focus:ring-2 focus:ring-primary-700/20 ${errors.gender ? 'border-red-400 bg-red-50/50' : 'border-gray-200 bg-gray-50/50 focus:bg-white'}`}
+                          >
+                            <option value="">Select gender</option>
+                            {GENDER_OPTIONS.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
                         </div>
 
                         <div className="space-y-2 group">
                           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 group-focus-within:text-primary-700 transition-colors">
-                            <Calendar className="h-4 w-4 text-gray-400 group-focus-within:text-primary-700" />
                             Estimated Age
                             {formData.date_of_birth && (
                               <span className="ml-1 text-primary-700 font-bold text-xs">
@@ -1642,7 +1499,6 @@ export default function PatientForm({
                         {/* Phone Number */}
                         <div className="space-y-2 group">
                           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 group-focus-within:text-primary-700 transition-colors">
-                            <Phone className="h-4 w-4 text-gray-400 group-focus-within:text-primary-700" />
                             Phone Number
                           </label>
                           <div className="relative">
@@ -1655,16 +1511,12 @@ export default function PatientForm({
                               className="w-full pl-4 pr-10 py-3 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:ring-2 focus:ring-primary-700/20 focus:border-primary-700 transition-all duration-200 text-sm bg-gray-50/50 focus:bg-white"
                               placeholder="Enter phone number"
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                              <Phone className="h-5 w-5" />
-                            </span>
                           </div>
                         </div>
 
                         {/* Email Address */}
                         <div className="space-y-2 group">
                           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 group-focus-within:text-primary-700 transition-colors">
-                            <Mail className="h-4 w-4 text-gray-400 group-focus-within:text-primary-700" />
                             Email Address
                           </label>
                           <div className="relative">
@@ -1676,9 +1528,6 @@ export default function PatientForm({
                               className="w-full pl-4 pr-10 py-3 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:ring-2 focus:ring-primary-700/20 focus:border-primary-700 transition-all duration-200 text-sm bg-gray-50/50 focus:bg-white"
                               placeholder="Enter email address"
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                              <Mail className="h-5 w-5" />
-                            </span>
                           </div>
                           {errors.email && (
                             <p className="text-xs text-red-600 flex items-center gap-1">
@@ -1692,7 +1541,6 @@ export default function PatientForm({
                         {/* Occupation - searchable predefined options + manual entry */}
                         <div className="space-y-2 group">
                           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 group-focus-within:text-primary-700 transition-colors">
-                            <Briefcase className="h-4 w-4 text-gray-400 group-focus-within:text-primary-700" />
                             Occupation
                           </label>
                           <div className="relative">
@@ -1705,9 +1553,6 @@ export default function PatientForm({
                               className="w-full pl-4 pr-10 py-3 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:ring-2 focus:ring-primary-700/20 focus:border-primary-700 transition-all duration-200 text-sm bg-gray-50/50 focus:bg-white"
                               placeholder="Select or type occupation"
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                              <Briefcase className="h-5 w-5" />
-                            </span>
                           </div>
                           <datalist id="occupation-options">
                             {OCCUPATION_OPTIONS.map((occupation) => (
@@ -1719,21 +1564,26 @@ export default function PatientForm({
                         {/* Blood Group - retained for clinical safety */}
                         <div className="space-y-2 group">
                           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 group-focus-within:text-primary-700 transition-colors">
-                            <Droplets className="h-4 w-4 text-gray-400 group-focus-within:text-primary-700" />
                             Blood Group
                           </label>
-                          <SearchableSelect
-                            options={BLOOD_GROUP_OPTIONS}
+                          <select
+                            name="blood_group"
                             value={formData.blood_group || ''}
-                            onChange={(value) =>
+                            onChange={(event) =>
                               setFormData((prev) => ({
                                 ...prev,
-                                blood_group: value,
+                                blood_group: event.target.value,
                               }))
                             }
-                            placeholder="Select Blood Group"
-                            className="w-full border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:ring-2 focus:ring-primary-700/20 focus:border-primary-700 transition-all text-sm bg-gray-50/50 focus:bg-white"
-                          />
+                            className="w-full rounded-xl border-2 border-gray-200 bg-gray-50/50 px-4 py-3 text-sm outline-none transition-all focus:border-primary-700 focus:bg-white focus:ring-2 focus:ring-primary-700/20"
+                          >
+                            <option value="">Select blood group</option>
+                            {BLOOD_GROUP_OPTIONS.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
                         </div>
                       </div>
 
@@ -1923,22 +1773,18 @@ export default function PatientForm({
                 </div>
               )}
 
-              {currentStep === 1 && (
-                <div className="space-y-5 animate-fadeIn">
+              {(<div className="space-y-5">
                   {/* Contact Information */}
                   <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_2px_16px_-4px_rgba(15,80,72,0.08)] overflow-hidden">
                     {/* Section Header */}
-                    <div className="flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
+                    <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-100 bg-slate-50/60">
                       <div className="w-9 h-9 bg-primary-700 rounded-xl flex items-center justify-center shadow-sm shadow-primary-700/25">
-                        <Phone className="h-4 w-4 text-white" />
+                        <Phone className="h-4 w-4 text-[#B36845]" />
                       </div>
                       <div>
                         <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
                           Contact Information
                         </h3>
-                        <p className="text-xs text-gray-500">
-                          Residential address and next of kin details
-                        </p>
                       </div>
                     </div>
 
@@ -1948,7 +1794,6 @@ export default function PatientForm({
                         {/* Residential Address */}
                         <div className="space-y-2 group">
                           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 group-focus-within:text-primary-700 transition-colors">
-                            <Home className="h-4 w-4 text-gray-400 group-focus-within:text-primary-700" />
                             Residential Address
                           </label>
                           <div className="relative">
@@ -1960,9 +1805,6 @@ export default function PatientForm({
                               className="w-full pl-4 pr-10 py-3 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:ring-2 focus:ring-primary-700/20 focus:border-primary-700 transition-all duration-200 text-sm bg-gray-50/50 focus:bg-white"
                               placeholder="Enter full residential address"
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                              <MapPin className="h-5 w-5" />
-                            </span>
                           </div>
                         </div>
                       </div>
@@ -1977,11 +1819,10 @@ export default function PatientForm({
                         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {/* NOK Full Name */}
                         <div className="space-y-2 group">
                           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 group-focus-within:text-primary-700 transition-colors">
-                            <User className="h-4 w-4 text-gray-400 group-focus-within:text-primary-700" />
                             NOK Full Name
                           </label>
                           <div className="relative">
@@ -1994,16 +1835,12 @@ export default function PatientForm({
                               className="w-full pl-4 pr-10 py-3 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:ring-2 focus:ring-primary-700/20 focus:border-primary-700 transition-all duration-200 text-sm bg-gray-50/50 focus:bg-white"
                               placeholder="Enter next of kin name"
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                              <User className="h-5 w-5" />
-                            </span>
                           </div>
                         </div>
 
                         {/* Relationship */}
                         <div className="space-y-2 group">
                           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 group-focus-within:text-primary-700 transition-colors">
-                            <Heart className="h-4 w-4 text-gray-400 group-focus-within:text-primary-700" />
                             Relationship
                           </label>
                           <div className="relative">
@@ -2025,7 +1862,6 @@ export default function PatientForm({
                         {/* NOK Phone */}
                         <div className="space-y-2 group">
                           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 group-focus-within:text-primary-700 transition-colors">
-                            <Phone className="h-4 w-4 text-gray-400 group-focus-within:text-primary-700" />
                             NOK Phone
                           </label>
                           <div className="relative">
@@ -2038,9 +1874,6 @@ export default function PatientForm({
                               className="w-full pl-4 pr-10 py-3 border-2 border-gray-200 rounded-xl hover:border-gray-300 focus:ring-2 focus:ring-primary-700/20 focus:border-primary-700 transition-all duration-200 text-sm bg-gray-50/50 focus:bg-white"
                               placeholder="Enter NOK phone number"
                             />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                              <Phone className="h-5 w-5" />
-                            </span>
                           </div>
                         </div>
                       </div>
@@ -2054,7 +1887,7 @@ export default function PatientForm({
                 <div className="space-y-5 animate-fadeIn">
                   {/* Service & Classification Card */}
                   <div className="bg-white rounded-2xl border border-slate-200/80 shadow-[0_2px_16px_-4px_rgba(15,80,72,0.08)] overflow-hidden">
-                    <div className="flex items-center gap-3 px-5 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-100">
+                    <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-100 bg-slate-50/60">
                       <div className="w-9 h-9 bg-primary-700 rounded-xl flex items-center justify-center shadow-sm shadow-primary-700/25">
                         <Shield className="h-4 w-4 text-white" />
                       </div>
@@ -2080,7 +1913,14 @@ export default function PatientForm({
                           <div className="relative">
                             <SearchableSelect
                               options={PATIENT_CATEGORY_OPTIONS.filter(
-                                (opt) => opt.value !== '',
+                                (opt) =>
+                                  opt.value !== '' &&
+                                  (isMilitaryFeatureEnabled() ||
+                                    ![
+                                      'Military',
+                                      'Military Participant',
+                                      'Security Services',
+                                    ].includes(opt.value)),
                               )}
                               value={formData.patient_category || ''}
                               onChange={(value) =>
@@ -2359,10 +2199,10 @@ export default function PatientForm({
                               <div className="space-y-1.5 p-3 bg-white rounded-xl border border-amber-100 shadow-sm">
                                 <label className="text-xs font-bold text-gray-500 uppercase block mb-1">
                                   {formData.patient_category === 'Security Services'
-                                    ? "Principal's Rank / Designation"
+                                    ? "Principal's Title / Designation"
                                     : formData.patient_category === 'Civilian' || formData.patient_category === 'Civilian Participant'
                                       ? "Principal's Occupation"
-                                      : "Principal's Rank"}
+                                      : "Principal's Title"}
                                 </label>
                                 <input
                                   type="text"
@@ -2467,7 +2307,7 @@ export default function PatientForm({
                                     }));
                                   }
                                 }}
-                                placeholder="Search by name, rank, or EMR number..."
+                                placeholder="Search by name, rank, or patient number..."
                                 onSearch={(q: string) => setPrincipalSearch(q)}
                               />
                               <p className="text-xs text-gray-500">
@@ -2701,11 +2541,11 @@ export default function PatientForm({
                         </h4>
                       </div>
                       <div className="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {/* Title/Rank for Civilian and Civilian Participant */}
+                        {/* Title / Designation for Civilian and Civilian Participant */}
                         {showCivilianTitle && (
                           <div className="space-y-1.5">
                             <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide">
-                              Title/Rank
+                              Title / Designation
                             </label>
                             <input
                               type="text"
@@ -3381,58 +3221,35 @@ export default function PatientForm({
             </div>
           </form>
 
-          {/* Footer with Navigation */}
-          <div className="border-t border-gray-200/80 bg-white/95 backdrop-blur-sm px-6 py-4 flex items-center justify-between flex-shrink-0">
-            <button
-              type="button"
-              onClick={prevStep}
-              disabled={currentStep === 0}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 ${
-                currentStep === 0
-                  ? 'text-gray-300 cursor-not-allowed'
-                  : 'text-gray-700 hover:bg-gray-100 border border-gray-200 hover:border-gray-300 active:scale-[0.98]'
-              }`}
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Previous
-            </button>
-
-            <div className="flex items-center gap-3">
+          {/* Footer */}
+          <div className="flex shrink-0 items-center justify-between gap-3 border-t border-slate-200 bg-white px-4 py-3 sm:px-6">
+            <p className="hidden text-xs text-slate-500 sm:block">
+              Fields marked <span className="text-red-500">*</span> are required
+            </p>
+            <div className="ml-auto flex items-center gap-2">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex items-center gap-2 px-5 py-2.5 text-gray-600 hover:bg-gray-100 rounded-xl font-medium text-sm transition-all duration-200 border border-gray-200 hover:border-gray-300 active:scale-[0.98]"
+                className="rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50"
               >
-                <X className="h-4 w-4" />
                 Cancel
               </button>
-
-              {currentStep < steps.length - 1 ? (
-                <button
-                  type="button"
-                  onClick={nextStep}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-primary-700 hover:bg-primary-800 text-white rounded-xl font-medium text-sm transition-all duration-200 shadow-sm shadow-primary-700/20 hover:shadow-md hover:shadow-primary-700/25 active:scale-[0.98]"
-                >
-                  Next Step
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleSubmit as any}
-                  disabled={isLoading || isSavingAndAddingDependent}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-primary-700 hover:bg-primary-800 text-white rounded-xl font-medium text-sm transition-all duration-200 shadow-sm shadow-primary-700/20 hover:shadow-md hover:shadow-primary-700/25 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
-                >
-                  {isLoading ? (
-                    <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  ) : (
-                    <Check className="h-4 w-4" />
-                  )}
-                  {isEditing ? 'Update Patient' : 'Save Patient'}
-                </button>
-              )}
+              <button
+                type="button"
+                onClick={handleSubmit as any}
+                disabled={isLoading || isSavingAndAddingDependent}
+                className="flex items-center gap-2 rounded-lg bg-[#E9783F] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#D96A36] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isLoading ? (
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                ) : (
+                  <Check className="h-4 w-4" />
+                )}
+                {isEditing ? 'Save changes' : 'Save patient'}
+              </button>
             </div>
           </div>
+
         </div>
       </div>
 

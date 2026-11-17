@@ -52,8 +52,6 @@ import { NhisClaimsExportModal } from './NhisClaimsExportModal';
 import { SkeletonTable } from '../../../components/ui/SkeletonLoader';
 
 // XenoCare Logo
-const ndcLogoSrc = require('../../../../../assets/xenocare-logo.png');
-
 // =============================================================================
 // Helpers & Constants
 // =============================================================================
@@ -228,7 +226,7 @@ const EXPORT_COLUMNS: ExportColumn[] = [
   },
   {
     key: 'emrNumber',
-    label: 'EMR Number',
+    label: 'Patient number',
     group: 'patient',
     required: true,
     getValue: (i) => i.emrNumber,
@@ -561,11 +559,7 @@ function ClaimDetailModal({ claim, onClose }: ClaimDetailModalProps) {
       >
         <div className="bg-gradient-to-r from-green-700 to-green-600 px-6 py-4">
           <div className="flex items-center gap-4">
-            <img
-              src={ndcLogoSrc}
-              alt="XenoCare Logo"
-              className="h-12 w-12 rounded-full bg-white p-1"
-            />
+            
             <div className="flex-1">
               <h3 className="text-lg font-bold text-white">
                 NHIS Claim Details

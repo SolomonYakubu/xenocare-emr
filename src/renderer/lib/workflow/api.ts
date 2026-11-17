@@ -2260,7 +2260,7 @@ export async function getEncounterStats(): Promise<EncounterStats> {
     supabase
       .from('lab_requests')
       .select('created_at, processed_at')
-      .in('status', ['Completed', 'Validated', 'Verified'])
+      .in('status', ['Completed', 'Reported'])
       .gte('created_at', firstOfMonth),
   ]);
 

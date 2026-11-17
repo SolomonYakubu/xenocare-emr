@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR
+ * XenoCare
  * Reusable Filter Panel — used across all medical module report systems
  *
  * Renders date range, patient search, status, and module-specific filters.

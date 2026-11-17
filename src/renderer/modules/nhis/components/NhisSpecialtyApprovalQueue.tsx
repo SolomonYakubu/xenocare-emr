@@ -761,7 +761,7 @@ export function NhisSpecialtyApprovalQueue({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by patient name or EMR number..."
+              placeholder="Search by patient name or patient number..."
               className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 rounded-xl text-base focus:ring-2 focus:ring-primary-700 focus:border-primary-700"
             />
           </div>
@@ -1159,11 +1159,7 @@ export function NhisSpecialtyApprovalQueue({
             <div className="px-6 py-4 bg-gradient-to-r from-primary-700 to-[#008545] flex items-center justify-between shrink-0">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center p-1.5 backdrop-blur-sm border border-white/10">
-                  <img
-                    src={require('../../../../../assets/xenocare-logo.png')}
-                    alt="XenoCare Logo"
-                    className="w-full h-full object-contain drop-shadow-sm"
-                  />
+                  
                 </div>
                 <div className="border-l border-white/20 pl-4">
                   <h3 className="text-lg font-bold text-white tracking-tight leading-tight">
@@ -2118,7 +2114,7 @@ export function NhisSpecialtyApprovalQueue({
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <p className="text-xs text-gray-400 uppercase">
-                            EMR Number
+                            Patient number
                           </p>
                           <p className="font-mono text-sm font-bold text-gray-700">
                             {selectedBooking.emr_number}

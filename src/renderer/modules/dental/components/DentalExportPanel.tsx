@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR — Dental Export Panel
+ * XenoCare — Dental Export Panel
  * Inline export toolbar for the Dental module page.
  */
 
@@ -31,7 +31,7 @@ export function DentalExportPanel({ data }: DentalExportPanelProps) {
   if (!canExport) return null;
 
   const headers = [
-    'EMR Number',
+    'Patient number',
     'Patient',
     'Procedure Type',
     'Tooth',

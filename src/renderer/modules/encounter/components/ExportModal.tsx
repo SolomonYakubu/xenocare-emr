@@ -299,8 +299,8 @@ const encountersToExcel = (encounters: Encounter[], columns: ExportColumn[]): st
   xmlns:x="urn:schemas-microsoft-com:office:excel"
   xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
   <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
-    <Title>NDC Encounter Report</Title>
-    <Author>XenoCare EMR</Author>
+    <Title>XenoCare Encounter Report</Title>
+    <Author>XenoCare</Author>
     <Created>${new Date().toISOString()}</Created>
   </DocumentProperties>
   <Styles>

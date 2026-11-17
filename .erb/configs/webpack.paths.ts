@@ -1,13 +1,14 @@
-import { fileURLToPath } from 'url';
 import path from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Resolve everything from the repository root. Webpack is always invoked from
+// there by the npm scripts. Deliberately avoids import.meta so these configs
+// load through ts-node as CommonJS on Node 20 (macOS and Windows).
+const rootPath = process.cwd();
+const erbPath = path.join(rootPath, '.erb');
+const configsDir = path.join(erbPath, 'configs');
 
-const rootPath = path.join(__dirname, '../..');
-const erbPath = path.join(__dirname, '..');
 const erbNodeModulesPath = path.join(erbPath, 'node_modules');
-const dllPath = path.join(__dirname, '../dll');
+const dllPath = path.join(configsDir, '../dll');
 const srcPath = path.join(rootPath, 'src');
 const srcMainPath = path.join(srcPath, 'main');
 const srcRendererPath = path.join(srcPath, 'renderer');

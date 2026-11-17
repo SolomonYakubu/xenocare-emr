@@ -62,6 +62,8 @@ interface WardBedSelectorProps {
   onBedSelect: (bedId: string, bed: BedInfo) => void;
   disabled?: boolean;
   required?: boolean;
+  /** Hide ward selection and show every available bed in the facility. */
+  bedOnly?: boolean;
 }
 
 // Ward type color mapping
@@ -114,9 +116,13 @@ export const WardBedSelector: React.FC<WardBedSelectorProps> = ({
   onBedSelect,
   disabled = false,
   required = false,
+  bedOnly = true,
 }) => {
   const [wards, setWards] = useState<Ward[]>([]);
   const [beds, setBeds] = useState<BedInfo[]>([]);
+  const [facilityBeds, setFacilityBeds] = useState<
+    Array<BedInfo & { ward_id: string }>
+  >([]);
   const [loadingWards, setLoadingWards] = useState(true);
   const [loadingBeds, setLoadingBeds] = useState(false);
   const [wardFilter, setWardFilter] = useState('');
@@ -179,7 +185,7 @@ export const WardBedSelector: React.FC<WardBedSelectorProps> = ({
         // Fetch all beds (no facility filter - beds are linked via ward_id)
         const { data: allBeds, error: bedsError } = await supabase
           .from('beds')
-          .select('id, ward_id, status, is_active');
+          .select('id, ward_id, status, is_active, bed_number, bed_type, features');
 
         if (bedsError) {
           log.error('[WardBedSelector] Beds fetch error:', bedsError);
@@ -193,6 +199,14 @@ export const WardBedSelector: React.FC<WardBedSelectorProps> = ({
         );
 
         // Log unique statuses found
+        setFacilityBeds(
+          ((allBeds || []) as Array<
+              BedInfo & { ward_id: string; is_active?: boolean }
+            >).filter(
+            (bed) => bed.is_active !== false && isAvailableBedStatus(bed.status),
+          ),
+        );
+
         const uniqueStatuses = [
           ...new Set((allBeds || []).map((b) => b.status)),
         ];
@@ -340,6 +354,82 @@ export const WardBedSelector: React.FC<WardBedSelectorProps> = ({
 
   const selectedWard = wards.find((w) => w.id === selectedWardId);
   const selectedBed = beds.find((b) => b.id === selectedBedId);
+
+  if (bedOnly) {
+    const selectedFacilityBed = facilityBeds.find(
+      (bed) => bed.id === selectedBedId,
+    );
+
+    return (
+      <div className="space-y-4">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          <Bed className="w-4 h-4 inline mr-1" />
+          Select Bed {required && <span className="text-red-500">*</span>}
+        </label>
+
+        {loadingWards ? (
+          <SkeletonBedGrid count={12} />
+        ) : facilityBeds.length === 0 ? (
+          <div className="py-4 text-center text-amber-600 bg-amber-50 rounded-lg">
+            No available beds right now.
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 max-h-64 overflow-y-auto p-1">
+            {facilityBeds.map((bed) => {
+              const isSelected = bed.id === selectedBedId;
+              return (
+                <button
+                  key={bed.id}
+                  type="button"
+                  onClick={() => {
+                    if (disabled) return;
+                    const ward =
+                      wards.find((w) => w.id === bed.ward_id) ||
+                      ({
+                        id: bed.ward_id,
+                        name: 'Bed',
+                        ward_type: '',
+                        total_beds: 0,
+                        available_beds: 0,
+                        is_active: true,
+                      } as Ward);
+                    onWardSelect(ward.id, ward);
+                    onBedSelect(bed.id, bed);
+                  }}
+                  disabled={disabled}
+                  className={`p-2 rounded-lg border-2 text-center transition-all ${
+                    isSelected
+                      ? 'border-blue-500 bg-blue-100'
+                      : `${BED_STATUS_COLORS.available} hover:border-green-500`
+                  } ${disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+                  title={`Bed ${bed.bed_number} (${bed.bed_type || 'Standard'})`}
+                >
+                  <div className="font-semibold text-sm">{bed.bed_number}</div>
+                  <div className="text-xs text-gray-500 truncate">
+                    {bed.bed_type || 'Standard'}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {selectedFacilityBed && (
+          <div className="p-3 bg-green-50 rounded-lg border border-green-200 text-sm text-green-800">
+            <strong>Bed:</strong> {selectedFacilityBed.bed_number}
+            {selectedFacilityBed.bed_type && ` (${selectedFacilityBed.bed_type})`}
+          </div>
+        )}
+
+        {error && (
+          <div className="p-3 bg-red-50 rounded-lg text-red-700 text-sm">
+            <AlertCircle className="w-4 h-4 inline mr-2" />
+            {error}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

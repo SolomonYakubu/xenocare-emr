@@ -41,6 +41,7 @@ import {
   CheckCircle,
   Loader2,
   Sparkles,
+  X,
 } from 'lucide-react';
 import { Button, Input, SearchableSelect } from '../../components/ui';
 import { SpecialtyConsultationWizard } from '../clinical-consultation/components/SpecialtyConsultationWizard';
@@ -137,62 +138,29 @@ const SpecialtyCard: React.FC<SpecialtyCardProps> = ({
   return (
     <button
       onClick={() => onSelect(template)}
-      className={`
-        relative p-4 rounded-xl border-2 transition-all duration-200
-        hover:shadow-md hover:scale-[1.02] text-left w-full
-        ${
-          isSelected
-            ? 'border-violet-500 bg-violet-50 shadow-md'
-            : 'border-gray-200 bg-white hover:border-violet-300'
-        }
-      `}
+      className={`flex w-full items-center gap-3 rounded-xl border bg-white px-3.5 py-3 text-left transition-colors ${
+        isSelected
+          ? 'border-[#E9783F] bg-[#FDF8F4]'
+          : 'border-slate-200 hover:border-slate-300'
+      }`}
     >
-      {/* Badge for version */}
-      <div className="absolute top-2 right-2">
-        <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
-          v{template.version || 1}
+      <span
+        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+          isSelected ? 'bg-[#F1EAE4] text-[#B36845]' : 'bg-slate-50 text-slate-500'
+        }`}
+      >
+        <Icon size={18} />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm font-semibold leading-tight text-slate-900">
+          {template.specialty_name}
         </span>
-      </div>
-
-      <div className="flex items-start gap-3">
-        <div
-          className={`
-          p-2.5 rounded-lg
-          ${isSelected ? 'bg-violet-500 text-white' : 'bg-gray-100 text-gray-600'}
-        `}
-        >
-          <Icon size={20} />
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <h3
-            className={`font-semibold text-sm ${isSelected ? 'text-violet-700' : 'text-gray-900'}`}
-          >
-            {template.specialty_name}
-          </h3>
-          <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">
-            {template.description}
-          </p>
-
-          <div className="flex items-center gap-3 mt-2">
-            <span className="flex items-center gap-1 text-xs text-gray-500">
-              <FileText size={12} />
-              {template.sections?.length || 0} sections
-            </span>
-            {patientCount > 0 && (
-              <span className="flex items-center gap-1 text-xs text-violet-600 font-medium">
-                <Users size={12} />
-                {patientCount} waiting
-              </span>
-            )}
-          </div>
-        </div>
-
-        <ChevronRight
-          size={16}
-          className={`mt-1 ${isSelected ? 'text-violet-500' : 'text-gray-400'}`}
-        />
-      </div>
+        <span className="mt-0.5 block truncate text-xs text-slate-500">
+          {template.sections?.length || 0} sections
+          {patientCount > 0 ? ` · ${patientCount} waiting` : ''}
+        </span>
+      </span>
+      <ChevronRight size={16} className="shrink-0 text-slate-300" />
     </button>
   );
 };
@@ -218,6 +186,7 @@ export default function SpecialtyClinicPage() {
   const [selectedSpecialty, setSelectedSpecialty] =
     useState<SpecialtyTemplate | null>(null);
   const [isWizardOpen, setIsWizardOpen] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [preselectedPatient, setPreselectedPatient] =
     useState<PatientDTO | null>(null);
@@ -271,6 +240,7 @@ export default function SpecialtyClinicPage() {
   // Handlers
   const handleSelectSpecialty = useCallback((template: SpecialtyTemplate) => {
     setSelectedSpecialty(template);
+    setShowDetails(true);
   }, []);
 
   const handleStartConsultation = useCallback(() => {
@@ -329,7 +299,7 @@ export default function SpecialtyClinicPage() {
         showToast({
           type: 'error',
           title: 'Missing Patient',
-          message: 'All clinical records must be tied to a patient EMR number.',
+          message: 'All clinical records must be tied to a patient patient number.',
         });
         return;
       }
@@ -835,247 +805,165 @@ export default function SpecialtyClinicPage() {
   }
 
   // =============================================================================
-  // ADMIN VIEW - Full Specialty List
+  // ADMIN VIEW - Specialty list
   // =============================================================================
 
   return (
-    <div className="h-full flex flex-col bg-gray-50">
-      {/* Header */}
-      <div className={`${headerGradient} px-6 py-5`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-              <Microscope className="text-white" size={28} />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-white">
-                Specialty Clinics
-              </h1>
-              <p className="text-white/80 text-sm">
-                Template-driven specialty OPD consultations
-              </p>
-            </div>
-          </div>
-
-          <Button
-            onClick={handleStartConsultation}
-            disabled={!selectedSpecialty}
-            className="bg-white text-violet-600 hover:bg-violet-50 font-medium px-5"
-          >
-            <Plus size={18} className="mr-2" />
-            New Consultation
-          </Button>
-        </div>
-
-        {/* Stats Row */}
-        <div className="grid grid-cols-4 gap-4 mt-5">
-          {[
-            {
-              label: 'Total Today',
-              value: stats.total,
-              icon: Calendar,
-              color: 'bg-white/20',
-            },
-            {
-              label: 'In Progress',
-              value: stats.inProgress,
-              icon: Activity,
-              color: 'bg-yellow-500/30',
-            },
-            {
-              label: 'Completed',
-              value: stats.completed,
-              icon: CheckCircle,
-              color: 'bg-green-500/30',
-            },
-            {
-              label: 'Waiting',
-              value: stats.waiting,
-              icon: Clock,
-              color: 'bg-orange-500/30',
-            },
-          ].map((stat, idx) => (
-            <div
-              key={idx}
-              className={`${stat.color} rounded-lg px-4 py-3 backdrop-blur-sm`}
-            >
-              <div className="flex items-center gap-2">
-                <stat.icon size={16} className="text-white/80" />
-                <span className="text-white/80 text-xs font-medium">
-                  {stat.label}
-                </span>
-              </div>
-              <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 overflow-hidden flex">
-        {/* Left Panel - Specialty Selection */}
-        <div className="w-96 border-r border-gray-200 bg-white flex flex-col">
-          <div className="p-4 border-b border-gray-200">
-            <div className="relative">
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                size={18}
-              />
-              <Input
-                placeholder="Search specialties..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <p className="text-xs text-gray-500 mt-2">
-              {filteredTemplates.length} specialties available
+    <div className="h-full overflow-y-auto bg-[#F7F6F3]">
+      <div className="mx-auto max-w-5xl p-4 sm:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="font-display text-2xl font-bold text-slate-900">
+              Specialty clinics
+            </h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Choose a clinic to start a consultation.
             </p>
           </div>
+        </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
-            {filteredTemplates.map((template) => (
-              <SpecialtyCard
-                key={template.id}
-                template={template}
-                onSelect={handleSelectSpecialty}
-                isSelected={selectedSpecialty?.id === template.id}
-                patientCount={specialtyStats[template.specialty_code] || 0}
-              />
-            ))}
+        <div className="mt-3 flex flex-wrap items-baseline gap-x-6 gap-y-1 text-sm text-slate-500">
+          <span>
+            <strong className="font-display text-lg text-slate-900">
+              {stats.total}
+            </strong>{' '}
+            today
+          </span>
+          <span>
+            <strong className="font-display text-lg text-slate-900">
+              {stats.inProgress}
+            </strong>{' '}
+            in progress
+          </span>
+          <span>
+            <strong className="font-display text-lg text-slate-900">
+              {stats.completed}
+            </strong>{' '}
+            completed
+          </span>
+          <span>
+            <strong className="font-display text-lg text-slate-900">
+              {stats.waiting}
+            </strong>{' '}
+            waiting
+          </span>
+        </div>
 
-            {filteredTemplates.length === 0 && (
-              <div className="text-center py-8 text-gray-500">
-                <AlertCircle size={32} className="mx-auto mb-2 text-gray-400" />
-                <p className="text-sm">No specialties match your search</p>
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          <div className="relative w-full max-w-sm">
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              size={16}
+            />
+            <input
+              type="search"
+              placeholder="Search clinics"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm outline-none transition-colors focus:border-[#E9783F]"
+            />
+          </div>
+          <span className="text-xs text-slate-500">
+            {filteredTemplates.length} clinics
+          </span>
+        </div>
+
+        <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {filteredTemplates.map((template) => (
+            <SpecialtyCard
+              key={template.id}
+              template={template}
+              onSelect={handleSelectSpecialty}
+              isSelected={selectedSpecialty?.id === template.id}
+              patientCount={specialtyStats[template.specialty_code] || 0}
+            />
+          ))}
+        </div>
+
+        {filteredTemplates.length === 0 && (
+          <div className="rounded-xl border border-dashed border-slate-200 bg-white py-12 text-center">
+            <AlertCircle size={28} className="mx-auto mb-2 text-slate-300" />
+            <p className="text-sm text-slate-500">No clinics match your search</p>
+          </div>
+        )}
+      </div>
+
+      {/* Specialty details */}
+      {showDetails && selectedSpecialty && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 sm:items-center sm:p-4">
+          <div className="flex max-h-[88vh] w-full flex-col overflow-hidden rounded-t-2xl bg-white sm:max-w-lg sm:rounded-2xl">
+            <div className="flex items-start justify-between border-b border-slate-200 px-5 py-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#F1EAE4] text-[#B36845]">
+                  {(() => {
+                    const Icon =
+                      SPECIALTY_ICONS[selectedSpecialty.specialty_code] ||
+                      Sparkles;
+                    return <Icon size={20} />;
+                  })()}
+                </span>
+                <div className="min-w-0">
+                  <h2 className="truncate font-display text-lg font-bold text-slate-900">
+                    {selectedSpecialty.specialty_name}
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    {selectedSpecialty.sections?.length || 0} examination sections
+                  </p>
+                </div>
               </div>
-            )}
+              <button
+                type="button"
+                onClick={() => setShowDetails(false)}
+                aria-label="Close specialty details"
+                className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
+              <p className="text-sm leading-relaxed text-slate-600">
+                {selectedSpecialty.description}
+              </p>
+              <div className="mt-4 space-y-1.5">
+                {selectedSpecialty.sections?.map((section, idx) => (
+                  <div
+                    key={section.id}
+                    className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 px-3 py-2"
+                  >
+                    <span className="min-w-0 truncate text-sm text-slate-700">
+                      {idx + 1}. {section.section_name}
+                    </span>
+                    <span className="shrink-0 text-xs text-slate-400">
+                      {section.fields?.length || 0} fields
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex shrink-0 items-center justify-end gap-2 border-t border-slate-200 px-5 py-3">
+              <button
+                type="button"
+                onClick={() => setShowDetails(false)}
+                className="rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDetails(false);
+                  handleStartConsultation();
+                }}
+                className="rounded-lg bg-[#E9783F] px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-[#D96A36]"
+              >
+                Start consultation
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* Right Panel - Selected Specialty Info */}
-        <div className="flex-1 p-6 overflow-y-auto">
-          {selectedSpecialty ? (
-            <div className="max-w-3xl">
-              {/* Specialty Header */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-xl bg-violet-100 text-violet-600">
-                      {(() => {
-                        const Icon =
-                          SPECIALTY_ICONS[selectedSpecialty.specialty_code] ||
-                          Sparkles;
-                        return <Icon size={28} />;
-                      })()}
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-bold text-gray-900">
-                        {selectedSpecialty.specialty_name}
-                      </h2>
-                      <p className="text-gray-600 text-sm mt-1">
-                        {selectedSpecialty.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  <span className="px-3 py-1.5 text-sm font-medium rounded-full bg-violet-100 text-violet-700">
-                    Template v{selectedSpecialty.version || 1}
-                    {selectedSpecialty.is_active && (
-                      <span className="ml-1 text-green-600">(Active)</span>
-                    )}
-                  </span>
-                </div>
-
-                {/* Template Meta */}
-                <div className="grid grid-cols-3 gap-4 mt-6 pt-4 border-t border-gray-100">
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">
-                      OPD Type
-                    </p>
-                    <p className="font-medium text-gray-900 mt-1">
-                      {selectedSpecialty.opd_type}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">
-                      Sections
-                    </p>
-                    <p className="font-medium text-gray-900 mt-1">
-                      {selectedSpecialty.sections?.length || 0}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">
-                      Fields
-                    </p>
-                    <p className="font-medium text-gray-900 mt-1">
-                      {selectedSpecialty.sections?.reduce(
-                        (acc, s) => acc + (s.fields?.length || 0),
-                        0,
-                      ) || 0}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sections Preview */}
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <h3 className="font-semibold text-gray-900 mb-4">
-                  Examination Sections
-                </h3>
-
-                <div className="space-y-3">
-                  {selectedSpecialty.sections?.map((section, idx) => (
-                    <div
-                      key={section.id}
-                      className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 border border-gray-100"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center text-sm font-bold">
-                        {idx + 1}
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900 text-sm">
-                          {section.section_name}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {section.fields?.length || 0} fields
-                        </p>
-                      </div>
-                      {section.is_required && (
-                        <span className="px-2 py-0.5 text-xs font-medium rounded bg-red-100 text-red-600">
-                          Required
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Start Button */}
-                <Button
-                  onClick={handleStartConsultation}
-                  className="w-full mt-6 bg-violet-600 hover:bg-violet-700 text-white py-3"
-                >
-                  <Plus size={18} className="mr-2" />
-                  Start {selectedSpecialty.specialty_name} Consultation
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="h-full flex items-center justify-center">
-              <div className="text-center">
-                <Microscope size={48} className="mx-auto mb-4 text-gray-300" />
-                <h3 className="text-lg font-medium text-gray-600">
-                  Select a Specialty
-                </h3>
-                <p className="text-gray-500 text-sm mt-1">
-                  Choose a specialty clinic from the left panel to begin
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      )}
 
       {/* Specialty Consultation Wizard */}
       {selectedSpecialty && (

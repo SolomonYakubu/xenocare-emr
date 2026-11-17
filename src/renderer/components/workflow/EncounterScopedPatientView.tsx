@@ -55,7 +55,7 @@ function PatientDemographics({
         >
           <div>
             <label className="text-xs text-gray-500 uppercase">
-              EMR Number
+              Patient number
             </label>
             <p className="font-mono text-primary-700 font-medium text-sm">
               {patient.emr_number}

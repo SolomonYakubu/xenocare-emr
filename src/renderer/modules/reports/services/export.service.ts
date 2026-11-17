@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR
+ * XenoCare
  * Reusable Export Service — CSV, Excel (xlsx), PDF (jsPDF)
  *
  * All module exports funnel through this service for consistency.
@@ -166,7 +166,7 @@ export function exportToPDF(opts: PDFReportOptions, filename: string): void {
   doc.text('XENOCARE', ML, 9);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  doc.text(opts.facility || 'XenoCare EMR', ML, 15);
+  doc.text(opts.facility || 'XenoCare', ML, 15);
 
   // Confidentiality notice right-aligned
   doc.setFontSize(7);
@@ -301,7 +301,7 @@ export function exportToPDF(opts: PDFReportOptions, filename: string): void {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(7);
     doc.text(
-      'XenoCare EMR — Confidential Medical Record',
+      'XenoCare — Confidential Medical Record',
       ML,
       pageH - 4,
     );

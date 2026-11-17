@@ -58,8 +58,6 @@ import {
 import { getFacilityName } from '../../../lib/facility';
 
 // XenoCare logo import
-const ndcLogoSrc = require('../../../../../assets/xenocare-logo.png');
-
 // Category colors and icons
 const CATEGORY_CONFIG: Record<
   string,
@@ -890,11 +888,7 @@ export function ReceiptsList({ onViewReceipt }: ReceiptsListProps) {
               <div className="relative z-10 bg-gradient-to-r from-green-700 to-green-600 text-white p-6">
                 <div className="flex items-center justify-center gap-4">
                   <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg p-1">
-                    <img
-                      src={ndcLogoSrc}
-                      alt="XenoCare Logo"
-                      className="w-full h-full object-contain rounded-full"
-                    />
+                    
                   </div>
                   <div className="text-center">
                     <h1 className="text-2xl font-bold tracking-wide">
@@ -1160,7 +1154,7 @@ export function ReceiptsList({ onViewReceipt }: ReceiptsListProps) {
                         Thank you for your payment!
                       </p>
                       <p className="text-xs text-gray-400 mt-1">
-                        XenoCare EMR System
+                        XenoCare System
                       </p>
                       <div className="mt-2 inline-flex items-center gap-1 bg-green-50 px-2 py-1 rounded text-xs font-mono text-green-700">
                         <Shield className="h-3 w-3" />

@@ -313,7 +313,7 @@ function ImagingResultModal({
                 <div className="flex items-center gap-2">
                   <Shield size={14} className="text-slate-400" />
                   <span className="text-slate-400 text-xs font-black uppercase">
-                    EMR Number
+                    Patient number
                   </span>
                   <span className="font-bold text-slate-900 text-sm font-mono tracking-tighter">
                     {emrNumber}

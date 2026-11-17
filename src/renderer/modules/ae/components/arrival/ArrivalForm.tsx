@@ -3,6 +3,7 @@
 // Streamlined Nigerian A&E standard: Chief complaint first, then details
 // =============================================================================
 
+import { isMilitaryFeatureEnabled } from '../../../../config/features';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -205,7 +206,10 @@ export default function ArrivalForm({
             fieldId="ae:arrival_mode"
             value={watch('arrival_mode') || ''}
             onChange={(v) => setValue('arrival_mode', v as any)}
-            options={ARRIVAL_MODES}
+            options={ARRIVAL_MODES.filter(
+              (mode) =>
+                isMilitaryFeatureEnabled() || mode.value !== 'military_escort',
+            )}
             className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-red-500 focus:border-red-500 bg-white"
           />
           {errors.arrival_mode && (
@@ -223,7 +227,10 @@ export default function ArrivalForm({
             fieldId="ae:referral_source"
             value={watch('referral_source') || ''}
             onChange={(v) => setValue('referral_source', v as any)}
-            options={REFERRAL_SOURCES}
+            options={REFERRAL_SOURCES.filter(
+              (source) =>
+                isMilitaryFeatureEnabled() || source.value !== 'military',
+            )}
             className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-red-500 focus:border-red-500 bg-white"
           />
         </div>

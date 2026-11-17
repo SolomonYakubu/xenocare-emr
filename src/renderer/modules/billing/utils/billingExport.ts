@@ -14,9 +14,9 @@ import {
   FacilityBrand,
 } from '../../../shared/constants/branding';
 
-// Import app logo
-const ndcLogoSrc = require('../../../../../assets/xenocare-logo.png');
-
+// App logo stays on the login screen; printed documents carry the facility
+// name and colours only.
+const ndcLogoSrc = '';
 // =============================================================================
 // Facility Brand (configurable via Configurations → Facility Settings)
 // =============================================================================
@@ -1256,13 +1256,8 @@ export function exportToExcel(
 // XenoCare logo as base64 - will be loaded dynamically
 let ndcLogoBase64: string | null = null;
 
-// Function to load logo as base64 from imported source
+// Printed documents carry no app logo, so there is none to embed.
 async function loadLogoAsBase64(): Promise<string | null> {
-  // First try the imported logo
-  if (ndcLogoSrc) {
-    const result = await tryLoadImage(ndcLogoSrc);
-    if (result) return result;
-  }
   return null;
 }
 

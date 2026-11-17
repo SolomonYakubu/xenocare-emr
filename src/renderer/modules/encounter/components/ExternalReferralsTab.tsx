@@ -11,6 +11,7 @@
 // 4. Staff prints the form and gives to patient
 // =============================================================================
 
+import { isMilitaryFeatureEnabled } from '../../../config/features';
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Printer,
@@ -464,12 +465,18 @@ export const ExternalReferralsTab: React.FC<ExternalReferralsTabProps> = ({
     patientName:
       ref.patient_full_name ||
       `${ref.first_name} ${ref.middle_name || ''} ${ref.surname}`.trim(),
-    patientCategory: patientBio?.patient_category || '',
+    patientCategory:
+      isMilitaryFeatureEnabled() || patientBio?.patient_category !== 'Military'
+        ? patientBio?.patient_category || ''
+        : 'Civilian',
     patientTitle: patientBio?.title || '',
-    patientRank: patientBio?.rank || '',
-    serviceNumber: patientBio?.service_number || '',
-    militaryBranch:
-      patientBio?.military_branch || patientBio?.arm_of_service || '',
+    patientRank: isMilitaryFeatureEnabled() ? patientBio?.rank || '' : '',
+    serviceNumber: isMilitaryFeatureEnabled()
+      ? patientBio?.service_number || ''
+      : '',
+    militaryBranch: isMilitaryFeatureEnabled()
+      ? patientBio?.military_branch || patientBio?.arm_of_service || ''
+      : '',
     patientAge: ref.patient_age ?? undefined,
     patientGender: ref.gender || '',
     dateOfBirth: patientBio?.date_of_birth || '',
@@ -673,11 +680,7 @@ export const ExternalReferralsTab: React.FC<ExternalReferralsTabProps> = ({
             <div className="sticky top-0 bg-gradient-to-r from-primary-700 to-[#008545] px-6 py-4 rounded-t-xl z-10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <img
-                    src={require('../../../../../assets/xenocare-logo.png')}
-                    alt="XenoCare"
-                    className="h-10 w-10 rounded-full bg-white/20 p-0.5 object-contain"
-                  />
+                  
                   <div>
                     <h3 className="text-lg font-bold text-white">
                       Referral Details
@@ -1127,11 +1130,7 @@ export const ExternalReferralsTab: React.FC<ExternalReferralsTabProps> = ({
             <div className="sticky top-0 bg-gradient-to-r from-primary-700 to-[#008545] px-6 py-4 rounded-t-xl z-10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <img
-                    src={require('../../../../../assets/xenocare-logo.png')}
-                    alt="XenoCare"
-                    className="h-10 w-10 rounded-full bg-white/20 p-0.5 object-contain"
-                  />
+                  
                   <div>
                     <h3 className="text-lg font-bold text-white">
                       Print Preview

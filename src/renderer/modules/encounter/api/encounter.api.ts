@@ -19,6 +19,10 @@ import {
   ClinicFilters,
 } from '../dtos/encounter.dto';
 import { createScopedLogger } from '../../../utils/logger';
+import {
+  isSpecialtyClinicRecord,
+  isSpecialtyClinicsEnabled,
+} from '../../../config/features';
 
 const log = createScopedLogger('EncounterAPI');
 
@@ -730,7 +734,10 @@ export async function getClinics(
     throw error;
   }
 
-  return (data || []) as Clinic[];
+  const clinics = (data || []) as Clinic[];
+  return isSpecialtyClinicsEnabled()
+    ? clinics
+    : clinics.filter((clinic) => !isSpecialtyClinicRecord(clinic));
 }
 
 /**

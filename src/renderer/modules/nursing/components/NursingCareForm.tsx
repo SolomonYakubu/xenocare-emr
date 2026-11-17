@@ -40,17 +40,6 @@ import { useDebounce } from '../../../hooks/useDebounce';
 // Types
 // =============================================================================
 
-// XenoCare Logo component
-function XenoCareLogo() {
-  return (
-    <img
-      src={require('../../../../../assets/xenocare-logo.png')}
-      alt="XenoCare Logo"
-      className="h-12 w-auto"
-    />
-  );
-}
-
 interface NursingCareFormProps {
   isOpen: boolean;
   onClose: () => void;
@@ -215,9 +204,6 @@ export default function NursingCareForm({
             {/* Top Bar with Logo and Title */}
             <div className="flex items-center justify-between px-6 py-3 bg-gradient-to-r from-primary-700 to-primary-600">
               <div className="flex items-center gap-4">
-                <div className="bg-white rounded-lg p-1.5 shadow-md">
-                  <XenoCareLogo />
-                </div>
                 <div className="border-l border-white/30 pl-4">
                   <h1 className="text-white font-bold text-lg tracking-wide">
                     XENOCARE

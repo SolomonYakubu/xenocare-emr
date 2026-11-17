@@ -26,8 +26,6 @@ const path = electron ? window.require('path') : null;
 const os = electron ? window.require('os') : null;
 
 // XenoCare Logo as base64 (fallback if image load fails)
-const NDC_LOGO_PATH = require('../../../../../assets/xenocare-logo.png');
-
 // =============================================================================
 // Types
 // =============================================================================
@@ -1641,7 +1639,7 @@ function generateStatisticsSection(
         </h3>
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
           ${generateBarChart('By Gender Distribution', stats.byGender, '#0891b2', '👤')}
-          ${generateBarChart('By Age Group', stats.byAgeGroup, '#ea580c', '📅')}
+          ${generateBarChart('By Age Group', stats.byAgeGroup, '#D96A36', '📅')}
           ${generateBarChart('By Patient Category', stats.byPatientCategory, '#65a30d', '🏷️')}
           ${showDoctors ? generateBarChart('Top Attending Doctors', stats.byDoctor, '#db2777', '👨‍⚕️') : ''}
         </div>
@@ -1792,7 +1790,7 @@ export function generateEncounterPDFContent(data: EncounterPDFData): string {
   <div style="background: linear-gradient(135deg, #006838 0%, #008545 100%); color: white; padding: 24px; margin: -15mm -15mm 24px -15mm; display: flex; justify-content: space-between; align-items: center;">
     <div style="display: flex; align-items: center; gap: 20px;">
       <div style="background: white; padding: 8px; border-radius: 8px;">
-        <img src="${NDC_LOGO_PATH}" alt="XenoCare" style="height: 60px; width: auto;" onerror="this.style.display='none'"/>
+        
       </div>
       <div>
         <h1 style="margin: 0; font-size: 20px; font-weight: bold;">${(facilityName || getFacilityName()).toUpperCase()}</h1>

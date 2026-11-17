@@ -465,7 +465,7 @@ export default function AeNewArrival({ onBack, onSuccess }: AeNewArrivalProps) {
             Find Existing Patient
           </h2>
           <p className="text-sm text-gray-500 mb-4">
-            Search by name, EMR number, or phone number.
+            Search by name, patient number, or phone number.
           </p>
 
           {/* Search Input */}

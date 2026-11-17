@@ -860,7 +860,7 @@ function BookAppointmentModal({
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search by name or EMR number..."
+                placeholder="Search by name or patient number..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 pl-9 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary-700 focus:border-transparent"
@@ -1166,7 +1166,7 @@ function ReferralDetailPanel({
               <p className="font-medium text-gray-900">{patientName}</p>
             </div>
             <div>
-              <p className="text-gray-500">EMR Number</p>
+              <p className="text-gray-500">Patient number</p>
               <p className="font-medium text-gray-900">{referral.emr_number}</p>
             </div>
             <div>
@@ -1682,7 +1682,7 @@ export function InternalReferralQueue({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 pointer-events-none" />
           <input
             type="text"
-            placeholder="Search by patient name or EMR number..."
+            placeholder="Search by patient name or patient number..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:border-primary-700 focus:ring-1 focus:ring-primary-700/20 transition-colors placeholder:text-gray-400"

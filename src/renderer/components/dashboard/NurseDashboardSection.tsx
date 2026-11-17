@@ -19,6 +19,7 @@ import {
   Users,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { isEmergencyFeatureEnabled } from '../../config/features';
 import { useEncounterStats } from '../../lib/workflow';
 import {
   useNursingStatsNew,
@@ -64,7 +65,7 @@ export default function NurseDashboardSection() {
       icon: Bed,
       path: '/in-patient',
       color: 'from-violet-500 to-violet-600',
-      description: 'Ward management',
+      description: 'Bed management',
     },
     {
       label: 'A&E',
@@ -94,7 +95,9 @@ export default function NurseDashboardSection() {
       color: 'from-rose-400 to-rose-500',
       description: 'Antenatal care',
     },
-  ];
+  ].filter(
+    (action) => isEmergencyFeatureEnabled() || action.path !== '/ae',
+  );
 
   const getPriorityColor = (priority: string) => {
     switch (priority?.toLowerCase()) {
@@ -274,7 +277,7 @@ export default function NurseDashboardSection() {
             </div>
             <button
               onClick={() => navigate('/nursing')}
-              className="text-xs font-bold text-[#0d5e56] hover:underline flex items-center gap-1"
+              className="text-xs font-bold text-[#11151C] hover:underline flex items-center gap-1"
             >
               View All <ChevronRight size={14} />
             </button>

@@ -6,6 +6,10 @@
  * =============================================================================
  */
 
+import {
+  isMilitaryFeatureEnabled,
+  isNhisFeatureEnabled,
+} from '../../../../config/features';
 import React, { useState, useCallback } from 'react';
 import { ChevronDown, Copy, Check, AlertTriangle } from 'lucide-react';
 import {
@@ -134,6 +138,9 @@ export function PatientStickyHeader({
       .toLowerCase()
       .replace(/_/g, ' ')
       .trim();
+    if (!isNhisFeatureEnabled() && insType.includes('nhis')) {
+      return 'Private Pay';
+    }
     if (insType === 'dhml' || insType === 'military nhis')
       return 'Military NHIS';
     if (insType === 'security services nhis') return 'Security Services NHIS';
@@ -238,7 +245,8 @@ export function PatientStickyHeader({
                   <span>{age}</span>
                 </div>
 
-                {(patient.military_branch || patient.service_number) && (
+                {isMilitaryFeatureEnabled() &&
+                  (patient.military_branch || patient.service_number) && (
                   <div className="flex items-center gap-2">
                     {patient.military_branch && (
                       <div className="flex items-center gap-1.5 rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-emerald-950">

@@ -200,7 +200,7 @@ export const DischargeSummary = forwardRef<
                   <span className="font-medium">{data.patientName}</span>
                 </div>
                 <div className="flex">
-                  <span className="w-28 text-gray-500">EMR Number:</span>
+                  <span className="w-28 text-gray-500">Patient number:</span>
                   <span className="font-medium">{data.emrNumber}</span>
                 </div>
                 <div className="flex">

@@ -1,6 +1,6 @@
 /**
  * =============================================================================
- * XenoCare EMR — Facility Info (configurable facility identity)
+ * XenoCare — Facility Info (configurable facility identity)
  *
  * The facility (hospital/clinic) name shown on printed documents, receipts and
  * report headers is configurable: it comes from the default row of the

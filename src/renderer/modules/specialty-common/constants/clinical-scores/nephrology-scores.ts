@@ -80,7 +80,7 @@ export const CKD_STAGE_SCORE: ClinicalScoreDefinition = {
       min: 5,
       max: 5,
       label: 'G4: Severe decrease',
-      color: '#f97316',
+      color: '#E9783F',
       clinical_action:
         'Nephrology follow-up (3–6 monthly). Prepare for renal replacement therapy (RRT). Dialysis or transplant planning.',
     },

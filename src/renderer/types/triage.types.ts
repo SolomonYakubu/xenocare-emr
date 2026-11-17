@@ -103,7 +103,7 @@ export const ESI_LEVELS: ESILevelDefinition[] = [
     name: 'Emergent',
     description: 'High-risk situation or severe distress',
     responseTime: '< 10 minutes',
-    color: '#EA580C', // orange-600
+    color: '#D96A36', // orange-600
     examples: [
       'Chest pain',
       'Stroke symptoms',

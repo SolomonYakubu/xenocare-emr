@@ -131,8 +131,6 @@ import { createScopedLogger } from '../../../utils/logger';
 const log = createScopedLogger('SpecialtyClinic');
 
 // XenoCare Logo
-const ndcLogoSrc = require('../../../../../assets/xenocare-logo.png');
-
 // =============================================================================
 // ICON MAPPING (Static - avoids dynamic imports)
 // =============================================================================
@@ -236,7 +234,7 @@ function SpecialtyMetricCard({
       badge: isDark
         ? 'bg-teal-900/40 text-teal-300'
         : 'bg-teal-100 text-teal-700',
-      value: isDark ? 'text-teal-300' : 'text-[#0d5e56]',
+      value: isDark ? 'text-teal-300' : 'text-[#11151C]',
       subtitle: isDark ? 'text-slate-400' : 'text-teal-700/70',
     },
     done: {
@@ -798,7 +796,7 @@ export default function SpecialtyClinicPage() {
       showToast({
         type: 'error',
         title: 'Missing Patient',
-        message: 'All clinical records must be tied to a patient EMR number.',
+        message: 'All clinical records must be tied to a patient patient number.',
       });
       return;
     }
@@ -1358,7 +1356,7 @@ export default function SpecialtyClinicPage() {
             <div>
               <div className="mb-3 flex items-center gap-3">
                 <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-2xl ${isDark ? 'bg-slate-700 text-teal-300' : 'bg-[#0d5e56] text-white'}`}
+                  className={`flex h-12 w-12 items-center justify-center rounded-2xl ${isDark ? 'bg-slate-700 text-teal-300' : 'bg-[#E9783F] text-white'}`}
                 >
                   <IconComponent className="h-6 w-6" />
                 </div>
@@ -1374,7 +1372,7 @@ export default function SpecialtyClinicPage() {
               <div className="flex flex-wrap items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400">
                 <span>{format(new Date(), 'EEEE, do MMMM')}</span>
                 <span className="text-slate-300 dark:text-slate-600">•</span>
-                <span className="text-[#0d5e56] dark:text-teal-300">
+                <span className="text-[#11151C] dark:text-teal-300">
                   {stats.waiting + stats.in_progress} patients across waiting
                   and active sessions
                 </span>
@@ -1390,7 +1388,7 @@ export default function SpecialtyClinicPage() {
                 Refresh
               </button>
               <div
-                className={`font-black text-xs uppercase tracking-[0.22em] px-4 py-2 rounded-full shadow-sm border ${isDark ? 'bg-teal-900/40 text-teal-300 border-teal-800' : 'bg-[#ccfbf1] text-[#0d5e56] border-teal-100'}`}
+                className={`font-black text-xs uppercase tracking-[0.22em] px-4 py-2 rounded-full shadow-sm border ${isDark ? 'bg-teal-900/40 text-teal-300 border-teal-800' : 'bg-[#ccfbf1] text-[#11151C] border-teal-100'}`}
               >
                 Clinic Active
               </div>
@@ -1454,7 +1452,7 @@ export default function SpecialtyClinicPage() {
         <details className="group mb-8 overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900/70 open:shadow-md">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 bg-slate-50/80 px-5 py-4 sm:px-6 dark:bg-slate-800/70 [&::-webkit-details-marker]:hidden">
             <span className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
-              <Sparkles className="h-5 w-5 text-[#0d5e56] shrink-0" />
+              <Sparkles className="h-5 w-5 text-[#11151C] shrink-0" />
               {config.specialty_name} AI Assistants
             </span>
             <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-500 ring-1 ring-slate-200 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700">
@@ -1470,14 +1468,14 @@ export default function SpecialtyClinicPage() {
               <button
                 type="button"
                 onClick={() => setIsAIDashboardOpen(true)}
-                className="text-[11px] font-black text-[#0d5e56] dark:text-teal-300 uppercase tracking-widest hover:underline"
+                className="text-[11px] font-black text-[#11151C] dark:text-teal-300 uppercase tracking-widest hover:underline"
               >
                 Configure models
               </button>
             </div>
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2 md:gap-6">
               <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-100 dark:border-slate-700 flex items-start gap-4">
-                <div className="bg-[#ccfbf1]/60 dark:bg-teal-900/40 p-3.5 rounded-2xl text-[#0d5e56] dark:text-teal-300 shrink-0">
+                <div className="bg-[#ccfbf1]/60 dark:bg-teal-900/40 p-3.5 rounded-2xl text-[#11151C] dark:text-teal-300 shrink-0">
                   <Bot className="h-6 w-6" />
                 </div>
                 <div>
@@ -1491,14 +1489,14 @@ export default function SpecialtyClinicPage() {
                   <button
                     type="button"
                     onClick={() => setIsAIDashboardOpen(true)}
-                    className="mt-4 text-[10px] font-black text-[#0d5e56] dark:text-teal-300 uppercase tracking-widest flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+                    className="mt-4 text-[10px] font-black text-[#11151C] dark:text-teal-300 uppercase tracking-widest flex items-center gap-1.5 hover:opacity-80 transition-opacity"
                   >
                     Analyze data <ChevronRight className="h-3 w-3" />
                   </button>
                 </div>
               </div>
               <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-7 shadow-sm border border-slate-100 dark:border-slate-700 flex items-start gap-4">
-                <div className="bg-[#ccfbf1]/60 dark:bg-teal-900/40 p-3.5 rounded-2xl text-[#0d5e56] dark:text-teal-300 shrink-0">
+                <div className="bg-[#ccfbf1]/60 dark:bg-teal-900/40 p-3.5 rounded-2xl text-[#11151C] dark:text-teal-300 shrink-0">
                   <Bot className="h-6 w-6" />
                 </div>
                 <div>
@@ -1511,7 +1509,7 @@ export default function SpecialtyClinicPage() {
                   <button
                     type="button"
                     onClick={() => setIsAIDashboardOpen(true)}
-                    className="mt-4 text-[10px] font-black text-[#0d5e56] dark:text-teal-300 uppercase tracking-widest flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+                    className="mt-4 text-[10px] font-black text-[#11151C] dark:text-teal-300 uppercase tracking-widest flex items-center gap-1.5 hover:opacity-80 transition-opacity"
                   >
                     Start session <ChevronRight className="h-3 w-3" />
                   </button>
@@ -1536,7 +1534,7 @@ export default function SpecialtyClinicPage() {
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[13px] font-bold transition-all whitespace-nowrap ${isActive ? 'bg-[#0d5e56] text-white shadow-sm shadow-teal-900/20' : 'bg-white text-slate-500 ring-1 ring-slate-200 hover:bg-slate-50 hover:text-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700 dark:hover:bg-slate-800'}`}
+                      className={`inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-[13px] font-bold transition-all whitespace-nowrap ${isActive ? 'bg-[#E9783F] text-white shadow-sm shadow-teal-900/20' : 'bg-white text-slate-500 ring-1 ring-slate-200 hover:bg-slate-50 hover:text-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:ring-slate-700 dark:hover:bg-slate-800'}`}
                     >
                       <Icon className="h-3.5 w-3.5" />
                       {label}
@@ -1637,9 +1635,9 @@ export default function SpecialtyClinicPage() {
                       key={ref.id}
                       className="relative overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-800"
                     >
-                      <div className="absolute top-0 bottom-0 left-0 w-1 bg-[#0d5e56]" />
+                      <div className="absolute top-0 bottom-0 left-0 w-1 bg-[#E9783F]" />
                       <div className="p-5">
-                        <div className="mb-2 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-[#0d5e56]">
+                        <div className="mb-2 flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-[#11151C]">
                           REFERRAL TASK
                           <span className="font-bold text-slate-400">
                             {ref.created_at
@@ -1706,14 +1704,10 @@ export default function SpecialtyClinicPage() {
             onClick={() => setIsAIDashboardOpen(false)}
           />
           <div className="relative w-full max-w-5xl h-[85vh] bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col">
-            <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-[#0d5e56] to-teal-700 text-white">
+            <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-[#1E232B] to-teal-700 text-white">
               <div className="flex items-center gap-3">
                 <div className="bg-white/10 rounded-xl p-2 border border-white/20">
-                  <img
-                    src={require('../../../../../assets/xenocare-logo.png')}
-                    alt="XenoCare"
-                    className="h-6 w-6 object-contain filter brightness-0 invert"
-                  />
+                  
                 </div>
                 <div>
                   <h2 className="text-base font-bold tracking-tight">
@@ -1824,7 +1818,7 @@ function QueueTab({
       <div
         className={`rounded-[1.75rem] border border-dashed px-6 py-20 text-center ${isDark ? 'border-slate-700 text-slate-400' : 'border-slate-200 text-slate-500 bg-slate-50/60'}`}
       >
-        <Users className="h-12 w-12 mx-auto mb-4 opacity-30 text-[#0d5e56]" />
+        <Users className="h-12 w-12 mx-auto mb-4 opacity-30 text-[#11151C]" />
         <p className="font-bold tracking-tight">No patients in queue</p>
         <p className="mt-2 text-sm text-slate-400 dark:text-slate-300">
           New specialty patients and assigned sessions will appear here.
@@ -1867,7 +1861,7 @@ function QueueTab({
               <div className="flex flex-col gap-4 lg:grid lg:grid-cols-[minmax(0,1.6fr)_minmax(120px,.7fr)_minmax(120px,.6fr)_auto] lg:items-center">
                 <div className="flex items-center gap-3 min-w-0">
                   <div
-                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border text-sm font-bold ${isDark ? 'border-slate-600 bg-slate-700 text-slate-200' : 'border-teal-100 bg-teal-50 text-[#0d5e56]'}`}
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border text-sm font-bold ${isDark ? 'border-slate-600 bg-slate-700 text-slate-200' : 'border-teal-100 bg-teal-50 text-[#11151C]'}`}
                   >
                     {initials || <User className="h-4 w-4" />}
                   </div>
@@ -1896,7 +1890,7 @@ function QueueTab({
                   </p>
                   <div className="mt-1 flex flex-wrap gap-2">
                     <span
-                      className={`inline-flex items-center rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${isWait ? (isDark ? 'bg-teal-900/40 text-teal-300' : 'bg-[#ccfbf1] text-[#0d5e56]') : isDark ? 'bg-indigo-900/40 text-indigo-300' : 'bg-indigo-100 text-indigo-700'}`}
+                      className={`inline-flex items-center rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${isWait ? (isDark ? 'bg-teal-900/40 text-teal-300' : 'bg-[#ccfbf1] text-[#11151C]') : isDark ? 'bg-indigo-900/40 text-indigo-300' : 'bg-indigo-100 text-indigo-700'}`}
                     >
                       {isWait ? 'Waiting' : 'Assigned'}
                     </span>
@@ -1915,7 +1909,7 @@ function QueueTab({
                     <Button
                       onClick={() => onStartSession(patient.id)}
                       disabled={isStarting}
-                      className="bg-[#0d5e56] hover:bg-[#0a4a44] text-white rounded-full px-5 py-2 h-auto text-[11px] font-bold shadow-sm min-w-[88px]"
+                      className="bg-[#E9783F] hover:bg-[#0a4a44] text-white rounded-full px-5 py-2 h-auto text-[11px] font-bold shadow-sm min-w-[88px]"
                     >
                       Start
                     </Button>
@@ -1987,7 +1981,7 @@ function QueueTab({
             </h3>
           </div>
           <span
-            className={`rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] ${isDark ? 'bg-teal-500/15 text-teal-300 ring-1 ring-teal-500/20' : 'bg-[#ccfbf1] text-[#0d5e56]'}`}
+            className={`rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] ${isDark ? 'bg-teal-500/15 text-teal-300 ring-1 ring-teal-500/20' : 'bg-[#ccfbf1] text-[#11151C]'}`}
           >
             {waitingQueue.length}
           </span>
@@ -2021,7 +2015,7 @@ function ReferralsTab({
       <div
         className={`rounded-[1.75rem] border border-dashed px-6 py-20 text-center ${isDark ? 'border-slate-700 text-slate-400' : 'border-slate-200 text-slate-500 bg-slate-50/60'}`}
       >
-        <ClipboardList className="h-12 w-12 mx-auto mb-4 opacity-30 text-[#0d5e56]" />
+        <ClipboardList className="h-12 w-12 mx-auto mb-4 opacity-30 text-[#11151C]" />
         <p className="font-bold tracking-tight">No pending referrals</p>
         <p className="mt-2 text-sm text-slate-400 dark:text-slate-300">
           Incoming specialty referrals will appear here for review.
@@ -2050,7 +2044,7 @@ function ReferralsTab({
               : 'bg-rose-100 text-rose-700'
             : isDark
               ? 'bg-teal-900/40 text-teal-300'
-              : 'bg-[#ccfbf1] text-[#0d5e56]';
+              : 'bg-[#ccfbf1] text-[#11151C]';
 
         return (
           <div
@@ -2137,7 +2131,7 @@ function ReferralsTab({
                       size="sm"
                       disabled={isProcessing}
                       onClick={() => onAccept(req.id)}
-                      className="bg-[#0d5e56] hover:bg-[#0a4a44] text-white rounded-full px-5 py-2 h-auto text-[11px] font-bold shadow-sm min-w-[88px]"
+                      className="bg-[#E9783F] hover:bg-[#0a4a44] text-white rounded-full px-5 py-2 h-auto text-[11px] font-bold shadow-sm min-w-[88px]"
                     >
                       Accept
                     </Button>
@@ -2190,7 +2184,7 @@ function HistoryTab({ history, specialtyName, isDark }: HistoryTabProps) {
       <div
         className={`text-center py-20 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}
       >
-        <FileText className="h-12 w-12 mx-auto mb-4 opacity-30 text-[#0d5e56]" />
+        <FileText className="h-12 w-12 mx-auto mb-4 opacity-30 text-[#11151C]" />
         <p className="font-bold tracking-tight">No Consultation History</p>
         <p className="text-xs text-slate-400 mt-2">
           Completed consultations for {specialtyName} will appear here.
@@ -2210,7 +2204,7 @@ function HistoryTab({ history, specialtyName, isDark }: HistoryTabProps) {
             placeholder="Search patients, EMR, diagnosis..."
             value={historySearch}
             onChange={(e) => setHistorySearch(e.target.value)}
-            className={`w-full pl-9 pr-4 py-2 text-sm rounded-full border transition-all focus:outline-none focus:ring-2 focus:ring-[#0d5e56]/50 ${
+            className={`w-full pl-9 pr-4 py-2 text-sm rounded-full border transition-all focus:outline-none focus:ring-2 focus:ring-[#11151C]/50 ${
               isDark
                 ? 'bg-slate-800 border-slate-700 text-white placeholder-slate-500'
                 : 'bg-white border-slate-200 text-slate-900 placeholder-slate-400 shadow-sm'
@@ -2238,7 +2232,7 @@ function HistoryTab({ history, specialtyName, isDark }: HistoryTabProps) {
             <div
               key={consultation.id}
               onClick={() => setSelectedConsultation(consultation)}
-              className={`rounded-[1.25rem] p-4 lg:p-3 shadow-sm border flex flex-col lg:grid lg:grid-cols-12 gap-4 items-center transition-all hover:shadow-md cursor-pointer ${isDark ? 'bg-slate-800 border-slate-700 hover:border-slate-600' : 'bg-white border-slate-100 hover:border-[#0d5e56]/30'}`}
+              className={`rounded-[1.25rem] p-4 lg:p-3 shadow-sm border flex flex-col lg:grid lg:grid-cols-12 gap-4 items-center transition-all hover:shadow-md cursor-pointer ${isDark ? 'bg-slate-800 border-slate-700 hover:border-slate-600' : 'bg-white border-slate-100 hover:border-[#11151C]/30'}`}
             >
               {/* PATIENT */}
               <div className="col-span-3 flex items-center gap-3 w-full lg:pl-2">
@@ -2299,7 +2293,7 @@ function HistoryTab({ history, specialtyName, isDark }: HistoryTabProps) {
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="text-slate-400 hover:text-[#0d5e56] hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full px-4 h-8 text-[11px] font-bold"
+                  className="text-slate-400 hover:text-[#11151C] hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full px-4 h-8 text-[11px] font-bold"
                 >
                   View
                 </Button>
@@ -2477,11 +2471,7 @@ function ConsultationDetailModal({
               {/* XenoCare Logo */}
               <div className="hidden sm:flex items-center gap-3 border-r border-white/20 pr-5">
                 <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center border border-white/10 shadow-inner p-1.5 backdrop-blur-sm">
-                  <img
-                    src={require('../../../../../assets/xenocare-logo.png')}
-                    alt="XenoCare Logo"
-                    className="w-full h-full object-contain drop-shadow-sm"
-                  />
+                  
                 </div>
                 <div>
                   <h4 className="font-bold text-sm leading-tight text-white">
@@ -2734,7 +2724,7 @@ function ConsultationDetailModal({
             {/* ── Footer Meta ── */}
             <div className="flex items-center justify-between text-xs text-gray-400 uppercase tracking-wider px-1 pt-2 border-t border-gray-100">
               <span>Record ID: {consultation.id?.slice(0, 12)}</span>
-              <span>XenoCare EMR • Electronic Health Record</span>
+              <span>XenoCare • Electronic Health Record</span>
               {consultation.updated_at && (
                 <span>
                   Last Updated:{' '}
@@ -2784,7 +2774,7 @@ function ProceduresTab({
       <div
         className={`rounded-[1.75rem] border border-dashed px-6 py-20 text-center ${isDark ? 'border-slate-700 text-slate-400' : 'border-slate-200 text-slate-500 bg-slate-50/60'}`}
       >
-        <Syringe className="h-12 w-12 mx-auto mb-4 opacity-30 text-[#0d5e56]" />
+        <Syringe className="h-12 w-12 mx-auto mb-4 opacity-30 text-[#11151C]" />
         <p className="font-bold tracking-tight">
           No pending {specialtyName.toLowerCase()} procedures
         </p>
@@ -2809,7 +2799,7 @@ function ProceduresTab({
       case 'pending':
         return isDark
           ? 'bg-teal-900/40 text-teal-300'
-          : 'bg-[#ccfbf1] text-[#0d5e56]';
+          : 'bg-[#ccfbf1] text-[#11151C]';
       case 'cancelled':
         return isDark
           ? 'bg-rose-900/40 text-rose-300'
@@ -2890,7 +2880,7 @@ function ProceduresTab({
               <Button
                 size="sm"
                 variant="ghost"
-                className="text-slate-500 dark:text-slate-300 hover:text-[#0d5e56] hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full px-4 h-9 text-[11px] font-bold"
+                className="text-slate-500 dark:text-slate-300 hover:text-[#11151C] hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full px-4 h-9 text-[11px] font-bold"
               >
                 View Details
               </Button>
@@ -2919,7 +2909,7 @@ function ExamsTab({ exams, specialtyName, isDark, onViewTimeline }: ExamsTabProp
       <div
         className={`rounded-[1.75rem] border border-dashed px-6 py-20 text-center ${isDark ? 'border-slate-700 text-slate-400' : 'border-slate-200 text-slate-500 bg-slate-50/60'}`}
       >
-        <ClipboardCheck className="h-12 w-12 mx-auto mb-4 opacity-30 text-[#0d5e56]" />
+        <ClipboardCheck className="h-12 w-12 mx-auto mb-4 opacity-30 text-[#11151C]" />
         <p className="font-bold tracking-tight">
           No {specialtyName.toLowerCase()} exams on record
         </p>
@@ -2944,7 +2934,7 @@ function ExamsTab({ exams, specialtyName, isDark, onViewTimeline }: ExamsTabProp
       case 'pending':
         return isDark
           ? 'bg-teal-900/40 text-teal-300'
-          : 'bg-[#ccfbf1] text-[#0d5e56]';
+          : 'bg-[#ccfbf1] text-[#11151C]';
       default:
         return isDark
           ? 'bg-slate-700 text-slate-300'
@@ -3020,7 +3010,7 @@ function ExamsTab({ exams, specialtyName, isDark, onViewTimeline }: ExamsTabProp
               <Button
                 size="sm"
                 variant="ghost"
-                className="text-slate-500 dark:text-slate-300 hover:text-[#0d5e56] hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full px-4 h-9 text-[11px] font-bold"
+                className="text-slate-500 dark:text-slate-300 hover:text-[#11151C] hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full px-4 h-9 text-[11px] font-bold"
               >
                 View Details
               </Button>

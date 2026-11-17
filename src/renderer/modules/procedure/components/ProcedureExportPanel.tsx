@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR — Procedures / Surgery Export Panel
+ * XenoCare — Procedures / Surgery Export Panel
  * Inline export toolbar for the Procedures module page.
  */
 
@@ -31,7 +31,7 @@ export function ProcedureExportPanel({ data }: ProcedureExportPanelProps) {
   if (!canExport) return null;
 
   const headers = [
-    'EMR Number',
+    'Patient number',
     'Patient',
     'Procedure Name',
     'Priority',

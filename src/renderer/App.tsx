@@ -26,10 +26,20 @@ import { GlobalMutationSyncIndicator } from './components/ui/GlobalMutationSyncI
 import { runIndexedDbMaintenance } from './lib/offline/storage/maintenance';
 import { setupRealtimeInvalidation } from './lib/realtimeInvalidation';
 import { createScopedLogger } from './utils/logger';
-import { isNhisFeatureEnabled } from './config/features';
+import {
+  isEmergencyFeatureEnabled,
+  isHygieneFeatureEnabled,
+  isNhisFeatureEnabled,
+  isSpecialtyClinicsEnabled,
+  isDentalEnabled,
+  isOphthalmologyEnabled,
+  isPhysiotherapyEnabled,
+} from './config/features';
 import './App.css';
 
 const log = createScopedLogger('App');
+
+const APP_ICON = require('../../assets/xenocare-logo.png');
 
 // =============================================================================
 // Lazy-loaded modules for code splitting (reduces initial bundle by ~60%)
@@ -55,7 +65,9 @@ const MedicalRecordsModule = lazy(() => import('./modules/medical-records'));
 const NursingCare = lazy(() => import('./modules/nursing'));
 const Pharmacy = lazy(() => import('./modules/pharmacy'));
 const Laboratory = lazy(() => import('./modules/lab'));
-const Radiology = lazy(() => import('./modules/radiology'));
+const Radiology = lazy(
+  () => import('./modules/radiology/ExternalRadiology'),
+);
 const QueueManagement = lazy(() => import('./modules/queue'));
 const Billing = lazy(() => import('./modules/billing'));
 const Analytics = lazy(() => import('./modules/analytics'));
@@ -107,6 +119,16 @@ const MessagingModule = lazy(() => import('./modules/messaging'));
 // Records History module
 const RecordsHistoryModule = lazy(() => import('./modules/records-history'));
 
+function FeatureGate({
+  enabled,
+  children,
+}: {
+  enabled: boolean;
+  children: React.ReactNode;
+}) {
+  return enabled ? <>{children}</> : <Navigate to="/" replace />;
+}
+
 // Loading fallback component for lazy-loaded modules
 function ModuleLoadingFallback() {
   return (
@@ -121,17 +143,15 @@ function ModuleLoadingFallback() {
 
 export default function App() {
   useEffect(() => {
-    document.title = 'XenoCare EMR';
-    const faviconSvg =
-      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 112 112'%3E%3Crect x='5' y='5' width='102' height='102' rx='27' fill='%230E2A47'/%3E%3Cpath d='M29 29L83 83M83 29L29 83' fill='none' stroke='%23FFFFFF' stroke-width='9' stroke-linecap='round'/%3E%3Cpath d='M51 40H61V51H72V61H61V72H51V61H40V51H51V40Z' fill='%23F97316' stroke='%23FFFFFF' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E";
+    document.title = 'XenoCare';
     let iconLink = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
     if (!iconLink) {
       iconLink = document.createElement('link');
       iconLink.rel = 'icon';
       document.head.appendChild(iconLink);
     }
-    iconLink.type = 'image/svg+xml';
-    iconLink.href = faviconSvg;
+    iconLink.type = 'image/png';
+    iconLink.href = APP_ICON;
 
     setupPersistentQueryCache();
     const cleanupRealtime = setupRealtimeInvalidation();
@@ -232,9 +252,11 @@ export default function App() {
                             <Route
                               path="specialty-clinic"
                               element={
-                                <ModuleRoute module="specialty-clinic">
-                                  <SpecialtyClinicPage />
-                                </ModuleRoute>
+                                <FeatureGate enabled={isSpecialtyClinicsEnabled()}>
+                                  <ModuleRoute module="specialty-clinic">
+                                    <SpecialtyClinicPage />
+                                  </ModuleRoute>
+                                </FeatureGate>
                               }
                             />
                             {/* Unified Medical Records - Accessible to ALL clinicians */}
@@ -305,9 +327,11 @@ export default function App() {
                             <Route
                               path="hygiene/*"
                               element={
-                                <ModuleRoute module="hygiene">
-                                  <HygieneModule />
-                                </ModuleRoute>
+                                <FeatureGate enabled={isHygieneFeatureEnabled()}>
+                                  <ModuleRoute module="hygiene">
+                                    <HygieneModule />
+                                  </ModuleRoute>
+                                </FeatureGate>
                               }
                             />
                             <Route
@@ -329,9 +353,11 @@ export default function App() {
                             <Route
                               path="ae"
                               element={
-                                <ModuleRoute module="emergency">
-                                  <AeModule />
-                                </ModuleRoute>
+                                <FeatureGate enabled={isEmergencyFeatureEnabled()}>
+                                  <ModuleRoute module="emergency">
+                                    <AeModule />
+                                  </ModuleRoute>
+                                </FeatureGate>
                               }
                             />
                             <Route
@@ -345,25 +371,31 @@ export default function App() {
                             <Route
                               path="dental"
                               element={
-                                <ModuleRoute module="dental">
-                                  <DentalPage />
-                                </ModuleRoute>
+                                <FeatureGate enabled={isDentalEnabled()}>
+                                  <ModuleRoute module="dental">
+                                    <DentalPage />
+                                  </ModuleRoute>
+                                </FeatureGate>
                               }
                             />
                             <Route
                               path="ophthalmology"
                               element={
-                                <ModuleRoute module="ophthalmology">
-                                  <OphthalmologyPage />
-                                </ModuleRoute>
+                                <FeatureGate enabled={isOphthalmologyEnabled()}>
+                                  <ModuleRoute module="ophthalmology">
+                                    <OphthalmologyPage />
+                                  </ModuleRoute>
+                                </FeatureGate>
                               }
                             />
                             <Route
                               path="physiotherapy"
                               element={
-                                <ModuleRoute module="physiotherapy">
-                                  <PhysiotherapyPage />
-                                </ModuleRoute>
+                                <FeatureGate enabled={isPhysiotherapyEnabled()}>
+                                  <ModuleRoute module="physiotherapy">
+                                    <PhysiotherapyPage />
+                                  </ModuleRoute>
+                                </FeatureGate>
                               }
                             />
                             <Route
@@ -377,9 +409,11 @@ export default function App() {
                             <Route
                               path="specialty-clinic/:specialtyCode?"
                               element={
-                                <ModuleRoute module="specialty-clinic">
-                                  <SpecialtyClinicPage />
-                                </ModuleRoute>
+                                <FeatureGate enabled={isSpecialtyClinicsEnabled()}>
+                                  <ModuleRoute module="specialty-clinic">
+                                    <SpecialtyClinicPage />
+                                  </ModuleRoute>
+                                </FeatureGate>
                               }
                             />
                             <Route

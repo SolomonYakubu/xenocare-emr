@@ -16,6 +16,10 @@ import {
 } from '../../../types/database.types';
 import { useToast } from '../../../components/ui/Toast';
 import { useSpecialtyDepartments } from '../../specialty-clinic/hooks/useSpecialtyDashboard';
+import {
+  isMilitaryFeatureEnabled,
+  isSpecialtyClinicsEnabled,
+} from '../../../config/features';
 
 interface StaffFormProps {
   initialData?: Staff | null;
@@ -49,7 +53,12 @@ const STAFF_CATEGORIES: { value: StaffCategory; label: string }[] = [
   { value: 'Civilian', label: 'Civilian' },
   { value: 'DS', label: 'DS' },
   { value: 'Guest Lecturer', label: 'Guest Lecturer' },
-];
+].filter(
+  (category) =>
+    isMilitaryFeatureEnabled() ||
+    !['Military', 'DS'].includes(category.value),
+) as { value: StaffCategory; label: string }[];
+
 
 const MILITARY_BRANCHES: { value: MilitaryBranch; label: string }[] = [
   { value: 'Army', label: 'Army' },
@@ -393,7 +402,13 @@ export default function StaffForm({
         <Select
           label="Role"
           {...register('role', { required: 'Role is required' })}
-          options={ROLES}
+          options={ROLES.filter(
+            (role) =>
+              isSpecialtyClinicsEnabled() ||
+              !['dentist', 'ophthalmologist', 'physiotherapist'].includes(
+                role.value,
+              ),
+          )}
         />
       </div>
 
@@ -412,7 +427,7 @@ export default function StaffForm({
       </div>
 
       {/* Specialty selection for doctors */}
-      {selectedRole === 'doctor' && (
+      {isSpecialtyClinicsEnabled() && selectedRole === 'doctor' && (
         <div className="grid grid-cols-1 gap-4">
           <Select
             label="Specialty"
@@ -427,7 +442,7 @@ export default function StaffForm({
         </div>
       )}
 
-      {staffCategory === 'Military' && (
+      {isMilitaryFeatureEnabled() && staffCategory === 'Military' && (
         <div className="grid grid-cols-3 gap-4">
           <Select
             label="Branch"

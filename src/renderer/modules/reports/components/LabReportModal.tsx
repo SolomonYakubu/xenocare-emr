@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR — Lab Report Modal
+ * XenoCare — Lab Report Modal
  *
  * Month-end Lab report: summary metrics + detailed table + critical alerts.
  * Supports CSV, Excel, and PDF export of the generated report.

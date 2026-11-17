@@ -1069,7 +1069,7 @@ export function NhisVerificationPanel({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Search patient, EMR number..."
+              placeholder="Search patient, patient number..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-700/20 focus:border-primary-700 bg-white placeholder:text-gray-400"
@@ -1277,11 +1277,7 @@ export function NhisVerificationPanel({
                 {/* NDC Branding */}
                 <div className="hidden sm:flex items-center gap-4 border-r border-white/20 pr-6">
                   <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center p-1.5 backdrop-blur-sm border border-white/10 shadow-inner">
-                    <img
-                      src={require('../../../../../assets/xenocare-logo.png')}
-                      alt="XenoCare Logo"
-                      className="w-full h-full object-contain drop-shadow-sm"
-                    />
+                    
                   </div>
                   <div>
                     <h4 className="font-bold text-sm leading-tight text-white">
@@ -1649,7 +1645,7 @@ export function NhisVerificationPanel({
                           )}
                         <div>
                           <span className="text-xs font-semibold text-gray-400 uppercase block mb-1">
-                            EMR Number
+                            Patient number
                           </span>
                           <span className="font-mono font-bold text-gray-700 text-sm">
                             {fullPatient?.emr_number || 'N/A'}

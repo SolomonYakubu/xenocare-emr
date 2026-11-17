@@ -7,14 +7,6 @@ import {
   getFacilityName,
 } from '../../../lib/facility';
 
-let ndcLogoSrc = '';
-try {
-  const logoModule = require('../../../../../assets/xenocare-logo.png');
-  ndcLogoSrc = logoModule?.default || logoModule || '';
-} catch {
-  ndcLogoSrc = '';
-}
-
 interface PrintOptions {
   printedByName?: string;
 }
@@ -339,11 +331,7 @@ export function printMedicalReport(
 
     <header class="header">
       <div class="brand">
-        ${
-          ndcLogoSrc
-            ? `<img src="${ndcLogoSrc}" alt="XenoCare Logo" />`
-            : '<div class="logo-fallback">XenoCare</div>'
-        }
+        <div class="logo-fallback">XenoCare</div>
         <div>
           <h1>${escapeHtml(getFacilityName())}</h1>
           <p>${escapeHtml(getFacilityAddress())}</p>

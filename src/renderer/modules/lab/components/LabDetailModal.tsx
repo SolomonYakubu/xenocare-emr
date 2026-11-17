@@ -53,17 +53,6 @@ import { printUniversalLabReport } from '../utils/labReportPrint';
 import { sanitizeClinicalHtml } from '../utils/clinicalDataHtml';
 import { MUHEDA_LOGO_DATA_URI } from '../../../shared/constants/muhedaLogo';
 
-// XenoCare Logo component
-function XenoCareLogo() {
-  return (
-    <img
-      src={MUHEDA_LOGO_DATA_URI}
-      alt="MUHEDA Clinic"
-      className="h-12 w-12 object-contain"
-    />
-  );
-}
-
 interface LabDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -1603,9 +1592,6 @@ export default function LabDetailModal({
           <div className="bg-white border-b border-gray-200 flex-shrink-0">
             <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-primary-700 to-primary-600">
               <div className="flex items-center gap-4">
-                <div className="bg-white rounded-lg p-1.5 shadow-md">
-                  <XenoCareLogo />
-                </div>
                 <div className="border-l border-white/30 pl-4">
                   <h1 className="text-white font-bold text-lg tracking-wide">
                     {getFacilityName().toUpperCase()}
@@ -2027,9 +2013,6 @@ export default function LabDetailModal({
                     <div className="p-8 border-b-2 border-primary-700">
                       <div className="flex justify-between items-start">
                         <div className="flex gap-4 items-center">
-                          <div className="h-16 w-16 bg-white rounded-xl flex items-center justify-center border-2 border-primary-700 shadow-md overflow-hidden p-1.5">
-                            <XenoCareLogo />
-                          </div>
                           <div>
                             <h2 className="text-2xl font-bold text-gray-900 tracking-tight uppercase">
                               {getFacilityName()}

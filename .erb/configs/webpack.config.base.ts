@@ -5,14 +5,12 @@
 import * as webpack from 'webpack';
 import * as path from 'path';
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
-import { createRequire } from 'module';
 
 // Load .env file
 import * as dotenv from 'dotenv';
-import webpackPaths from './webpack.paths.ts';
+import webpackPaths from './webpack.paths.js';
 
-const _require =
-  typeof require !== 'undefined' ? require : createRequire(import.meta.url);
+const _require = require;
 const { dependencies: externals } = _require('../../release/app/package.json');
 dotenv.config();
 

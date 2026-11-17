@@ -61,8 +61,6 @@ interface NhisReferralFormProps {
 }
 
 // XenoCare Logo path for embedding
-const ndcLogoSrc = require('../../../../../assets/xenocare-logo.png');
-
 export const NhisReferralForm = forwardRef<
   HTMLDivElement,
   NhisReferralFormProps
@@ -141,18 +139,7 @@ export const NhisReferralForm = forwardRef<
               transform: 'translateY(-50%)',
             }}
           >
-            <img
-              src={ndcLogoSrc}
-              alt="XenoCare"
-              style={{
-                width: '56px',
-                height: '56px',
-                borderRadius: '50%',
-                border: '2px solid rgba(255,255,255,0.5)',
-                objectFit: 'contain',
-                background: 'rgba(255,255,255,0.15)',
-              }}
-            />
+            
           </div>
           {/* Right logo */}
           <div
@@ -163,18 +150,7 @@ export const NhisReferralForm = forwardRef<
               transform: 'translateY(-50%)',
             }}
           >
-            <img
-              src={ndcLogoSrc}
-              alt="XenoCare"
-              style={{
-                width: '56px',
-                height: '56px',
-                borderRadius: '50%',
-                border: '2px solid rgba(255,255,255,0.5)',
-                objectFit: 'contain',
-                background: 'rgba(255,255,255,0.15)',
-              }}
-            />
+            
           </div>
 
           <div

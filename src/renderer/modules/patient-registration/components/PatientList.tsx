@@ -30,6 +30,7 @@ import {
 } from '../dtos/patient.dto';
 import { Gender, PatientStatus, StaffCategory } from '../../../types';
 import {
+  isMilitaryFeatureEnabled,
   isNhisCategory,
   isNhisFeatureEnabled,
 } from '../../../config/features';
@@ -110,11 +111,30 @@ const INSURANCE_OPTIONS: Array<{ value: InsuranceType | ''; label: string }> = [
   { value: 'Security_Services_NHIS', label: 'Security Services NHIS' },
 ];
 
-const VISIBLE_INSURANCE_OPTIONS = isNhisFeatureEnabled()
-  ? INSURANCE_OPTIONS
-  : INSURANCE_OPTIONS.filter(
-      (option) => !option.value || !isNhisCategory(option.value),
-    );
+const VISIBLE_INSURANCE_OPTIONS = INSURANCE_OPTIONS.filter((option) => {
+  if (!option.value) return true;
+  if (!isNhisFeatureEnabled() && isNhisCategory(option.value)) return false;
+  if (
+    !isMilitaryFeatureEnabled() &&
+    ['Military_NHIS', 'DHML', 'Security_Services_NHIS'].includes(option.value)
+  ) {
+    return false;
+  }
+  return true;
+});
+
+const VISIBLE_CATEGORY_OPTIONS = CATEGORY_OPTIONS.filter(
+  (option) =>
+    isMilitaryFeatureEnabled() ||
+    !['Military', 'DS'].includes(option.value),
+);
+const VISIBLE_PATIENT_CATEGORY_OPTIONS = PATIENT_CATEGORY_OPTIONS.filter(
+  (option) =>
+    isMilitaryFeatureEnabled() ||
+    !['Military', 'Military Participant', 'Security Services'].includes(
+      option.value,
+    ),
+);
 
 const NHIS_SOURCE_OPTIONS: Array<{
   value: NHISPatientSource | '';
@@ -387,7 +407,7 @@ export default function PatientList({
       },
       {
         key: 'emr_number' as const,
-        header: 'EMR Number',
+        header: 'Patient number',
         render: (patient: PatientDTO) => (
           <div className="flex items-center gap-2">
             <FileText
@@ -545,7 +565,7 @@ export default function PatientList({
             />
             <input
               type="text"
-              placeholder="Search by name, phone, or service number..."
+              placeholder="Search by name, phone or patient number"
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value);
@@ -683,7 +703,7 @@ export default function PatientList({
                     Staff category
                   </label>
                   <Select
-                    options={CATEGORY_OPTIONS}
+                    options={VISIBLE_CATEGORY_OPTIONS}
                     value={categoryFilter}
                     onChange={(e) => {
                       setCategoryFilter(e.target.value as StaffCategory | '');
@@ -702,7 +722,7 @@ export default function PatientList({
                       Patient category
                     </label>
                     <Select
-                      options={PATIENT_CATEGORY_OPTIONS}
+                      options={VISIBLE_PATIENT_CATEGORY_OPTIONS}
                       value={patientCategoryFilter}
                       onChange={(e) => {
                         setPatientCategoryFilter(
@@ -861,7 +881,7 @@ export default function PatientList({
                   className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
                     isNightMode
                       ? 'bg-emerald-600 text-white hover:bg-emerald-500'
-                      : 'bg-[#0d5e56] text-white hover:bg-[#0b4f49]'
+                      : 'bg-[#E9783F] text-white hover:bg-[#0b4f49]'
                   }`}
                 >
                   <Download className="h-4 w-4" />

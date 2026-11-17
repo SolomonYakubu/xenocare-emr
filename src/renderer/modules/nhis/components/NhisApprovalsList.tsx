@@ -41,15 +41,6 @@ import { useToast } from '../../../components/ui/Toast';
 import { formatClinicalTextForDisplay } from '../../../utils/clinicalTextFormatter';
 
 // XenoCare Logo component
-function XenoCareLogo() {
-  return (
-    <img
-      src={require('../../../../../assets/xenocare-logo.png')}
-      alt="XenoCare Logo"
-      className="h-10 w-10 rounded-full object-contain bg-white/90 shadow-md ring-2 ring-white/30"
-    />
-  );
-}
 
 // Format currency in Naira
 const formatCurrency = (amount: number) =>
@@ -369,7 +360,6 @@ function ApprovalDecisionModal({
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZyIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNMCAwaDQwdjQwSDB6IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjwvcGF0dGVybj48L2RlZnM+PC9zdmc+')] opacity-10" />
             <div className="relative flex items-center justify-between px-7 py-4">
               <div className="flex items-center gap-4">
-                <XenoCareLogo />
                 <div>
                   <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
                     <Shield size={18} className="text-white/80" />
@@ -666,7 +656,7 @@ function ApprovalDecisionModal({
           <div className="flex-shrink-0 border-t border-gray-200 bg-white px-7 py-3.5">
             <div className="flex items-center justify-between">
               <p className="text-[11px] text-gray-400 font-medium">
-                XenoCare EMR — NHIS Service Authorization
+                XenoCare — NHIS Service Authorization
               </p>
               <div className="flex items-center gap-2.5">
                 <button

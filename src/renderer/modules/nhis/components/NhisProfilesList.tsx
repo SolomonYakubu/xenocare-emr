@@ -424,7 +424,7 @@ function ProfileDetailModal({ profile, onClose }: ProfileDetailModalProps) {
                   </div>
                   <div>
                     <label className="text-xs font-bold text-slate-400 uppercase block mb-1">
-                      EMR Number
+                      Patient number
                     </label>
                     <p className="font-mono font-black text-blue-600 text-lg tracking-tighter">
                       {profile.patient?.emr_number}
@@ -1201,7 +1201,7 @@ export function NhisProfilesList() {
             />
             <input
               type="text"
-              placeholder="Search by name, enrollee ID, or EMR number..."
+              placeholder="Search by name, enrollee ID, or patient number..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

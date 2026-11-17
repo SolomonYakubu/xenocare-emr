@@ -346,7 +346,7 @@ function PlanCard({ plan }: { plan: SpecialtyCareplan }) {
               <div class="info-val">${patientName}</div>
             </div>
             <div class="info-item">
-              <div class="info-label">EMR Number</div>
+              <div class="info-label">Patient number</div>
               <div class="info-val">${patient?.emr_number || 'N/A'}</div>
             </div>
             <div class="info-item">

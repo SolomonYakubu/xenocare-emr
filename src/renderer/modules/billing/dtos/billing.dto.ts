@@ -253,6 +253,7 @@ export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-NG', {
     style: 'currency',
     currency: 'NGN',
+    currencyDisplay: 'code',
   }).format(amount);
 }
 

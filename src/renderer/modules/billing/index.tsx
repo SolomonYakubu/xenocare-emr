@@ -91,6 +91,7 @@ import { ReceiptsList } from './components/ReceiptsList';
 import { ApprovedRequestsHistory } from './components/ApprovedRequestsHistory';
 
 import { useAuth } from '../../contexts/AuthContext';
+import { isNhisFeatureEnabled } from '../../config/features';
 import { useTimeTheme } from '../../hooks/useTimeTheme';
 import { InlineGuidance } from '../../components/guidance/InlineGuidance';
 import { getFacilityName } from '../../lib/facility';
@@ -386,7 +387,7 @@ export default function Billing() {
         const status = (invoice.status || '').toLowerCase();
         const amount = invoice.total_amount?.toString() || '';
 
-        // EMR number search: allow searching by just the number (1, 0001, 10, etc.)
+        // patient number search: allow searching by just the number (1, 0001, 10, etc.)
         let emrMatch = emrNumber.includes(query);
         if (emrSearchNumber && !emrMatch) {
           // Check if EMR ends with the padded number (e.g., NDC-0004 for search "4")
@@ -803,21 +804,16 @@ export default function Billing() {
       {/* Compact Top Bar */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
         <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-emerald-100 rounded-lg">
-                <Wallet className="h-5 w-5 text-emerald-700" />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900">
-                  Billing & Payments
-                </h1>
-                <p className="text-xs text-gray-500">
-                  Manage invoices, payments, and financial records
-                </p>
-              </div>
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div className="min-w-0">
+              <h1 className="font-display text-xl font-bold text-slate-900">
+                Billing
+              </h1>
+              <p className="mt-0.5 text-sm text-slate-500">
+                Invoices, payments and receipts
+              </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 onClick={() => setShowSearchModal(true)}
                 className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
@@ -849,7 +845,7 @@ export default function Billing() {
               {hasRole(['super_admin', 'admin', 'billing_clerk']) && (
                 <button
                   onClick={() => setShowCreateForm(true)}
-                  className="px-3 py-2 text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg flex items-center gap-2 transition-colors shadow-sm"
+                  className="flex items-center gap-2 rounded-lg bg-[#E9783F] px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#D96A36]"
                 >
                   <Plus className="h-4 w-4" />
                   New Invoice
@@ -878,7 +874,7 @@ export default function Billing() {
               </div>
             </div>
             <p className="text-2xl font-bold text-gray-900">
-              {stats ? formatCurrency(stats.payments_today) : '₦0'}
+              {stats ? formatCurrency(stats.payments_today) : 'NGN 0'}
             </p>
             <div className="flex items-center gap-1 mt-1">
               <ArrowUpRight className="h-3 w-3 text-emerald-500" />
@@ -902,7 +898,7 @@ export default function Billing() {
               </div>
             </div>
             <p className="text-2xl font-bold text-gray-900">
-              {stats ? formatCurrency(stats.outstanding_today || 0) : '₦0'}
+              {stats ? formatCurrency(stats.outstanding_today || 0) : 'NGN 0'}
             </p>
             <div className="flex items-center gap-1 mt-1">
               <ArrowDownRight className="h-3 w-3 text-amber-500" />
@@ -943,7 +939,7 @@ export default function Billing() {
               </div>
             </div>
             <p className="text-2xl font-bold text-red-600">
-              {stats ? formatCurrency(stats.outstanding) : '₦0'}
+              {stats ? formatCurrency(stats.outstanding) : 'NGN 0'}
             </p>
             <div className="flex items-center gap-1 mt-1">
               <span className="text-xs text-red-500 font-medium">
@@ -1046,7 +1042,7 @@ export default function Billing() {
                       Comprehensive Summary
                     </h3>
                     <p className="text-sm text-gray-500">
-                      All invoices, receipts & NHIS records
+                      All invoices, receipts & payments
                     </p>
                   </button>
                   <button
@@ -1900,7 +1896,7 @@ export default function Billing() {
                                     item.total_price || item.gross_amount || 0,
                                   )}
                                 </p>
-                                {(item.nhis_payable || 0) > 0 && (
+                                {isNhisFeatureEnabled() && (item.nhis_payable || 0) > 0 && (
                                   <p className="text-xs text-green-600">
                                     NHIS: -{formatCurrency(item.nhis_payable)}
                                   </p>
@@ -1914,7 +1910,7 @@ export default function Billing() {
                   )}
 
                 {/* NHIS Breakdown (if applicable) */}
-                {selectedReceiptForView.nhis_covered && (
+                {isNhisFeatureEnabled() && selectedReceiptForView.nhis_covered && (
                   <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-5">
                     <div className="flex items-center gap-2 mb-3 pb-2 border-b border-emerald-200">
                       <Building className="h-4 w-4 text-emerald-600" />

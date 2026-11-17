@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR — Ophthalmology Report Modal
+ * XenoCare — Ophthalmology Report Modal
  */
 
 import React, { useState } from 'react';

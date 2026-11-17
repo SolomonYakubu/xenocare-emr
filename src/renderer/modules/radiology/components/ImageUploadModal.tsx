@@ -32,17 +32,6 @@ import {
   optimizeRadiologyUploadFile,
 } from '../../../utils/storage';
 
-// XenoCare Logo component
-function XenoCareLogo() {
-  return (
-    <img
-      src={require('../../../../../assets/xenocare-logo.png')}
-      alt="XenoCare Logo"
-      className="h-12 w-auto"
-    />
-  );
-}
-
 // Image file with metadata
 interface ImageFile {
   id: string;
@@ -276,9 +265,6 @@ export default function ImageUploadModal({
           <div className="bg-white border-b border-gray-200 flex-shrink-0">
             <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-primary-700 to-primary-600">
               <div className="flex items-center gap-4">
-                <div className="bg-white rounded-lg p-1.5 shadow-md">
-                  <XenoCareLogo />
-                </div>
                 <div className="border-l border-white/30 pl-4">
                   <h1 className="text-white font-bold text-lg tracking-wide">
                     XENOCARE

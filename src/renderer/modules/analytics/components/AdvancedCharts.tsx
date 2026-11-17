@@ -57,9 +57,9 @@ export const chartColors = {
 // =============================================================================
 
 export const formatCurrency = (value: number): string => {
-  if (value >= 1000000) return `₦${(value / 1000000).toFixed(1)}M`;
-  if (value >= 1000) return `₦${(value / 1000).toFixed(0)}K`;
-  return `₦${value.toLocaleString()}`;
+  if (value >= 1000000) return `NGN ${(value / 1000000).toFixed(1)}M`;
+  if (value >= 1000) return `NGN ${(value / 1000).toFixed(0)}K`;
+  return `NGN ${value.toLocaleString()}`;
 };
 
 export const formatNumber = (value: number): string => {
@@ -760,8 +760,6 @@ export function KPICard({
   subtitle,
   sparklineData,
 }: KPICardProps) {
-  const colors = kpiColorMap[color];
-
   const formattedValue = useMemo(() => {
     switch (format) {
       case 'currency':
@@ -774,44 +772,21 @@ export function KPICard({
   }, [value, format]);
 
   return (
-    <div
-      className={`bg-white rounded-xl border ${colors.border} p-4 shadow-sm hover:shadow-md transition-shadow`}
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <p className="text-sm text-gray-500 font-medium">{title}</p>
-          <p className={`text-2xl font-bold ${colors.text} mt-1`}>
-            {formattedValue}
-          </p>
-          {subtitle && <p className="text-xs text-gray-400 mt-1">{subtitle}</p>}
-
-          {trend && (
-            <div
-              className={`flex items-center gap-1 mt-2 text-sm ${
-                trend.value >= 0 ? 'text-green-600' : 'text-red-600'
-              }`}
-            >
-              {trend.value >= 0 ? (
-                <TrendingUp className="h-4 w-4" />
-              ) : (
-                <TrendingDown className="h-4 w-4" />
-              )}
-              <span className="font-medium">{Math.abs(trend.value)}%</span>
-              <span className="text-gray-400 text-xs">{trend.period}</span>
-            </div>
-          )}
-        </div>
-
-        {icon && (
-          <div
-            className={`p-3 rounded-xl bg-gradient-to-br ${colors.gradient} text-white shadow-lg`}
-          >
-            {icon}
-          </div>
-        )}
-      </div>
-
-      {/* Mini sparkline */}
+    <div className="min-h-[104px] rounded-xl border border-slate-200 bg-white p-3.5">
+      <p className="text-xs font-medium text-slate-500">{title}</p>
+      <p className="mt-1 whitespace-nowrap font-display text-xl font-bold tabular-nums text-slate-900">
+        {formattedValue}
+      </p>
+      {subtitle && <p className="mt-1 text-xs text-slate-400">{subtitle}</p>}
+      {trend && (
+        <p
+          className={`mt-1 text-xs font-medium ${
+            trend.value >= 0 ? 'text-emerald-600' : 'text-rose-600'
+          }`}
+        >
+          {Math.abs(trend.value)}% {trend.period}
+        </p>
+      )}
       {sparklineData && sparklineData.length > 0 && (
         <div className="mt-3 h-8">
           <MiniSparkline data={sparklineData} color={color} />

@@ -814,7 +814,7 @@ function buildSocraticClinicalQuery(
       ? `Patient Name: ${context.patientName}`
       : null,
     !isGlobalMode && context.emrNumber
-      ? `EMR Number: ${context.emrNumber}`
+      ? `Patient number: ${context.emrNumber}`
       : null,
     !isGlobalMode && context.encounterId
       ? `Encounter ID: ${context.encounterId}`

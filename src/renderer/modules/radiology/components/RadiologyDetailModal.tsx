@@ -36,17 +36,6 @@ import {
   getFacilityName,
 } from '../../../lib/facility';
 
-// XenoCare Logo component
-function XenoCareLogo() {
-  return (
-    <img
-      src={require('../../../../../assets/xenocare-logo.png')}
-      alt="XenoCare Logo"
-      className="h-12 w-auto"
-    />
-  );
-}
-
 // =============================================================================
 // Types
 // =============================================================================
@@ -216,15 +205,6 @@ export default function RadiologyDetailModal({
   const handlePrintRadiologyReport = () => {
     const facilityName = getFacilityName();
     const facilityAddress = getFacilityAddress();
-    // Load XenoCare logo as base64
-    let ndcLogoBase64 = '';
-    try {
-      const logoModule = require('../../../../../assets/xenocare-logo.png');
-      ndcLogoBase64 = logoModule.default || logoModule;
-    } catch (error) {
-      console.warn('Could not load XenoCare logo:', error);
-    }
-
     const patientName = request.patient
       ? `${request.patient.first_name || ''} ${request.patient.surname || ''}`.trim()
       : 'Unknown Patient';
@@ -697,7 +677,7 @@ export default function RadiologyDetailModal({
           <div class="header">
             <div class="logo-section">
               <div class="logo">
-                ${ndcLogoBase64 ? `<img src="${ndcLogoBase64}" alt="XenoCare Logo" />` : '<span style="font-size:18px;font-weight:bold;color:#059669;">XenoCare</span>'}
+                <span style="font-size:18px;font-weight:bold;color:#059669;">XenoCare</span>
               </div>
               <div class="hospital-info">
                 <div class="hospital-name">${facilityName.toUpperCase()}</div>
@@ -719,7 +699,7 @@ export default function RadiologyDetailModal({
                 <div class="patient-value name">${patientName}</div>
               </div>
               <div class="patient-field">
-                <div class="patient-label">EMR Number</div>
+                <div class="patient-label">Patient number</div>
                 <div class="patient-value">${request.patient?.emr_number || 'N/A'}</div>
               </div>
               <div class="patient-field">
@@ -1086,9 +1066,6 @@ export default function RadiologyDetailModal({
             {/* Top Bar with Logo and Title */}
             <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-primary-700 to-primary-600">
               <div className="flex items-center gap-4">
-                <div className="bg-white rounded-lg p-1.5 shadow-md">
-                  <XenoCareLogo />
-                </div>
                 <div className="border-l border-white/30 pl-4">
                   <h1 className="text-white font-bold text-lg tracking-wide">
                     {getFacilityName().toUpperCase()}

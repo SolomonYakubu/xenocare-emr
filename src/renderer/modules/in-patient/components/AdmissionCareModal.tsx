@@ -3581,7 +3581,7 @@ export const AdmissionCareModal: React.FC<AdmissionCareModalProps> = ({
               </div>
               <span>Enc: {encounterIdForHooks || 'NEW'}</span>
             </div>
-            <div>XenoCare EMR • In-Patient Module</div>
+            <div>XenoCare • In-Patient Module</div>
           </footer>
         </div>
       </div>

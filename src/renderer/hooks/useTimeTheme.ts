@@ -67,98 +67,98 @@ const themes: Record<TimeOfDay, TimeThemeColors> = {
   morning: {
     // Teal/Cyan theme for morning (6am-12pm)
     header: {
-      gradient: 'from-teal-600 via-cyan-500 to-teal-500',
-      decorativeCircle: 'bg-cyan-300/30',
+      gradient: 'from-[#1E232B] via-[#262C36] to-[#1E232B]',
+      decorativeCircle: 'bg-[#E9783F]/20',
     },
     sidebar: {
-      gradient: 'from-teal-700 via-teal-600 to-cyan-700',
+      gradient: 'from-[#1E232B] via-[#161B23] to-[#0B0D11]',
     },
     card: {
-      background: 'bg-teal-50',
-      border: 'border-teal-100',
-      hover: 'bg-teal-100',
+      background: 'bg-[#F7F5F1]',
+      border: 'border-[#E7E2D9]',
+      hover: 'bg-[#F1EEE8]',
     },
     accent: {
-      text: 'text-teal-600',
-      muted: 'text-teal-100',
-      border: 'border-teal-500',
-      bg: 'bg-teal-500',
+      text: 'text-[#D96A36]',
+      muted: 'text-white/70',
+      border: 'border-[#E9783F]',
+      bg: 'bg-[#F7F6F3]',
     },
     button: {
-      primary: 'bg-teal-600',
-      primaryHover: 'hover:bg-teal-700',
+      primary: 'bg-[#E9783F]',
+      primaryHover: 'hover:bg-[#D96A36]',
     },
     icon: {
-      bg: 'bg-teal-100',
-      color: 'text-teal-600',
+      bg: 'bg-[#F1EFE9]',
+      color: 'text-[#D96A36]',
     },
   },
   afternoon: {
     // Teal/Cyan theme for afternoon (12pm-6pm)
     header: {
-      gradient: 'from-teal-600 via-cyan-500 to-teal-500',
-      decorativeCircle: 'bg-cyan-300/30',
+      gradient: 'from-[#1E232B] via-[#262C36] to-[#1E232B]',
+      decorativeCircle: 'bg-[#E9783F]/20',
     },
     sidebar: {
-      gradient: 'from-teal-700 via-teal-600 to-cyan-700',
+      gradient: 'from-[#1E232B] via-[#161B23] to-[#0B0D11]',
     },
     card: {
-      background: 'bg-teal-50',
-      border: 'border-teal-100',
-      hover: 'bg-teal-100',
+      background: 'bg-[#F7F5F1]',
+      border: 'border-[#E7E2D9]',
+      hover: 'bg-[#F1EEE8]',
     },
     accent: {
-      text: 'text-teal-600',
-      muted: 'text-teal-100',
-      border: 'border-teal-500',
-      bg: 'bg-teal-500',
+      text: 'text-[#D96A36]',
+      muted: 'text-white/70',
+      border: 'border-[#E9783F]',
+      bg: 'bg-[#F7F6F3]',
     },
     button: {
-      primary: 'bg-teal-600',
-      primaryHover: 'hover:bg-teal-700',
+      primary: 'bg-[#E9783F]',
+      primaryHover: 'hover:bg-[#D96A36]',
     },
     icon: {
-      bg: 'bg-teal-100',
-      color: 'text-teal-600',
+      bg: 'bg-[#F1EFE9]',
+      color: 'text-[#D96A36]',
     },
   },
   evening: {
     // Teal/Cyan theme for evening (6pm-9pm)
     header: {
-      gradient: 'from-teal-600 via-cyan-500 to-teal-500',
-      decorativeCircle: 'bg-cyan-300/30',
+      gradient: 'from-[#1E232B] via-[#262C36] to-[#1E232B]',
+      decorativeCircle: 'bg-[#E9783F]/20',
     },
     sidebar: {
-      gradient: 'from-teal-700 via-teal-600 to-cyan-700',
+      gradient: 'from-[#1E232B] via-[#161B23] to-[#0B0D11]',
     },
     card: {
-      background: 'bg-teal-50',
-      border: 'border-teal-100',
-      hover: 'bg-teal-100',
+      background: 'bg-[#F7F5F1]',
+      border: 'border-[#E7E2D9]',
+      hover: 'bg-[#F1EEE8]',
     },
     accent: {
-      text: 'text-teal-600',
-      muted: 'text-teal-100',
-      border: 'border-teal-500',
-      bg: 'bg-teal-500',
+      text: 'text-[#D96A36]',
+      muted: 'text-white/70',
+      border: 'border-[#E9783F]',
+      bg: 'bg-[#F7F6F3]',
     },
     button: {
-      primary: 'bg-teal-600',
-      primaryHover: 'hover:bg-teal-700',
+      primary: 'bg-[#E9783F]',
+      primaryHover: 'hover:bg-[#D96A36]',
     },
     icon: {
-      bg: 'bg-teal-100',
-      color: 'text-teal-600',
+      bg: 'bg-[#F1EFE9]',
+      color: 'text-[#D96A36]',
     },
   },
   night: {
     // Dark, eye-friendly colors for night (9pm-6am)
     header: {
-      gradient: 'from-slate-800 via-slate-700 to-slate-800',
-      decorativeCircle: 'bg-slate-600/30',
+      gradient: 'from-[#1E232B] via-[#262C36] to-[#1E232B]',
+      decorativeCircle: 'bg-[#E9783F]/15',
     },
     sidebar: {
-      gradient: 'from-slate-900 via-slate-800 to-slate-900',
+      gradient: 'from-[#1E232B] via-[#161B23] to-[#0B0D11]',
     },
     card: {
       background: 'bg-slate-800',
@@ -185,11 +185,11 @@ const themes: Record<TimeOfDay, TimeThemeColors> = {
 // Navy blue theme - dark professional look
 const navyTheme: TimeThemeColors = {
   header: {
-    gradient: 'from-[#0a1628] via-[#0f2744] to-[#1e3a5f]',
-    decorativeCircle: 'bg-blue-300/20',
+    gradient: 'from-[#1E232B] via-[#262C36] to-[#1E232B]',
+    decorativeCircle: 'bg-[#E9783F]/20',
   },
   sidebar: {
-    gradient: 'from-[#0a1628] via-[#0f2744] to-[#0a1628]',
+    gradient: 'from-[#1E232B] via-[#161B23] to-[#0B0D11]',
   },
   card: {
     background: 'bg-white',
@@ -197,26 +197,26 @@ const navyTheme: TimeThemeColors = {
     hover: 'bg-gray-50',
   },
   accent: {
-    text: 'text-[#0a1628]',
-    muted: 'text-blue-100',
-    border: 'border-[#1e3a5f]',
-    bg: 'bg-[#0a1628]',
+    text: 'text-[#11151C]',
+    muted: 'text-white/70',
+    border: 'border-[#E9783F]',
+    bg: 'bg-[#E9783F]',
   },
   button: {
-    primary: 'bg-[#0a1628]',
-    primaryHover: 'hover:bg-[#1e3a5f]',
+    primary: 'bg-[#E9783F]',
+    primaryHover: 'hover:bg-[#D96A36]',
   },
   icon: {
-    bg: 'bg-blue-100',
-    color: 'text-[#0a1628]',
+    bg: 'bg-[#E9783F]/10',
+    color: 'text-[#11151C]',
   },
 };
 
 // Crystal theme - soft, eye-friendly cream/warm white with elegant emerald accents
 const crystalTheme: TimeThemeColors = {
   header: {
-    gradient: 'from-emerald-600 via-teal-500 to-cyan-500',
-    decorativeCircle: 'bg-emerald-300/30',
+    gradient: 'from-[#1E232B] via-[#262C36] to-[#1E232B]',
+    decorativeCircle: 'bg-[#E9783F]/20',
   },
   sidebar: {
     gradient: 'from-[#fafaf9] via-[#f5f5f4] to-[#fafaf9]',
@@ -227,18 +227,18 @@ const crystalTheme: TimeThemeColors = {
     hover: 'bg-stone-50',
   },
   accent: {
-    text: 'text-emerald-600',
-    muted: 'text-emerald-100',
-    border: 'border-emerald-300',
-    bg: 'bg-emerald-500',
+    text: 'text-[#D96A36]',
+    muted: 'text-[#FFD9C9]',
+    border: 'border-[#FFC7B0]',
+    bg: 'bg-[#E9783F]',
   },
   button: {
-    primary: 'bg-emerald-600',
-    primaryHover: 'hover:bg-emerald-700',
+    primary: 'bg-[#E9783F]',
+    primaryHover: 'hover:bg-[#D96A36]',
   },
   icon: {
-    bg: 'bg-emerald-100',
-    color: 'text-emerald-600',
+    bg: 'bg-[#E9783F]/10',
+    color: 'text-[#D96A36]',
   },
 };
 
@@ -364,25 +364,15 @@ export function getTimeThemeColors(): Omit<
   'setThemeMode' | 'toggleTheme'
 > & { setThemeMode: (mode: ThemeMode) => void; toggleTheme: () => void } {
   const hour = new Date().getHours();
-  const storedMode: ThemeMode = 'auto';
   const actualTimeOfDay = getTimeOfDay(hour);
-
-  // Select theme based on stored mode
-  let themeColors: TimeThemeColors;
-  if (storedMode === 'navy') {
-    themeColors = navyTheme;
-  } else if (storedMode === 'crystal') {
-    themeColors = crystalTheme;
-  } else {
-    themeColors = themes[actualTimeOfDay];
-  }
+  const themeColors = themes[actualTimeOfDay];
 
   return {
     timeOfDay: actualTimeOfDay,
     greeting: getGreeting(actualTimeOfDay),
-    isNightMode: storedMode === 'auto' && actualTimeOfDay === 'night',
+    isNightMode: actualTimeOfDay === 'night',
     colors: themeColors,
-    themeMode: storedMode,
+    themeMode: 'auto',
     setThemeMode: () => {}, // No-op for non-hook context
     toggleTheme: () => {}, // No-op for non-hook context
   };

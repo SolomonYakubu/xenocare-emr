@@ -1,6 +1,6 @@
 {
   "name": "xenocare-emr",
-  "description": "XenoCare Electronic Medical Records System - Powered by Xenolink Technologies",
+  "description": "XenoCare Electronic Medical Records System - Powered by XenoCare Technologies",
   "keywords": [
     "emr",
     "hospital",
@@ -9,33 +9,33 @@
     "healthcare",
     "xenocare"
   ],
-  "homepage": "https://Xenolink.tech",
+  "homepage": "https://XenoCare.tech",
   "bugs": {
-    "url": "https://Xenolink.tech/support"
+    "url": "https://XenoCare.tech/support"
   },
   "repository": {
     "type": "git",
-    "url": "https://Xenolink.tech"
+    "url": "https://XenoCare.tech"
   },
   "license": "Proprietary",
   "author": {
-    "name": "Xenolink Technologies",
-    "email": "support@Xenolink.tech",
-    "url": "https://Xenolink.tech"
+    "name": "XenoCare Technologies",
+    "email": "support@XenoCare.tech",
+    "url": "https://XenoCare.tech"
   },
   "contributors": [
     {
-      "name": "Xenolink Technologies",
-      "email": "support@Xenolink.tech",
-      "url": "https://Xenolink.tech"
+      "name": "XenoCare Technologies",
+      "email": "support@XenoCare.tech",
+      "url": "https://XenoCare.tech"
     }
   ],
   "main": "./.erb/dll/main.bundle.dev.js",
   "scripts": {
     "build": "concurrently \"npm run build:main\" \"npm run build:renderer\"",
-    "build:dll": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
-    "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.main.prod.ts",
-    "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.renderer.prod.cts",
+    "build:dll": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"--no-experimental-detect-module --no-experimental-require-module -r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.renderer.dev.dll.ts",
+    "build:main": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"--no-experimental-detect-module --no-experimental-require-module -r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.main.prod.ts",
+    "build:renderer": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"--no-experimental-detect-module --no-experimental-require-module -r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.renderer.prod.cts",
     "postinstall": "ts-node .erb/scripts/check-native-dep.js && electron-builder install-app-deps && npm run build:dll",
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx --fix",
@@ -47,7 +47,18 @@
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
     "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true NODE_OPTIONS=\"-r ts-node/register --no-warnings\" webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
     "test": "jest",
-    "knip": "knip"
+    "knip": "knip",
+    "db:provision": "node scripts/local-db/provision.mjs",
+    "db:env": "node scripts/local-db/host-server.mjs --env-only",
+    "db:test": "node scripts/local-db/e2e-flow.mjs",
+    "db:ui": "node scripts/local-db/ui-smoke.mjs",
+    "db:modules": "node scripts/local-db/ui-modules.mjs",
+    "db:roles": "node scripts/local-db/ui-roles.mjs",
+    "db:host": "node scripts/local-db/host-server.mjs",
+    "db:lan": "node scripts/local-db/ui-lan.mjs",
+    "db:host:install": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/local-db/install-server-task.ps1",
+    "db:audit": "node scripts/local-db/ui-form-audit.mjs",
+    "serve:web": "node scripts/server/web-server.mjs"
   },
   "browserslist": [
     "extends browserslist-config-erb"
@@ -200,7 +211,7 @@
   },
   "build": {
     "productName": "XenoCare",
-    "appId": "com.Xenolink.ndcmedicalcentre.emr",
+    "appId": "com.XenoCare.ndcmedicalcentre.emr",
     "asar": true,
     "afterSign": ".erb/scripts/notarize.js",
     "asarUnpack": "**\\*.{node,dll}",
@@ -266,12 +277,12 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "Xenolink-technologies",
+      "owner": "XenoCare-technologies",
       "repo": "ndc-hospital-emr"
     }
   },
   "collective": {
-    "url": "https://Xenolink.tech"
+    "url": "https://XenoCare.tech"
   },
   "devEngines": {
     "runtime": {

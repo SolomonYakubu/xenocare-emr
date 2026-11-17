@@ -1,0 +1,8 @@
+{
+  "name": "xenocare-server",
+  "version": "4.6.0",
+  "description": "XenoCare LAN server (database + browser app)",
+  "main": "main.js",
+  "author": "XenoCare",
+  "license": "Proprietary"
+}

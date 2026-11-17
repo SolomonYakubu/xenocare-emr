@@ -33,8 +33,6 @@ import { EncounterForm } from '../encounter/components';
 import { InlineGuidance } from '../../components/guidance/InlineGuidance';
 
 // XenoCare Logo
-const ndcLogoSrc = require('../../../../assets/xenocare-logo.png');
-
 export default function PatientRegistration() {
   // Enable real-time updates
   usePatientSubscription();
@@ -239,125 +237,43 @@ export default function PatientRegistration() {
     <div
       className={`space-y-6 sm:space-y-8 ${isNightMode ? 'text-slate-100' : ''}`}
     >
-      <div
-        className={`${headerGradient} relative overflow-hidden rounded-2xl border border-white/20 shadow-[0_24px_56px_-20px_rgba(13,94,86,0.45),inset_0_0_0_1px_rgba(255,255,255,0.08)] sm:rounded-3xl`}
-      >
-        <div
-          className={`pointer-events-none absolute -top-24 right-0 h-72 w-72 rounded-full ${themeColors.header.decorativeCircle} blur-3xl opacity-[0.35]`}
-        />
-        <div className="pointer-events-none absolute bottom-0 left-1/4 h-48 w-96 rounded-full bg-teal-400/15 blur-3xl" />
-
-        <div className="relative z-10 p-5 sm:p-7 md:p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div className="flex min-w-0 flex-1 flex-col gap-5 sm:flex-row sm:items-center">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/95 p-2 shadow-[0_12px_28px_-8px_rgba(0,0,0,0.28)] ring-2 ring-white/40 sm:h-16 sm:w-16 sm:rounded-[1.15rem]">
-                <img
-                  src={ndcLogoSrc}
-                  alt="XenoCare"
-                  className="h-full w-full object-contain"
-                />
-              </div>
-              <div className="min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70 sm:text-[11px]">
-                  Registry
-                </p>
-                <h1 className="mt-1 flex flex-wrap items-center gap-2 text-2xl font-bold tracking-tight text-white sm:text-3xl md:text-4xl [text-rendering:optimizeLegibility]">
-                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/15 ring-1 ring-white/25">
-                    <Users
-                      className="h-5 w-5 sm:h-[1.35rem] sm:w-[1.35rem]"
-                      strokeWidth={2.25}
-                    />
-                  </span>
-                  Patient registration
-                </h1>
-                <p
-                  className={`mt-2 flex max-w-xl flex-wrap items-center gap-x-2 gap-y-1 text-sm ${themeColors.accent.muted}`}
-                >
-                  <TimeIcon className="h-4 w-4 shrink-0 opacity-90" />
-                  <span className="font-medium text-white/95">
-                    XenoCare
-                  </span>
-                  <span className="hidden text-white/40 sm:inline">·</span>
-                  <span>Demographics, coverage & master patient index</span>
-                </p>
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleNewPatient}
-              className="inline-flex shrink-0 items-center justify-center gap-2.5 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-[#0d5e56] shadow-[0_10px_28px_-6px_rgba(0,0,0,0.35)] ring-1 ring-white/60 transition hover:bg-emerald-50/95 hover:shadow-lg active:scale-[0.99] sm:px-6"
-            >
-              <UserPlus className="h-5 w-5" strokeWidth={2.25} />
-              Register new patient
-            </button>
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="mt-1 font-display text-2xl font-bold text-slate-900">
+              Patient registration
+            </h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Find an existing patient or register a new one.
+            </p>
           </div>
-
-          <div className="relative z-10 mt-6 sm:mt-7">
-            <InlineGuidance
-              module="registration"
-              variant="onDark"
-              message="This module is the entry point for all patients. Capture accurate demographics, phone numbers and contact details to keep clinical and billing records consistent."
-            />
-          </div>
-
-          <div className="relative z-10 mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            {[
-              {
-                label: 'Total patients',
-                value: stats?.total?.toLocaleString() || '0',
-                icon: Users,
-                iconWrap: `rounded-xl p-2.5 ring-1 ring-white/20 ${themeColors.header.decorativeCircle}`,
-                iconClass: 'text-white',
-              },
-              {
-                label: 'Active',
-                value: stats?.active?.toLocaleString() || '0',
-                icon: UserCheck,
-                iconWrap:
-                  'rounded-xl bg-emerald-400/25 p-2.5 ring-1 ring-emerald-200/30',
-                iconClass: 'text-emerald-100',
-              },
-              {
-                label: 'Today',
-                value: stats?.registeredToday?.toLocaleString() || '0',
-                icon: Clock,
-                iconWrap:
-                  'rounded-xl bg-sky-400/25 p-2.5 ring-1 ring-sky-200/25',
-                iconClass: 'text-sky-100',
-              },
-              {
-                label: 'This month',
-                value: stats?.registeredThisMonth?.toLocaleString() || '0',
-                icon: TrendingUp,
-                iconWrap:
-                  'rounded-xl bg-violet-400/25 p-2.5 ring-1 ring-violet-200/25',
-                iconClass: 'text-violet-100',
-              },
-            ].map((card) => (
-              <div
-                key={card.label}
-                className="rounded-2xl border border-white/20 bg-white/10 p-4 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.35)] backdrop-blur-md transition hover:bg-white/[0.14]"
-              >
-                <div className="flex items-center gap-3">
-                  <div className={card.iconWrap}>
-                    <card.icon className={`h-5 w-5 ${card.iconClass}`} />
-                  </div>
-                  <div className="min-w-0">
-                    <p
-                      className={`text-[10px] font-semibold uppercase tracking-wider ${themeColors.accent.muted}`}
-                    >
-                      {card.label}
-                    </p>
-                    <p className="text-xl font-bold tabular-nums text-white sm:text-2xl [text-rendering:optimizeLegibility]">
-                      {card.value}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <button
+            type="button"
+            onClick={handleNewPatient}
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[#E9783F] px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-[#D96A36]"
+          >
+            <UserPlus className="h-4 w-4" />
+            Register new patient
+          </button>
         </div>
+
+        <dl className="mt-5 grid grid-cols-2 gap-4 border-t border-slate-100 pt-4 sm:grid-cols-4">
+          {[
+            { label: 'Total patients', value: stats?.total },
+            { label: 'Active', value: stats?.active },
+            { label: 'Today', value: stats?.registeredToday },
+            { label: 'This month', value: stats?.registeredThisMonth },
+          ].map((card) => (
+            <div key={card.label}>
+              <dt className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                {card.label}
+              </dt>
+              <dd className="font-display text-xl font-bold tabular-nums text-slate-900">
+                {card.value?.toLocaleString() || '0'}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </div>
 
       {/* Patient List */}

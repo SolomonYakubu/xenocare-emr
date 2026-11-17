@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR — Procedure Report Modal
+ * XenoCare — Procedure Report Modal
  */
 
 import React, { useState } from 'react';

@@ -2011,11 +2011,7 @@ export function SpecialtyConsultationWizard({
             <div className="flex items-center justify-between px-5 py-3 bg-gradient-to-r from-primary-700 to-primary-600 text-white">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="bg-white rounded-lg p-1.5 shadow flex-shrink-0">
-                  <img
-                    src={require('../../../../../assets/xenocare-logo.png')}
-                    alt="XenoCare"
-                    className="h-6 w-6 object-contain"
-                  />
+                  
                 </div>
                 <div className="min-w-0">
                   <span className="block text-sm font-semibold truncate">
@@ -2686,7 +2682,7 @@ function PatientReviewStep({
           Select Patient
         </h3>
         <p className="text-gray-500 mb-6 max-w-md mx-auto">
-          Search for a registered patient by name, EMR number or phone number to
+          Search for a registered patient by name, patient number or phone number to
           begin the consultation.
         </p>
         <div className="max-w-xl mx-auto relative text-left">

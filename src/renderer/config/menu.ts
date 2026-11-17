@@ -34,7 +34,13 @@ import {
 
 // Import NHIS Logo
 import nhisLogo from '../../../assets/nhis_logo.png';
-import { isNhisFeatureEnabled } from './features';
+import {
+  isEmergencyFeatureEnabled,
+  isHygieneFeatureEnabled,
+  isNhisFeatureEnabled,
+  isSpecialtyModuleEnabled,
+  SPECIALTY_CLINIC_MODULES,
+} from './features';
 
 export interface MenuItem {
   to: string;
@@ -75,7 +81,7 @@ const baseMenuItems: MenuItem[] = [
   {
     to: '/encounter',
     icon: CalendarClock,
-    label: 'Encounters',
+    label: 'Visits',
     module: 'encounter',
     description: 'Patient visits and clinic management',
     color: 'bg-emerald-500',
@@ -83,9 +89,9 @@ const baseMenuItems: MenuItem[] = [
   {
     to: '/consultation',
     icon: Stethoscope,
-    label: 'OPD Consultation',
+    label: 'Consultation',
     module: 'consultation',
-    description: 'GOPD clinical consultations and diagnosis (OPD Doctors Only)',
+    description: 'Outpatient consultations and diagnosis',
     color: 'bg-green-500',
   },
   {
@@ -132,7 +138,7 @@ const baseMenuItems: MenuItem[] = [
   {
     to: '/in-patient',
     icon: Bed,
-    label: 'In-Patient',
+    label: 'In-patients',
     module: 'in-patient',
     description: 'Ward management and admissions',
     color: 'bg-violet-500',
@@ -212,7 +218,7 @@ const baseMenuItems: MenuItem[] = [
   {
     to: '/clinical-requests',
     icon: ClipboardList,
-    label: 'Clinical Requests',
+    label: 'Requests',
     module: 'clinical-requests',
     description: 'Manage admission, procedure, and referral requests',
     color: 'bg-sky-500',
@@ -308,6 +314,15 @@ const baseMenuItems: MenuItem[] = [
   },
 ];
 
-export const menuItems: MenuItem[] = isNhisFeatureEnabled()
-  ? baseMenuItems
-  : baseMenuItems.filter((item) => item.module !== 'nhis');
+export const menuItems: MenuItem[] = baseMenuItems.filter((item) => {
+  if (!isNhisFeatureEnabled() && item.module === 'nhis') return false;
+  if (!isEmergencyFeatureEnabled() && item.module === 'emergency') return false;
+  if (!isHygieneFeatureEnabled() && item.module === 'hygiene') return false;
+  if (
+    (SPECIALTY_CLINIC_MODULES as readonly string[]).includes(item.module) &&
+    !isSpecialtyModuleEnabled(item.module)
+  ) {
+    return false;
+  }
+  return true;
+});

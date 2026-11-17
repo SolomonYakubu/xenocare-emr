@@ -36,8 +36,6 @@ import {
 import { AdvancedEncounterFilters } from './EncounterFilterPanel';
 
 // XenoCare Logo for print
-const XenoCareLogoSrc = require('../../../../../assets/xenocare-logo.png');
-
 interface EncounterReportTemplateProps {
   isOpen: boolean;
   onClose: () => void;
@@ -148,17 +146,13 @@ export function EncounterReportTemplate({
         <div className="bg-gradient-to-r from-primary-700 to-[#008545] text-white p-8 print:p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
-              <img
-                src={XenoCareLogoSrc}
-                alt="XenoCare Logo"
-                className="h-20 w-auto print:h-16"
-              />
+              
               <div>
                 <h1 className="text-2xl font-bold print:text-xl">
                   {getFacilityName().toUpperCase()}
                 </h1>
                 <h2 className="text-lg opacity-90 print:text-base">
-                  XenoCare EMR
+                  XenoCare
                 </h2>
                 <p className="text-sm opacity-80 mt-1">
                   {getFacilityAddress()}

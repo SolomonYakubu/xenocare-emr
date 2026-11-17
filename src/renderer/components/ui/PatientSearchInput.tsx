@@ -1,7 +1,7 @@
 // =============================================================================
 // XENOCARE EMR - Patient Search Input Component
 // Reusable patient search component for use across all modules
-// Searches by: EMR Number, Name, Phone
+// Searches by: Patient number, Name, Phone
 // =============================================================================
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -24,7 +24,7 @@ const PatientSearchInput: React.FC<PatientSearchInputProps> = ({
   value,
   onChange,
   selectedPatient,
-  placeholder = 'Search by EMR number, name, or phone...',
+  placeholder = 'Search by patient number, name, or phone...',
   disabled = false,
   className = '',
   autoFocus = false,
@@ -169,7 +169,7 @@ const PatientSearchInput: React.FC<PatientSearchInputProps> = ({
             onFocus={() => searchTerm.length >= 1 && setIsOpen(true)}
             placeholder={placeholder}
             disabled={disabled}
-            className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="w-full rounded-lg border border-slate-300 py-2.5 pl-10 pr-10 text-sm outline-none transition-colors focus:border-[#E9783F] focus:ring-2 focus:ring-[#E9783F]/15 disabled:cursor-not-allowed disabled:bg-slate-100"
           />
           {isLoading && (
             <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 animate-spin" />
@@ -192,7 +192,7 @@ const PatientSearchInput: React.FC<PatientSearchInputProps> = ({
                   <button
                     type="button"
                     onClick={() => handleSelect(patient)}
-                    className="w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors"
+                    className="w-full px-4 py-2.5 text-left transition-colors hover:bg-[#FBF1E9]"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
@@ -252,7 +252,7 @@ const PatientSearchInput: React.FC<PatientSearchInputProps> = ({
               <User className="h-10 w-10 text-gray-300 mx-auto mb-2" />
               <p className="text-gray-500">No patients found</p>
               <p className="text-sm text-gray-400 mt-1">
-                Try searching by EMR number, name, or phone
+                Try searching by patient number, name, or phone
               </p>
             </div>
           ) : (
@@ -260,7 +260,7 @@ const PatientSearchInput: React.FC<PatientSearchInputProps> = ({
               <Search className="h-10 w-10 text-gray-300 mx-auto mb-2" />
               <p className="text-gray-500">Start typing to search</p>
               <p className="text-sm text-gray-400 mt-1">
-                Search by EMR number (e.g., NDC-0001), name, or phone
+                Search by patient number (e.g., NDC-0001), name, or phone
               </p>
             </div>
           )}

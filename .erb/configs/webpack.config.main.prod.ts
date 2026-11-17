@@ -9,7 +9,7 @@ import TerserPlugin from 'terser-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import dotenv from 'dotenv';
 import baseConfig from './webpack.config.base.js';
-import webpackPaths from './webpack.paths.ts';
+import webpackPaths from './webpack.paths.js';
 import checkNodeEnv from '../scripts/check-node-env.js';
 import deleteSourceMaps from '../scripts/delete-source-maps.js';
 

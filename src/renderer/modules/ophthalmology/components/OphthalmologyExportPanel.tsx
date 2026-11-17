@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR — Ophthalmology Export Panel
+ * XenoCare — Ophthalmology Export Panel
  * Inline export toolbar for the Ophthalmology module page.
  */
 
@@ -33,7 +33,7 @@ export function OphthalmologyExportPanel({
   if (!canExport) return null;
 
   const headers = [
-    'EMR Number',
+    'Patient number',
     'Patient',
     'Procedure Type',
     'Doctor',

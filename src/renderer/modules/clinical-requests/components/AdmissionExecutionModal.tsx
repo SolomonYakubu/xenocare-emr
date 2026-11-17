@@ -282,7 +282,7 @@ export const AdmissionExecutionModal: React.FC<
                   <p className="font-medium">{request.patient_name}</p>
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500">EMR Number</label>
+                  <label className="text-xs text-gray-500">Patient number</label>
                   <p className="font-medium">{request.emr_number}</p>
                 </div>
                 <div>

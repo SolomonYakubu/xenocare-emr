@@ -79,7 +79,7 @@ interface OutgoingReferralItem {
   // Source encounter (for fetching investigations)
   source_encounter_id?: string | null;
 
-  // EMR number (enriched after fetch)
+  // patient number (enriched after fetch)
   emr_number?: string | null;
 }
 
@@ -1189,7 +1189,7 @@ export const NhisOutgoingReferralQueue: React.FC<
 
       if (error) throw error;
 
-      // Enrich with EMR numbers from patients table
+      // Enrich with patient numbers from patients table
       const enriched = await Promise.all(
         (data || []).map(async (item: any) => {
           try {
@@ -1393,11 +1393,7 @@ export const NhisOutgoingReferralQueue: React.FC<
         <div className="bg-gradient-to-r from-primary-700 to-[#008545] px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img
-                src={require('../../../../../assets/xenocare-logo.png')}
-                alt="XenoCare"
-                className="h-10 w-10 rounded-full bg-white/20 p-0.5 object-contain"
-              />
+              
               <div>
                 <h2 className="text-lg font-bold text-white flex items-center gap-2">
                   Outgoing NHIS Referrals

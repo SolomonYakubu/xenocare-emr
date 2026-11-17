@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useEncounterStats, useWorkflowSubscription } from '../lib/workflow';
+import { useBedAvailability } from '../modules/in-patient/hooks/useBeds';
 import { useTimeTheme } from '../hooks/useTimeTheme';
 import { supabase } from '../api/supabaseClient';
 import {
@@ -83,6 +84,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { data: stats, isLoading, error, refetch } = useEncounterStats();
+  const { data: bedAvailability = [] } = useBedAvailability();
 
   // State for doctors modal
   const [showDoctorsModal, setShowDoctorsModal] = useState(false);
@@ -209,9 +211,14 @@ export default function Dashboard() {
     const completionRate =
       totalToday > 0 ? Math.round((completed / totalToday) * 100) : 0;
 
-    // Bed stats
-    const occupiedBeds = stats.occupied_beds || 0;
-    const totalBeds = stats.total_beds || 0;
+    // Bed stats come from the live bed board, not ward capacity.
+    const liveBeds = bedAvailability as Array<{ status?: string }>;
+    const occupiedBeds = liveBeds.length
+      ? liveBeds.filter(
+          (bed) => String(bed.status || '').toLowerCase() === 'occupied',
+        ).length
+      : stats.occupied_beds || 0;
+    const totalBeds = liveBeds.length || stats.total_beds || 0;
     const bedOccupancy =
       totalBeds > 0 ? Math.round((occupiedBeds / totalBeds) * 100) : 0;
 
@@ -233,13 +240,10 @@ export default function Dashboard() {
       admitted: stats.admitted || 0,
       avgWait: stats.consultation_average_wait_minutes || 0,
       waitTarget: stats.consultation_wait_target_minutes || 30,
-      labAvgTatHours: 0,
-      labAvgTatMinutes: 42,
-      labTatWithinTargetRate: 94,
       inactiveDoctors: stats.inactive_doctors || 0,
       doctorPerformance: stats.doctor_performance || [],
     };
-  }, [stats]);
+  }, [stats, bedAvailability]);
 
   // Chart data for patient flow
   const patientFlowData = useMemo(() => {
@@ -344,24 +348,6 @@ export default function Dashboard() {
     );
   }
 
-  // Calculate highest volume across workflows to normalize progress bars
-  const maxWorkflowLoad = Math.max(
-    metrics?.registration || 1,
-    metrics?.triage || 1,
-    metrics?.inConsultation || 1,
-    metrics?.labPending || 1,
-    metrics?.pharmacyPending || 1,
-    metrics?.billingPending || 1,
-  );
-
-  const getStatusBadge = (load: number, max: number) => {
-    if (load === 0)
-      return { text: 'EMPTY', classes: 'bg-slate-100 text-slate-500' };
-    if (load > max * 0.7 && load > 5)
-      return { text: 'HIGH VOLUME', classes: 'bg-red-50 text-red-600' };
-    return { text: 'ACTIVE', classes: 'bg-[#e2f1f0] text-[#0d5e56]' };
-  };
-
   return (
     <div className={`min-h-screen ${theme.bg} font-sans`}>
       <div className="max-w-[1440px] mx-auto px-6 py-6 pb-12 flex flex-col xl:flex-row gap-6">
@@ -379,9 +365,9 @@ export default function Dashboard() {
                 })}
               </p>
               <h2 className="text-2xl font-bold text-slate-800 mb-2">
-                Good {getTimeOfDay()}, {staff?.first_name || 'Doctor'}.
+                Welcome back.
               </h2>
-              <p className="text-slate-500 text-sm mb-6 max-w-md leading-relaxed">
+              <p className="max-w-md text-sm leading-relaxed text-slate-500">
                 {isDoctor ? (
                   <>
                     You have{' '}
@@ -402,7 +388,7 @@ export default function Dashboard() {
                     </strong>{' '}
                     and{' '}
                     <strong className="text-slate-700">
-                      {metrics?.totalActive || 0} active encounters
+                      {metrics?.totalActive || 0} active visits
                     </strong>{' '}
                     today.
                   </>
@@ -428,42 +414,12 @@ export default function Dashboard() {
                     <strong className="text-slate-700">
                       {metrics?.triage || 0} patients in triage
                     </strong>{' '}
-                    this morning.
+                    today.
                   </>
                 )}
               </p>
-              <button
-                onClick={() => refetch()}
-                className="bg-[#0d5e56] hover:bg-teal-800 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-transform hover:scale-105 shadow-sm"
-              >
-                <Activity size={16} />
-                Refresh Dashboard
-              </button>
             </div>
 
-            {/* Banner Illustration (abstract shapes) */}
-            <div className="hidden md:block w-40 h-40 bg-[#f4f7f6] rounded-2xl rotate-12 absolute -right-6 -top-6">
-              <div className="absolute inset-4 bg-[#e8f1f0] rounded-xl flex items-center justify-center -rotate-12">
-                <div className="opacity-20 text-[#0d5e56]">
-                  <svg
-                    width="80"
-                    height="80"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                    <line x1="16" y1="13" x2="8" y2="13" />
-                    <line x1="16" y1="17" x2="8" y2="17" />
-                    <polyline points="10 9 9 9 8 9" />
-                  </svg>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Doctor-Specific Dashboard Section */}
@@ -496,7 +452,7 @@ export default function Dashboard() {
                       <div className="flex flex-nowrap items-center gap-1.5 text-slate-400 font-bold text-[10px] md:text-xs tracking-wider uppercase min-w-0 flex-1 overflow-hidden">
                         <Users
                           size={14}
-                          className="text-[#0d5e56] shrink-0 min-w-[14px]"
+                          className="text-[#11151C] shrink-0 min-w-[14px]"
                         />
                         <span className="truncate">Patients</span>
                       </div>
@@ -512,7 +468,7 @@ export default function Dashboard() {
                       <div className="flex flex-nowrap items-center gap-1.5 text-slate-400 font-bold text-[10px] md:text-xs tracking-wider uppercase min-w-0 flex-1 overflow-hidden">
                         <Stethoscope
                           size={14}
-                          className="text-[#0d5e56] shrink-0 min-w-[14px]"
+                          className="text-[#11151C] shrink-0 min-w-[14px]"
                         />
                         <span className="truncate">Attended</span>
                       </div>
@@ -541,15 +497,15 @@ export default function Dashboard() {
                   {/* Online Doctors */}
                   <button
                     onClick={() => setShowDoctorsModal(true)}
-                    className="bg-white p-3 xl:p-4 rounded-2xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col justify-between text-left hover:border-[#0d5e56] transition-colors cursor-pointer group overflow-hidden"
+                    className="bg-white p-3 xl:p-4 rounded-2xl shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col justify-between text-left hover:border-[#11151C] transition-colors cursor-pointer group overflow-hidden"
                   >
                     <div className="flex justify-between items-center mb-3 w-full">
-                      <div className="flex flex-nowrap items-center gap-1.5 text-slate-400 font-bold text-[10px] md:text-xs tracking-wider uppercase group-hover:text-[#0d5e56] min-w-0 flex-1 overflow-hidden">
+                      <div className="flex flex-nowrap items-center gap-1.5 text-slate-400 font-bold text-[10px] md:text-xs tracking-wider uppercase group-hover:text-[#11151C] min-w-0 flex-1 overflow-hidden">
                         <div className="relative flex h-2 w-2 shrink-0 min-w-[8px]">
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
                           <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500" />
                         </div>
-                        <span className="truncate">Doctors Online</span>
+                        <span className="truncate">Doctors</span>
                       </div>
                     </div>
                     <p className="text-2xl font-bold text-slate-800">
@@ -586,26 +542,29 @@ export default function Dashboard() {
                           size={14}
                           className="text-slate-400 shrink-0 min-w-[14px]"
                         />
-                        <span className="truncate">Beds</span>
+                        <span className="truncate">Beds used</span>
                       </div>
                     </div>
                     <p className="text-2xl font-bold text-slate-800">
                       {metrics?.occupiedBeds || 0}
+                      <span className="text-sm font-semibold text-slate-400">
+                        {' '}/ {metrics?.totalBeds || 0}
+                      </span>
                     </p>
                   </div>
                 </div>
 
-                {/* Workflow Pipeline */}
+                {/* Patient flow */}
                 <div>
                   <div className="flex items-center justify-between mb-4 mt-2">
                     <h3 className="font-bold text-slate-800 text-lg">
-                      Workflow Pipeline
+                      Patient flow
                     </h3>
                     <button
                       onClick={() => navigate('/queue')}
-                      className="text-sm font-bold text-[#0d5e56] hover:underline"
+                      className="text-sm font-bold text-[#11151C] hover:underline"
                     >
-                      View All Processors
+                      View all
                     </button>
                   </div>
 
@@ -614,69 +573,41 @@ export default function Dashboard() {
                       {
                         name: 'Registration',
                         icon: Users,
-                        sub: 'Front Desk Intake',
+                        sub: 'Front desk',
                         load: metrics?.registration || 0,
-                        color: '#0d5e56',
+                        color: '#11151C',
                       },
                       {
                         name: 'Triage',
                         icon: Activity,
-                        sub: 'Vitals & Assessment',
+                        sub: 'Vitals',
                         load: metrics?.triage || 0,
                         color: '#94a3b8',
                       },
                       {
                         name: 'Consultation',
                         icon: Stethoscope,
-                        sub: 'Clinical Appointment',
+                        sub: 'With doctor',
                         load: metrics?.inConsultation || 0,
                         color: '#c53030',
                       },
                     ].map((stage) => {
-                      const status = getStatusBadge(
-                        stage.load,
-                        maxWorkflowLoad,
-                      );
                       return (
                         <div
                           key={stage.name}
-                          className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex flex-col"
+                          className="rounded-xl border border-slate-100 bg-white px-3.5 py-3"
                         >
-                          <div className="flex justify-between items-start mb-6 w-full">
-                            <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-500">
-                              <stage.icon size={20} />
-                            </div>
-                            <span
-                              className={`text-[9px] font-black tracking-widest px-2.5 py-1 rounded ${status.classes}`}
-                            >
-                              {status.text}
-                            </span>
-                          </div>
-                          <div className="mt-auto">
-                            <h4 className="font-bold text-slate-800 mb-0.5">
+                          <div className="flex items-baseline justify-between gap-2">
+                            <h4 className="truncate text-sm font-semibold text-slate-700">
                               {stage.name}
                             </h4>
-                            <p className="text-xs text-slate-400 mb-6">
-                              {stage.sub}
-                            </p>
-                            <div className="flex items-end justify-between mb-2">
-                              <span className="text-xs font-bold text-slate-800">
-                                Patient Load
-                              </span>
-                              <span className="text-sm font-black text-[#0d5e56]">
-                                {stage.load}
-                              </span>
-                            </div>
-                            <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                              <div
-                                className="h-full rounded-full transition-all duration-1000"
-                                style={{
-                                  width: `${Math.max((stage.load / maxWorkflowLoad) * 100, 2)}%`,
-                                  backgroundColor: stage.color,
-                                }}
-                              />
-                            </div>
+                            <span className="font-display text-lg font-bold text-slate-900">
+                              {stage.load}
+                            </span>
                           </div>
+                          <p className="mt-0.5 truncate text-xs text-slate-400">
+                            {stage.sub}
+                          </p>
                         </div>
                       );
                     })}
@@ -695,7 +626,7 @@ export default function Dashboard() {
                           name: 'Consultation',
                           users: 'Doctors seeing patients',
                           load: metrics?.inConsultation || 0,
-                          color: '#0d5e56',
+                          color: '#11151C',
                         },
                         {
                           name: 'Nursing/Triage',
@@ -707,13 +638,13 @@ export default function Dashboard() {
                           name: 'Laboratory',
                           users: 'Pending lab tests',
                           load: metrics?.labPending || 0,
-                          color: '#0d5e56',
+                          color: '#11151C',
                         },
                         {
                           name: 'Pharmacy',
                           users: 'Prescriptions to dispense',
                           load: metrics?.pharmacyPending || 0,
-                          color: '#0d5e56',
+                          color: '#11151C',
                         },
                         {
                           name: 'Billing',
@@ -732,7 +663,7 @@ export default function Dashboard() {
                               style={{ backgroundColor: dept.color }}
                             />
                             <div>
-                              <h4 className="font-bold text-slate-800 text-sm group-hover:text-[#0d5e56] transition-colors">
+                              <h4 className="font-bold text-slate-800 text-sm group-hover:text-[#11151C] transition-colors">
                                 {dept.name}
                               </h4>
                               <p className="text-xs text-slate-400 mt-0.5">
@@ -743,9 +674,6 @@ export default function Dashboard() {
                           <div className="text-right">
                             <p className="font-black text-slate-800 text-lg">
                               {dept.load}
-                            </p>
-                            <p className="text-xs text-slate-400 font-bold uppercase tracking-widest text-[9px]">
-                              ACTIVE CASES
                             </p>
                           </div>
                         </div>
@@ -775,10 +703,10 @@ export default function Dashboard() {
                   <button
                     key={module.title}
                     onClick={() => navigate(module.path)}
-                    className="flex flex-col items-center justify-center py-5 px-3 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all group"
+                    className="flex flex-col items-center justify-center rounded-xl border border-slate-100 bg-white px-3 py-4 transition-colors hover:border-slate-300 group"
                   >
                     <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 bg-gradient-to-br ${module.color} text-white shadow-sm`}
+                      className={`mb-2 flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br ${module.color} text-white`}
                     >
                       <module.icon size={18} />
                     </div>
@@ -813,61 +741,32 @@ export default function Dashboard() {
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-4">
                 {[
+                  { label: 'Registered today', value: metrics?.totalToday || 0 },
+                  { label: 'Being attended', value: metrics?.totalActive || 0 },
+                  { label: 'Discharged', value: metrics?.completed || 0 },
                   {
-                    label: 'Total registered patients today',
-                    value: metrics?.totalToday || 0,
-                  },
-                  {
-                    label: 'Currently being attended to',
-                    value: metrics?.totalActive || 0,
-                  },
-                  {
-                    label: 'Successfully discharged',
-                    value: metrics?.completed || 0,
-                  },
-                  {
-                    label: 'Overall discharge rate',
+                    label: 'Discharge rate',
                     value: `${metrics?.completionRate || 0}%`,
                   },
+                  { label: 'In triage', value: metrics?.triage || 0 },
                   {
-                    label: 'Patients in triage/nursing',
-                    value: metrics?.triage || 0,
-                  },
-                  {
-                    label: 'Active doctor consultations',
+                    label: 'In consultation',
                     value: metrics?.inConsultation || 0,
                   },
+                  { label: 'Lab pending', value: metrics?.labPending || 0 },
                   {
-                    label: 'Laboratory orders pending',
-                    value: metrics?.labPending || 0,
-                  },
-                  {
-                    label: 'Pharmacy prescriptions queued',
+                    label: 'Pharmacy queued',
                     value: metrics?.pharmacyPending || 0,
                   },
+                  { label: 'Bills pending', value: metrics?.billingPending || 0 },
+                  { label: 'Admitted', value: metrics?.admitted || 0 },
                   {
-                    label: 'Bills awaiting clearance',
-                    value: metrics?.billingPending || 0,
-                  },
-                  {
-                    label: 'Inpatients currently admitted',
-                    value: metrics?.admitted || 0,
-                  },
-                  {
-                    label: 'Beds occupied / total capacity',
+                    label: 'Beds in use',
                     value: `${metrics?.occupiedBeds || 0} / ${metrics?.totalBeds || 0}`,
                   },
                   {
-                    label: 'Avg wait (check-in to consult)',
+                    label: 'Average wait',
                     value: `${metrics?.avgWait || 0} min`,
-                  },
-                  {
-                    label: 'Lab average turnaround',
-                    value: `${metrics?.labAvgTatHours || 0} hrs`,
-                  },
-                  {
-                    label: 'Lab 2.5hr compliance rate',
-                    value: `${metrics?.labTatWithinTargetRate || 0}%`,
                   },
                 ].map((row) => (
                   <div
@@ -894,11 +793,10 @@ export default function Dashboard() {
           !isBillingClerk && (
             <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm p-6">
               <h3 className="text-sm font-bold text-slate-800 mb-1">
-                Doctor Performance Tracking
+                Doctors today
               </h3>
-              <p className="text-xs text-slate-400 mb-6 font-medium">
-                Active doctors are scored by consultation throughput and
-                wait-time.
+              <p className="text-xs text-slate-400 mb-4 font-medium">
+                Consultations completed and average wait.
               </p>
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -907,17 +805,11 @@ export default function Dashboard() {
                       <th className="text-left py-3 px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                         Doctor
                       </th>
-                      <th className="text-center py-3 px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                        Status
-                      </th>
                       <th className="text-right py-3 px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                         Consults
                       </th>
                       <th className="text-right py-3 px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                         Avg Wait
-                      </th>
-                      <th className="text-right py-3 px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                        Score
                       </th>
                     </tr>
                   </thead>
@@ -932,17 +824,6 @@ export default function Dashboard() {
                           <td className="py-3 px-3 text-sm font-bold text-slate-700">
                             {doc.doctor_name}
                           </td>
-                          <td className="py-3 px-3 text-center">
-                            <span
-                              className={`inline-flex px-2.5 py-1 rounded text-[10px] font-black tracking-widest uppercase ${
-                                doc.status === 'Active'
-                                  ? 'bg-[#e2f1f0] text-[#0d5e56]'
-                                  : 'bg-slate-100 text-slate-500'
-                              }`}
-                            >
-                              {doc.status}
-                            </span>
-                          </td>
                           <td className="py-3 px-3 text-right text-sm font-bold text-slate-800">
                             {doc.consultations}
                           </td>
@@ -950,11 +831,6 @@ export default function Dashboard() {
                             {doc.avg_wait_minutes === null
                               ? 'N/A'
                               : `${doc.avg_wait_minutes} min`}
-                          </td>
-                          <td className="py-3 px-3 text-right">
-                            <span className="inline-flex px-2.5 py-1 rounded text-[11px] font-black bg-indigo-50 text-indigo-700">
-                              {doc.performance_score}
-                            </span>
                           </td>
                         </tr>
                       ))}

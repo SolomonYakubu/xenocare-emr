@@ -34,6 +34,7 @@ import {
   PriorityLevel,
 } from '../dtos/encounter.dto';
 import {
+  isMilitaryFeatureEnabled,
   isNhisCategory,
   isNhisFeatureEnabled,
 } from '../../../config/features';
@@ -148,13 +149,24 @@ const VISIBLE_INSURANCE_TYPES = isNhisFeatureEnabled()
   ? INSURANCE_TYPES
   : INSURANCE_TYPES.filter((type) => !isNhisCategory(type.value));
 
-const VISIBLE_PAYMENT_CATEGORIES = isNhisFeatureEnabled()
-  ? PAYMENT_CATEGORIES
-  : PAYMENT_CATEGORIES.filter((category) => category.value !== 'NHIS');
+const VISIBLE_PAYMENT_CATEGORIES = PAYMENT_CATEGORIES.filter((category) => {
+  if (!isNhisFeatureEnabled() && category.value === 'NHIS') return false;
+  if (!isMilitaryFeatureEnabled() && category.value === 'Military_Free')
+    return false;
+  return true;
+});
+
+const VISIBLE_PATIENT_CATEGORIES = PATIENT_CATEGORIES.filter(
+  (category) =>
+    isMilitaryFeatureEnabled() ||
+    !['Military', 'Military Participant', 'Security Services'].includes(
+      category.value,
+    ),
+);
 
 const DEPARTMENTS = [
-  { value: 'GOPD', label: 'General Out-Patient (GOPD)' },
-  { value: 'SOPD', label: 'Special Out-Patient (SOPD)' },
+  { value: 'GOPD', label: 'General outpatient' },
+  { value: 'SOPD', label: 'Specialist outpatient' },
   { value: 'Emergency', label: 'Emergency' },
   { value: 'Laboratory', label: 'Laboratory' },
   { value: 'Radiology', label: 'Radiology' },
@@ -471,7 +483,7 @@ export function EncounterFilterPanel({
               className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-700 focus:border-primary-700"
             >
               <option value="all">All Categories</option>
-              {PATIENT_CATEGORIES.map((cat) => (
+              {VISIBLE_PATIENT_CATEGORIES.map((cat) => (
                 <option key={cat.value} value={cat.value}>
                   {cat.label}
                 </option>

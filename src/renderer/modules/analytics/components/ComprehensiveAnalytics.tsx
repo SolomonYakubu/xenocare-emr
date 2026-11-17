@@ -184,78 +184,19 @@ function SimpleStatCard({
   subtitle,
   trend,
 }: SimpleStatCardProps) {
-  const colorMap = {
-    blue: {
-      bg: 'bg-blue-50',
-      text: 'text-blue-600',
-      border: 'border-blue-200',
-      iconBg: 'bg-blue-500',
-    },
-    green: {
-      bg: 'bg-green-50',
-      text: 'text-green-600',
-      border: 'border-green-200',
-      iconBg: 'bg-green-500',
-    },
-    purple: {
-      bg: 'bg-purple-50',
-      text: 'text-purple-600',
-      border: 'border-purple-200',
-      iconBg: 'bg-purple-500',
-    },
-    yellow: {
-      bg: 'bg-amber-50',
-      text: 'text-amber-600',
-      border: 'border-amber-200',
-      iconBg: 'bg-amber-500',
-    },
-    red: {
-      bg: 'bg-red-50',
-      text: 'text-red-600',
-      border: 'border-red-200',
-      iconBg: 'bg-red-500',
-    },
-    cyan: {
-      bg: 'bg-cyan-50',
-      text: 'text-cyan-600',
-      border: 'border-cyan-200',
-      iconBg: 'bg-cyan-500',
-    },
-    pink: {
-      bg: 'bg-pink-50',
-      text: 'text-pink-600',
-      border: 'border-pink-200',
-      iconBg: 'bg-pink-500',
-    },
-    indigo: {
-      bg: 'bg-indigo-50',
-      text: 'text-indigo-600',
-      border: 'border-indigo-200',
-      iconBg: 'bg-indigo-500',
-    },
-  };
-  const colors = colorMap[color];
 
   return (
-    <div
-      className={`bg-white rounded-xl border ${colors.border} p-4 shadow-sm hover:shadow-md transition-shadow`}
-    >
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <p className="text-sm text-gray-500 font-medium">{title}</p>
-          <p className={`text-2xl font-bold ${colors.text} mt-1`}>{value}</p>
-          {subtitle && <p className="text-xs text-gray-400 mt-1">{subtitle}</p>}
-          {trend && (
-            <div className="flex items-center gap-1 mt-2 text-sm text-gray-500">
-              <span className="font-medium">{trend.value}</span>
-              <span className="text-xs">{trend.label}</span>
-            </div>
-          )}
-        </div>
-        <div className={`p-3 rounded-xl ${colors.iconBg} text-white shadow-lg`}>
-          {icon}
-        </div>
-      </div>
+    <div className="min-h-[104px] rounded-xl border border-slate-200 bg-white p-3.5">
+      <p className="text-xs font-medium text-slate-500">{title}</p>
+      <p className="mt-1 font-display text-2xl font-bold tabular-nums text-slate-900">
+        {value}
+      </p>
+      {subtitle && <p className="mt-1 text-xs text-slate-400">{subtitle}</p>}
+      {trend && (
+        <p className="mt-1 text-xs font-medium text-slate-500">
+          {trend.value} {trend.label}
+        </p>
+      )}
     </div>
   );
 }
@@ -329,38 +270,36 @@ export default function ComprehensiveAnalytics() {
   };
 
   const renderViewTabs = () => (
-    <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1 overflow-x-auto">
+    <div className="flex flex-wrap gap-x-6 border-b border-slate-200">
       {[
-        { id: 'overview', label: 'Overview', icon: PieChart },
-        { id: 'clinical', label: 'Clinical', icon: Stethoscope },
-        { id: 'financial', label: 'Financial', icon: DollarSign },
-        { id: 'operations', label: 'Operations', icon: Activity },
-        { id: 'pharmacy', label: 'Pharmacy', icon: Pill },
-        { id: 'laboratory', label: 'Laboratory', icon: FlaskConical },
-      ].map(({ id, label, icon: Icon }) => (
+        { id: 'overview', label: 'Overview' },
+        { id: 'clinical', label: 'Clinical' },
+        { id: 'financial', label: 'Financial' },
+        { id: 'operations', label: 'Operations' },
+        { id: 'pharmacy', label: 'Pharmacy' },
+        { id: 'laboratory', label: 'Laboratory' },
+      ].map(({ id, label }) => (
         <button
           key={id}
           onClick={() => setViewMode(id as ViewMode)}
-          className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
+          className={`-mb-px whitespace-nowrap border-b-2 px-1 py-2.5 text-sm font-semibold transition-colors ${
             viewMode === id
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-900'
+              ? 'border-[#E9783F] text-slate-900'
+              : 'border-transparent text-slate-500 hover:text-slate-800'
           }`}
         >
-          <Icon className="w-4 h-4" />
           {label}
         </button>
       ))}
     </div>
   );
-
   // =============================================================================
   // OVERVIEW DASHBOARD
   // =============================================================================
   const renderOverview = () => (
     <div className="space-y-6">
       {/* KPI Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+      <div className="grid grid-cols-2 items-start gap-3 md:grid-cols-4">
         <KPICard
           title="Total Patients"
           value={dashboardStats?.patients.total || 0}
@@ -410,13 +349,6 @@ export default function ComprehensiveAnalytics() {
           icon={<Activity className="w-5 h-5" />}
           color="yellow"
           subtitle={`Target ${dashboardStats?.operational.consultationWaitTargetMinutes || 30} min`}
-        />
-        <SimpleStatCard
-          title="Inactive Doctors"
-          value={dashboardStats?.operational.inactiveDoctors || 0}
-          icon={<Stethoscope className="w-5 h-5" />}
-          color="pink"
-          subtitle="Tracked with neutral baseline"
         />
         <KPICard
           title="Prescriptions"
@@ -1561,7 +1493,7 @@ export default function ComprehensiveAnalytics() {
             {
               label: '4-8 hr',
               value: labTAT?.distribution?.['4to8hr'] || 0,
-              color: '#F97316',
+              color: '#E9783F',
             },
             {
               label: '> 8 hr',
@@ -1713,10 +1645,10 @@ export default function ComprehensiveAnalytics() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              Analytics Dashboard
+              Analytics
             </h1>
             <p className="text-gray-500 mt-1">
-              Overview of clinic performance and trends
+              Clinic performance and trends
             </p>
           </div>
 
@@ -1738,7 +1670,7 @@ export default function ComprehensiveAnalytics() {
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-50"
             >
               <RefreshCw
                 className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`}
@@ -1746,11 +1678,6 @@ export default function ComprehensiveAnalytics() {
               Refresh
             </button>
 
-            {/* Export Button */}
-            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              <Download className="w-4 h-4" />
-              Export
-            </button>
           </div>
         </div>
 

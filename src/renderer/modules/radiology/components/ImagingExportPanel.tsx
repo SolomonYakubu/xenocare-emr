@@ -1,5 +1,5 @@
 /**
- * XenoCare EMR — Radiology / Imaging Export Panel
+ * XenoCare — Radiology / Imaging Export Panel
  * Inline export toolbar for the Radiology module page.
  */
 
@@ -31,7 +31,7 @@ export function ImagingExportPanel({ data }: ImagingExportPanelProps) {
   if (!canExport) return null;
 
   const headers = [
-    'EMR Number',
+    'Patient number',
     'Patient',
     'Modality',
     'Study',

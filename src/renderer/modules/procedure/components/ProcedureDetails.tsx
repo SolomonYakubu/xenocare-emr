@@ -323,7 +323,7 @@ const ProcedureDetails: React.FC<ProcedureDetailsProps> = ({
           .status-in_progress { background: #fef3c7; color: #d97706; }
           .status-completed { background: #dcfce7; color: #16a34a; }
           .status-cancelled { background: #f3f4f6; color: #6b7280; }
-          .status-postponed { background: #ffedd5; color: #ea580c; }
+          .status-postponed { background: #ffedd5; color: #D96A36; }
           .status-complications { background: #fee2e2; color: #dc2626; }
           .full-width { grid-column: 1 / -1; }
           .indication { 
@@ -541,7 +541,7 @@ const ProcedureDetails: React.FC<ProcedureDetailsProps> = ({
         }
 
         <div class="footer">
-          Printed on ${new Date().toLocaleString()} | XenoCare EMR System
+          Printed on ${new Date().toLocaleString()} | XenoCare System
         </div>
 
         <script>
@@ -583,15 +583,6 @@ const ProcedureDetails: React.FC<ProcedureDetailsProps> = ({
 
   const handlePrintConsentForm = () => {
     setShowActions(false);
-
-    // Load XenoCare logo as base64 for embedding in HTML
-    let ndcLogoBase64 = '';
-    try {
-      const logoModule = require('../../../../../assets/xenocare-logo.png');
-      ndcLogoBase64 = logoModule.default || logoModule;
-    } catch (error) {
-      console.warn('Could not load XenoCare logo:', error);
-    }
 
     // Format dates
     const scheduledDate = procedure.scheduled_date
@@ -1109,7 +1100,7 @@ const ProcedureDetails: React.FC<ProcedureDetailsProps> = ({
           <div class="header">
             <div class="logo-section">
               <div class="logo">
-                ${ndcLogoBase64 ? `<img src="${ndcLogoBase64}" alt="XenoCare Logo" />` : '<span style="font-size:18px;font-weight:bold;color:#059669;">XenoCare</span>'}
+                <span style="font-size:18px;font-weight:bold;color:#059669;">XenoCare</span>
               </div>
               <div class="hospital-info">
                 <div class="hospital-name">XENOCARE</div>
@@ -1130,7 +1121,7 @@ const ProcedureDetails: React.FC<ProcedureDetailsProps> = ({
               <div class="patient-value name">${patientName}</div>
             </div>
             <div class="patient-field">
-              <div class="patient-label">EMR Number</div>
+              <div class="patient-label">Patient number</div>
               <div class="patient-value">${emrNumber}</div>
             </div>
             <div class="patient-field">
