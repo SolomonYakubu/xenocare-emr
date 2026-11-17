@@ -135,15 +135,34 @@ try {
   Step 'Starting the XenoCare database (first run may pull images)'
   Push-Location $Root
   try {
+    $provisionScript = Join-Path $Root 'scripts\local-db\provision.mjs'
     $provisionLog = Join-Path $LogDir 'provision.log'
-    & $Node (Join-Path $Root 'scripts\local-db\provision.mjs') --if-empty 2>&1 |
-      Tee-Object -FilePath $provisionLog -Append | Out-Host
-    if ($LASTEXITCODE -ne 0) {
-      throw "Database provisioning failed. See $LogFile"
+    $provisionErr = Join-Path $LogDir 'provision-error.log'
+
+    # Native Docker progress goes to stderr; Start-Process keeps that from
+    # being treated as a terminating PowerShell error.
+    $proc = Start-Process `
+      -FilePath $Node `
+      -ArgumentList @("`"$provisionScript`"", '--if-empty') `
+      -WorkingDirectory $Root `
+      -NoNewWindow `
+      -Wait `
+      -PassThru `
+      -RedirectStandardOutput $provisionLog `
+      -RedirectStandardError $provisionErr
+
+    if (Test-Path $provisionLog) {
+      Get-Content $provisionLog -Tail 80 | Out-Host
+    }
+    if ($proc.ExitCode -ne 0) {
+      if (Test-Path $provisionErr) {
+        Get-Content $provisionErr -Tail 60 | Out-Host
+      }
+      throw "Database provisioning failed (exit $($proc.ExitCode)). See $provisionLog and $provisionErr"
     }
 
     Step 'Reading server keys'
-    $status = & $Supabase status -o env 2>&1
+    $status = & $Supabase status -o env 2>$null
     foreach ($line in $status) {
       if ($line -match '^([A-Z0-9_]+)="?(.*?)"?$') {
         $values[$Matches[1]] = $Matches[2]
