@@ -135,8 +135,9 @@ try {
   Step 'Starting the XenoCare database (first run may pull images)'
   Push-Location $Root
   try {
+    $provisionLog = Join-Path $LogDir 'provision.log'
     & $Node (Join-Path $Root 'scripts\local-db\provision.mjs') --if-empty 2>&1 |
-      Tee-Object -FilePath $LogFile -Append | Out-Host
+      Tee-Object -FilePath $provisionLog -Append | Out-Host
     if ($LASTEXITCODE -ne 0) {
       throw "Database provisioning failed. See $LogFile"
     }
